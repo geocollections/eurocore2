@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  font-family: Titillium Web, sans-serif!important;
+  /* Margin bottom by footer height */
+  margin-bottom: 123px;
+  background-color: rgba(0,68,148,.03)!important;
+}
