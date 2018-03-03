@@ -1,7 +1,6 @@
-# eurocore
+# EUROCORE Data Portal
 
-> EUROCORE educational data portal provides access to the detailed geological datasets collected from ore exploration drill cores.
-
+> The project aims to create data portal for accessing data on and from drillcores for student training and research. The data are stored in PostgreSQL database and made accessible via RESTful API.
 ## Build Setup
 
 ``` bash
