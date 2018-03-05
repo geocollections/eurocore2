@@ -59,22 +59,22 @@
         </ul>
         <div id="partners-logos">
           <a target="_blank" href="http://welcome.univ-lorraine.fr/en">
-            <img v-b-tooltip.hover.bottom title="Université de Lorraine" src="http://www.eurocore.rocks/images/logos/Nancy_logo.png" alt="UL">
+            <img v-b-tooltip.hover.bottom title="Université de Lorraine" src="../../assets/logos/Nancy_logo.png" alt="UL">
           </a>
           <a target="_blank" href="https://ttu.ee/geoloogia-instituut">
-            <img v-b-tooltip.hover.bottom title="Tallinn University of Technology" src="http://www.eurocore.rocks/images/logos/TTU_logo.png" alt="TTÜ" >
+            <img v-b-tooltip.hover.bottom title="Tallinn University of Technology" src="../../assets/logos/TTU_logo.png" alt="TTÜ" >
           </a>
           <a target="_blank" href="http://www.upm.es/internacional">
-            <img v-b-tooltip.hover.bottom title="Technical University of Madrid" src="http://www.eurocore.rocks/images/logos/Madrid_logo.png" alt="UPM">
+            <img v-b-tooltip.hover.bottom title="Technical University of Madrid" src="../../assets/logos/Madrid_logo.png" alt="UPM">
           </a>
           <a target="_blank" href="http://en.gtk.fi/">
-            <img v-b-tooltip.hover.bottom title="Geological Survey of Finland" src="http://www.eurocore.rocks/images/logos/GTK_logo.png" alt="GTK">
+            <img v-b-tooltip.hover.bottom title="Geological Survey of Finland" src="../../assets/logos/GTK_logo.png" alt="GTK">
           </a>
           <a target="_blank" href="https://www.fraunhofer.de/en.html">
-            <img v-b-tooltip.hover.bottom title="Fraunhofer" src="http://www.eurocore.rocks/images/logos/Fraunhofer_logo.png" alt="Fraunhofer">
+            <img v-b-tooltip.hover.bottom title="Fraunhofer" src="../../assets/logos/Fraunhofer_logo.png" alt="Fraunhofer">
           </a>
           <a target="_blank" href="http://georessources.univ-lorraine.fr/en">
-            <img v-b-tooltip.hover.bottom title="CREGU" src="http://www.eurocore.rocks/images/logos/cregu_logo.png" alt="CREGU">
+            <img v-b-tooltip.hover.bottom title="CREGU" src="../../assets/logos/cregu_logo.png" alt="CREGU">
           </a>
         </div>
 
