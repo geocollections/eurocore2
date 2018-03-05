@@ -1,10 +1,11 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
-
-      <router-link class="navbar-brand" to="/">
-        <img id="eurocoreLogo" src="../../../assets/eurocoreLogo.png" alt="Eurocore logo">
-      </router-link>
+      <h1>
+        <router-link class="navbar-brand" to="/">
+          <img id="eurocoreLogo" src="../../../assets/eurocoreLogo.png" alt="Eurocore logo">
+        </router-link>
+      </h1>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -45,6 +46,10 @@
   .navbar {
     background-color: #FFF;
     border-bottom: 2px solid rgba(0,68,148,.1);
+  }
+
+  h1 {
+    margin-bottom: 0;
   }
 
   #eurocoreLogo {
