@@ -12,8 +12,10 @@
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.1",
     "vue": "^2.5.2",
+    "vue-instant": "^1.0.2",
     "vue-resource": "^1.4.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuejs-auto-complete": "^0.6.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

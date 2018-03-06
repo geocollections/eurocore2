@@ -10,36 +10,60 @@
 
     <div class="row align-items-center">
       <div class="col">
+
+
+        <!--TODO: Find better autocomplete or make yourself-->
+
         <div class="form-group">
+          <!--<p>VUE-INSTANT</p>-->
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="search..." autocomplete="off"/>
-
-          <ul v-if="response.count > 0">
-            <li v-for="entity in response.results">
-              {{entity.name}}
-            </li>
-          </ul>
-
+          <vue-instant :suggestion-attribute="'name'" :suggestions="response.results" :autofocus="false"
+                       v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">
+          </vue-instant>
         </div>
+
+        <!--<div class="form-group">-->
+          <!--<select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>-->
+          <!--<input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="search..." autocomplete="off"/>-->
+
+          <!--<ul class="autocomplete-results" v-show="response.count > 0 && searchParameters.drillcoreName.name.length > 0">-->
+            <!--<li class="autocomplete-results-item" v-for="entity in response.results" @click="selectEntity(searchParameters.drillcoreName.name, entity.name)">-->
+              <!--{{entity.name}}-->
+            <!--</li>-->
+          <!--</ul>-->
+
+        <!--</div>-->
 
         <div class="form-group">
           <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.depositName.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.depositName)" placeholder="search..." autocomplete="off" />
+          <vue-instant :suggestion-attribute="'deposit__name'" :suggestions="response.results" :autofocus="false"
+                       v-model="searchParameters.depositName.name" placeholder="search..." type="google">
+          </vue-instant>
+          <!--<input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="search..." autocomplete="off" />-->
         </div>
 
         <div class="form-group">
           <select-default label="Ore type" v-model="searchParameters.oreType.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.oreType.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.oreType)" placeholder="search..." autocomplete="off" />
+          <vue-instant :suggestion-attribute="'name'" :suggestions="response.results" :autofocus="false"
+                       v-model="searchParameters.oreType.name" placeholder="search..." type="google">
+          </vue-instant>
+          <!--<input type="text" v-model="searchParameters.oreType.name" class="form-control" placeholder="search..." autocomplete="off" />-->
         </div>
 
         <div class="form-group">
           <select-default label="Main commodity" v-model="searchParameters.commodity.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.commodity.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.commodity)" placeholder="search..." autocomplete="off" />
+          <vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="response.results" :autofocus="false"
+                       v-model="searchParameters.commodity.name" placeholder="search..." type="google">
+          </vue-instant>
+          <!--<input type="text" v-model="searchParameters.commodity.name" class="form-control" placeholder="search..." autocomplete="off" />-->
         </div>
 
         <div class="form-group">
           <select-default label="Core depositor" v-model="searchParameters.coreDepositor.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.coreDepositor)" placeholder="search..." autocomplete="off" />
+          <vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="response.results" :autofocus="false"
+                       v-model="searchParameters.coreDepositor.name" placeholder="search..." type="google">
+          </vue-instant>
+          <!--<input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" placeholder="search..." autocomplete="off" />-->
         </div>
 
         <div class="searchButtons row">
@@ -145,10 +169,12 @@
 
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
+  import Autocomplete from 'vuejs-auto-complete'
 
   export default {
     components: {
-      SelectDefault
+      SelectDefault,
+      Autocomplete
     },
     name: "drillcore",
     data() {
@@ -199,19 +225,23 @@
         let url = this.buildUrl(params);
         console.log(url);
 
-        this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields}}).then(response => {
+        this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields, distinct: true}}).then(response => {
             console.log(response);
-            this.response.count = response.body.count;
-            this.response.results = response.body.results;
-            console.log(this.response);
+            this.devFuncPrintResults(response.body.results);
+            console.log(response.body.results);
+
+            if (response.body.results != null) {
+              this.response.count = response.body.count;
+              this.response.results = response.body.results;
+            }
         }, response => {
             console.log('error');
-            console.log(response)
+            // console.log(response)
         })
       },
         // This is the number of milliseconds we wait for the
         // user to stop typing.
-        300
+        0
       ),
 
       buildUrl(params) {
@@ -219,6 +249,18 @@
           return this.API_URL + params.table + '/?multi_search=value:' + params.name.trim() + ';fields:' + params.fields + ';lookuptype:' + params.lookUpType;
         } else {
           return this.API_URL + params.table + '/?' + params.fields + '__' + params.lookUpType + '=' + params.name.trim();
+        }
+      },
+
+      selectEntity(entity, value) {
+        this.entity = value;
+        console.log(entity + " " +value);
+        // this.entity.name = entity.name;
+      },
+
+      devFuncPrintResults(results) {
+        for (const entity in results) {
+          console.log(results[entity]);
         }
       }
     }
@@ -239,12 +281,28 @@
     margin: 0.75rem 0;
   }
 
-
-  #searchButton {
-    /*margin: 0.75rem 0;*/
+  .autocomplete-results {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    z-index: 1000;
+    position: absolute;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: 0;
+    color: #000;
   }
 
-  #resetButton {
+  .autocomplete-results-item {
+    padding: 0.25rem 1.5rem;
+    cursor: pointer;
+  }
 
+  .autocomplete-results-item:hover {
+    background-color: #004393;
+    color: #ffffff;
+    font-weight: 600;
   }
 </style>
