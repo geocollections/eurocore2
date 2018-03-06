@@ -12,50 +12,34 @@
       <div class="col">
         <div class="form-group">
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.drillcoreName.name" autocomplete="off" class="form-control" placeholder="search..." @keyup="getAutocompleteResults(searchParameters.drillcoreName)"/>
-          <!--<input [(ngModel)]="searchDrillcoreName" id="drillcoreName" class="form-control" (input)="searchDrillcoreByName()" (keypress)="enterKeyPress($event)"-->
-                 <!--placeholder="Drillcore name" [typeahead]="drillcoreAutocompleteValues" [typeaheadWaitMs]="200" typeaheadOptionField="name"-->
-                 <!--autocomplete="off">-->
+          <input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="search..." autocomplete="off"/>
+
           <ul v-if="response.count > 0">
             <li v-for="entity in response.results">
               {{entity.name}}
             </li>
           </ul>
+
         </div>
 
         <div class="form-group">
           <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <!--<input [(ngModel)]="searchDepositName" id="depositName" class="form-control" (input)="searchDepositByName(searchDepositName)"-->
-                 <!--(keypress)="enterKeyPress($event)" placeholder="Deposit name" [typeahead]="depositAutocompleteValues" [typeaheadWaitMs]="200"-->
-                 <!--autocomplete="off" />-->
-          <input class="form-control" placeholder="search..." autocomplete="off" />
+          <input type="text" v-model="searchParameters.depositName.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.depositName)" placeholder="search..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Ore type" v-model="searchParameters.oreType.lookUpType"></select-default>
-          <!--<input [(ngModel)]="searchOreType" id="OreType" class="form-control" (input)="searchOreTypeByName(searchOreType)" (keypress)="enterKeyPress($event)"-->
-                 <!--placeholder="Ore type" [typeahead]="oreTypeAutocompleteValues" [typeaheadWaitMs]="200" typeaheadOptionField="name"-->
-                 <!--autocomplete="off" />-->
-          <input class="form-control" placeholder="search..." autocomplete="off" />
+          <input type="text" v-model="searchParameters.oreType.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.oreType)" placeholder="search..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Main commodity" v-model="searchParameters.commodity.lookUpType"></select-default>
-          <!--<input [(ngModel)]="searchCommodity" id="commodity" class="form-control" (keypress)="enterKeyPress($event)" placeholder="Main commodity"-->
-                 <!--autocomplete="off" />-->
-          <input id="commodity" class="form-control" placeholder="search..." autocomplete="off" />
+          <input type="text" v-model="searchParameters.commodity.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.commodity)" placeholder="search..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Core depositor" v-model="searchParameters.coreDepositor.lookUpType"></select-default>
-          <!--<input [(ngModel)]="searchInstitution" id="coreDepositorName" class="form-control" (input)="searchCoreDepositorByName(searchInstitution)"-->
-                 <!--(keypress)="enterKeyPress($event)" placeholder="Core depositor" [typeahead]="coreDepositorAutocompleteValues" [typeaheadWaitMs]="200"-->
-          <input class="form-control" placeholder="search..." autocomplete="off" />
-        </div>
-
-        <div class="form-group">
-          <!--<input [(ngModel)]="searchDrillcoreId" type="hidden" id="drillcoreId" class="form-control" placeholder="ID" />-->
-          <input type="hidden" id="drillcoreId" class="form-control" placeholder="ID" />
+          <input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" @keyup="getAutocompleteResults(searchParameters.coreDepositor)" placeholder="search..." autocomplete="off" />
         </div>
 
         <div class="searchButtons row">
@@ -162,8 +146,6 @@
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
 
-  const API_URL = 'http://api.eurocore.rocks/';
-
   export default {
     components: {
       SelectDefault
@@ -171,12 +153,13 @@
     name: "drillcore",
     data() {
       return {
+        API_URL: 'http://api.eurocore.rocks/',
         searchParameters: {
           drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
           depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
           oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
-          commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
-          coreDepositor: { lookUpType: 'icontains', name: '' }
+          commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
+          coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' }
         },
         response: {
           count: 0,
@@ -184,14 +167,39 @@
         }
       }
     },
-    methods: {
-      getResults() {
-        return this.response.results
+    watch: {
+      'searchParameters.drillcoreName.name': function (newValue, oldValue) {
+        this.getAutocompleteResults(this.searchParameters.drillcoreName);
       },
-
-      getAutocompleteResults(params) {
+      'searchParameters.depositName.name': function () {
+        this.getAutocompleteResults(this.searchParameters.depositName);
+      },
+      'searchParameters.oreType.name': function () {
+        this.getAutocompleteResults(this.searchParameters.oreType);
+      },
+      'searchParameters.commodity.name': function () {
+        this.getAutocompleteResults(this.searchParameters.commodity);
+      },
+      'searchParameters.coreDepositor.name': function () {
+        this.getAutocompleteResults(this.searchParameters.coreDepositor);
+      }
+    },
+    methods: {
+      // _.debounce is a function provided by lodash to limit how
+      // often a particularly expensive operation can be run.
+      // In this case, we want to limit how often we access
+      // api.eurocore.rocks, waiting until the user has completely
+      // finished typing before making the ajax request. To learn
+      // more about the _.debounce function (and its cousin
+      // _.throttle), visit: https://lodash.com/docs#debounce
+      getAutocompleteResults: _.debounce(
+        function(params) {
         console.log(params);
-        this.$http.jsonp(API_URL + 'drillcore/?' + params.fields + '__' + params.lookUpType + '=' + params.name, {params: {format: 'jsonp', fields: params.fields}}).then(response => {
+
+        let url = this.buildUrl(params);
+        console.log(url);
+
+        this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields}}).then(response => {
             console.log(response);
             this.response.count = response.body.count;
             this.response.results = response.body.results;
@@ -200,18 +208,20 @@
             console.log('error');
             console.log(response)
         })
+      },
+        // This is the number of milliseconds we wait for the
+        // user to stop typing.
+        300
+      ),
+
+      buildUrl(params) {
+        if (params.fields.includes(',')) {
+          return this.API_URL + params.table + '/?multi_search=value:' + params.name.trim() + ';fields:' + params.fields + ';lookuptype:' + params.lookUpType;
+        } else {
+          return this.API_URL + params.table + '/?' + params.fields + '__' + params.lookUpType + '=' + params.name.trim();
+        }
       }
     }
-    // created: function(field) {
-    // this.$http.jsonp('http://api.eurocore.rocks/drillcore/', {params: {format: 'jsonp', fields: 'name', name__icontains: field}}).then(response => {
-    //   console.log(response.body.results);
-    //   this.results = response.body.results;
-    //   console.log(this.results);
-    //   }, response => {
-    //   console.log('error');
-    //   console.log(response)
-    //   })
-    // }
   }
 </script>
 
