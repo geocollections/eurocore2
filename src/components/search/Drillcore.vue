@@ -17,7 +17,7 @@
         <div class="form-group">
           <!--VUE-INSTANT-->
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'name'" :suggestions="response.results" :autofocus="false"
+          <vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">
           </vue-instant>
         </div>
@@ -36,7 +36,7 @@
 
         <div class="form-group">
           <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'deposit__name'" :suggestions="response.results" :autofocus="false"
+          <vue-instant :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.depositName.name" placeholder="search..." type="google">
           </vue-instant>
           <!--<input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="search..." autocomplete="off" />-->
@@ -44,7 +44,7 @@
 
         <div class="form-group">
           <select-default label="Ore type" v-model="searchParameters.oreType.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'name'" :suggestions="response.results" :autofocus="false"
+          <vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.oreType.name" placeholder="search..." type="google">
           </vue-instant>
           <!--<input type="text" v-model="searchParameters.oreType.name" class="form-control" placeholder="search..." autocomplete="off" />-->
@@ -52,7 +52,7 @@
 
         <div class="form-group">
           <select-default label="Main commodity" v-model="searchParameters.commodity.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="response.results" :autofocus="false"
+          <vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.commodity.name" placeholder="search..." type="google">
           </vue-instant>
           <!--<input type="text" v-model="searchParameters.commodity.name" class="form-control" placeholder="search..." autocomplete="off" />-->
@@ -60,7 +60,7 @@
 
         <div class="form-group">
           <select-default label="Core depositor" v-model="searchParameters.coreDepositor.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="response.results" :autofocus="false"
+          <vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.coreDepositor.name" placeholder="search..." type="google">
           </vue-instant>
           <!--<input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" placeholder="search..." autocomplete="off" />-->
@@ -68,7 +68,7 @@
 
         <div class="searchButtons row">
           <span class="mr-2 mb-2">
-            <button class="btn btn-primary" title="Sends request with inserted data" id="searchButton">SEARCH DRILLCORES</button>
+            <button class="btn btn-primary" title="Sends request with inserted data" @click="searchEntities(searchParameters)">SEARCH DRILLCORES</button>
           </span>
 
           <span class="mr-2 mb-2">
@@ -89,8 +89,8 @@
       <div class="col ">
         <!--<p *ngIf="sites">Found {{siteCount}} result(s). </p>-->
         <!--<p *ngIf="!sites">No results found. Please try again. </p>-->
-        <p>Found siteCount result(s). </p>
-        <p>No results found. Please try again. </p>
+        <p v-if="response.results != ''">Found {{response.count}} result(s). </p>
+        <p v-else>No results found. Please try again. </p>
       </div>
 
       <div class="col">
@@ -114,54 +114,49 @@
     </div>
 
 
-    <!--<div *ngIf="sites" class="row">-->
-    <div class="row">
+    <div v-if="response.count > 0" class="row">
       <div class="col">
-        <div class="table-responsive">
-          <table class="table table-hover table-bordered ">
-            <thead class="thead-light">
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Deposit</th>
-              <th>Commodity</th>
-              <!-- <th>Year</th>-->
-              <th>Latitude</th>
-              <th>Longitude</th>
-              <th>Elevation</th>
-              <th>Length</th>
-              <th>Dip</th>
-              <th>Azimuth</th>
-              <th></th>
-            </tr>
-            </thead>
-            <!--<tr *ngFor="let site of sites">-->
-            <tr>
-              <td></td>
-              <td>
-                <router-link to="/drillcore/id">SITE_NAME</router-link>
-                <!--<a routerLink="/drillcore/{{site.id}}">{{site.name}}</a>-->
-              </td>
-              <td>
-                <router-link to="/deposit/id">DEPOSIT_NAME</router-link>
-                <!--<a routerLink="/deposit/{{site.deposit__id}}">{{site.deposit__name}}</a>-->
-              </td>
-              <td></td>
-              <!-- <td>{{site.drilling_year}}</td>-->
-              <td></td>
-              <td></td>
-              <td> </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <router-link to="/drillcore_data/id">Show data</router-link>
-                <!--<a routerLink="/drillcore_data/{{site.id}}">Show data</a>-->
-              </td>
-            </tr>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered ">
+              <thead class="thead-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Deposit</th>
+                  <th>Commodity</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <!--<th>Elevation</th>-->
+                  <th>Length</th>
+                  <th>Dip</th>
+                  <th>Azimuth</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="drillcore in response.results">
+                  <td>{{drillcore.id}}</td>
+                  <td>
+                    <router-link :to="{ path: 'drillcore/' + drillcore.id }">{{drillcore.name}}</router-link>
+                  </td>
+                  <td>
+                    <router-link :to="{ path: 'deposit/' + drillcore.id }">{{drillcore.deposit__name}}</router-link>
+                  </td>
+                  <td>{{drillcore.deposit__main_commodity}}</td>
+                  <td>{{drillcore.latitude}}</td>
+                  <td>{{drillcore.longitude}}</td>
+                  <!--<td></td>-->
+                  <td>{{drillcore.hole_length}}</td>
+                  <td>{{drillcore.hole_dip}}</td>
+                  <td>{{drillcore.hole_azimuth}}</td>
+                  <td>
+                    <router-link :to="{ path: 'drillcore_data/' + drillcore.id }">Show data</router-link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
     </div>
 
   </div>
@@ -183,12 +178,16 @@
           depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
           oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
           commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
-          coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' }
+          coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
+          page: 1,
+          paginateBy: 25,
+          orderBy: 'id'
         },
         response: {
           count: 0,
           results: []
-        }
+        },
+        autocompleteResults: [],
       }
     },
     watch: {
@@ -207,6 +206,7 @@
       'searchParameters.coreDepositor.name': function () {
         this.getAutocompleteResults(this.searchParameters.coreDepositor);
       }
+    //  TODO: add watcher for page, paginateBy and orderBy and then call searchEntities method
     },
     methods: {
       // _.debounce is a function provided by lodash to limit how
@@ -220,21 +220,20 @@
         function(params) {
         console.log(params);
 
-        let url = this.buildUrl(params);
+        let url = this.buildAutocompleteUrl(params);
         console.log(url);
 
         this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields, distinct: true}}).then(response => {
-            console.log(response);
-            this.devFuncPrintResults(response.body.results);
-            // console.log(response.body.results);
+          console.log(response);
+          this.devFuncPrintResults(response.body.results);
+          // console.log(response.body.results);
 
-            if (response.body.results != null) {
-              this.response.count = response.body.count;
-              this.response.results = response.body.results;
-            }
+          if (response.body.results != null) {
+            this.autocompleteResults = response.body.results;
+          }
         }, response => {
-            console.log('ERROR: ');
-            console.log(response)
+          console.log('ERROR: ');
+          console.log(response);
         })
       },
         // This is the number of milliseconds we wait for the
@@ -242,12 +241,38 @@
         0
       ),
 
-      buildUrl(params) {
+      buildAutocompleteUrl(params) {
         if (params.fields.includes(',')) {
           return this.API_URL + params.table + '/?multi_search=value:' + params.name.trim() + ';fields:' + params.fields + ';lookuptype:' + params.lookUpType;
         } else {
           return this.API_URL + params.table + '/?' + params.fields + '__' + params.lookUpType + '=' + params.name.trim();
         }
+      },
+
+      buildSearchUrl(params) {
+        let url = this.API_URL + 'drillcore/';
+        return url;
+      },
+
+      searchEntities(searchParameters) {
+        console.log(searchParameters);
+        let url = this.buildSearchUrl(searchParameters);
+        console.log(url);
+
+        this.$http.jsonp(url, {params: {format: 'jsonp', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
+          console.log(response);
+          this.devFuncPrintResults(response.body.results);
+
+          if (response.body.results != null) {
+            this.response.count = response.body.count;
+            this.response.results = response.body.results;
+          }
+
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+        })
+
       },
 
       resetSearchParameters() {
