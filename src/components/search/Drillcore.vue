@@ -15,7 +15,7 @@
         <!--TODO: Find better autocomplete or make yourself-->
 
         <div class="form-group">
-          <!--<p>VUE-INSTANT</p>-->
+          <!--VUE-INSTANT-->
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
           <vue-instant :suggestion-attribute="'name'" :suggestions="response.results" :autofocus="false"
                        v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">
@@ -72,7 +72,7 @@
           </span>
 
           <span class="mr-2 mb-2">
-            <button class="btn btn-danger" title="Clears search fields" id="resetButton">RESET FORM</button>
+            <button class="btn btn-danger" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
           </span>
         </div>
 
@@ -169,12 +169,10 @@
 
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
-  import Autocomplete from 'vuejs-auto-complete'
 
   export default {
     components: {
-      SelectDefault,
-      Autocomplete
+      SelectDefault
     },
     name: "drillcore",
     data() {
@@ -228,15 +226,15 @@
         this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields, distinct: true}}).then(response => {
             console.log(response);
             this.devFuncPrintResults(response.body.results);
-            console.log(response.body.results);
+            // console.log(response.body.results);
 
             if (response.body.results != null) {
               this.response.count = response.body.count;
               this.response.results = response.body.results;
             }
         }, response => {
-            console.log('error');
-            // console.log(response)
+            console.log('ERROR: ');
+            console.log(response)
         })
       },
         // This is the number of milliseconds we wait for the
@@ -252,10 +250,17 @@
         }
       },
 
-      selectEntity(entity, value) {
-        this.entity = value;
-        console.log(entity + " " +value);
-        // this.entity.name = entity.name;
+      resetSearchParameters() {
+        console.log(this.searchParameters);
+        this.searchParameters =
+          {
+            drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
+            depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
+            oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
+            commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
+            coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' }
+          };
+        console.log(this.searchParameters);
       },
 
       devFuncPrintResults(results) {
