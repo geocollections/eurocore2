@@ -16,10 +16,10 @@
 
         <div class="form-group">
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
-          <!--<autocomplete-field v-model="searchParameters.drillcoreName.name" autocomplete-results="autocompleteResults"></autocomplete-field>-->
-          <vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"
-                       v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">
-          </vue-instant>
+          <input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="start typing..." autocomplete="off" />
+          <!--<vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"-->
+                       <!--v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">-->
+          <!--</vue-instant>-->
         </div>
 
         <!--<div class="form-group">-->
@@ -36,34 +36,34 @@
 
         <div class="form-group">
           <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <vue-instant :filterable="false" :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"
-                       v-model="searchParameters.depositName.name" placeholder="search..." type="google">
-          </vue-instant>
-          <!--<input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="search..." autocomplete="off" />-->
+          <!--<vue-instant :filterable="false" :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"-->
+                       <!--v-model="searchParameters.depositName.name" placeholder="search..." type="google">-->
+          <!--</vue-instant>-->
+          <input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="start typing..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Ore type" v-model="searchParameters.oreType.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"
-                       v-model="searchParameters.oreType.name" placeholder="search..." type="google">
-          </vue-instant>
-          <!--<input type="text" v-model="searchParameters.oreType.name" class="form-control" placeholder="search..." autocomplete="off" />-->
+          <!--<vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"-->
+                       <!--v-model="searchParameters.oreType.name" placeholder="search..." type="google">-->
+          <!--</vue-instant>-->
+          <input type="text" v-model="searchParameters.oreType.name" class="form-control" placeholder="start typing..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Main commodity" v-model="searchParameters.commodity.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="autocompleteResults" :autofocus="false"
-                       v-model="searchParameters.commodity.name" placeholder="search..." type="google">
-          </vue-instant>
-          <!--<input type="text" v-model="searchParameters.commodity.name" class="form-control" placeholder="search..." autocomplete="off" />-->
+          <!--<vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="autocompleteResults" :autofocus="false"-->
+                       <!--v-model="searchParameters.commodity.name" placeholder="search..." type="google">-->
+          <!--</vue-instant>-->
+          <input type="text" v-model="searchParameters.commodity.name" class="form-control" placeholder="start typing..." autocomplete="off" />
         </div>
 
         <div class="form-group">
           <select-default label="Core depositor" v-model="searchParameters.coreDepositor.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="autocompleteResults" :autofocus="false"
-                       v-model="searchParameters.coreDepositor.name" placeholder="search..." type="google">
-          </vue-instant>
-          <!--<input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" placeholder="search..." autocomplete="off" />-->
+          <!--<vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="autocompleteResults" :autofocus="false"-->
+                       <!--v-model="searchParameters.coreDepositor.name" placeholder="search..." type="google">-->
+          <!--</vue-instant>-->
+          <input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" placeholder="start typing..." autocomplete="off" />
         </div>
 
         <div class="searchButtons row">
@@ -93,7 +93,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row" v-if="response.count > 0">
       <div class="col-xs-1 pl-3 pr-3">
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-3" v-if="response.count > 0">
       <div class="col-xs-1 pl-3 pr-3 mb-3">
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
       </div>
@@ -166,12 +166,10 @@
 
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
-  import AutocompleteField from '../main/partial/AutocompleteField'
 
   export default {
     components: {
       SelectDefault,
-      AutocompleteField,
     },
     name: "drillcore",
     data() {
@@ -180,7 +178,7 @@
         searchParameters: {
           drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
           depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-          oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
+          oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name' },
           commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
           coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
           page: 1,
@@ -204,21 +202,27 @@
       }
     },
     watch: {
+      // TODO: Add debounce to input fields, so the request will be sent if typing stops
       'searchParameters.drillcoreName.name': function (newValue, oldValue) {
         console.log(newValue + ' ' + oldValue);
-        this.getAutocompleteResults(this.searchParameters.drillcoreName);
+        this.searchEntities(this.searchParameters);
+        // this.getAutocompleteResults(this.searchParameters.drillcoreName);
       },
       'searchParameters.depositName.name': function () {
-        this.getAutocompleteResults(this.searchParameters.depositName);
+        this.searchEntities(this.searchParameters);
+        // this.getAutocompleteResults(this.searchParameters.depositName);
       },
       'searchParameters.oreType.name': function () {
-        this.getAutocompleteResults(this.searchParameters.oreType);
+        this.searchEntities(this.searchParameters);
+        // this.getAutocompleteResults(this.searchParameters.oreType);
       },
       'searchParameters.commodity.name': function () {
-        this.getAutocompleteResults(this.searchParameters.commodity);
+        this.searchEntities(this.searchParameters);
+        // this.getAutocompleteResults(this.searchParameters.commodity);
       },
       'searchParameters.coreDepositor.name': function () {
-        this.getAutocompleteResults(this.searchParameters.coreDepositor);
+        this.searchEntities(this.searchParameters);
+        // this.getAutocompleteResults(this.searchParameters.coreDepositor);
       },
       'searchParameters.orderBy': function () {
         this.searchEntities(this.searchParameters);
@@ -345,7 +349,7 @@
           {
             drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
             depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-            oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
+            oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_tpye__name' },
             commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
             coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
             page: 1,
