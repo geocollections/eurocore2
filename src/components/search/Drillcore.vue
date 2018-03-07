@@ -12,8 +12,6 @@
       <div class="col">
 
 
-        <!--TODO: Find better autocomplete or make yourself-->
-
         <div class="form-group">
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
           <input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="start typing..." autocomplete="off" />
@@ -128,10 +126,10 @@
                 <tr v-for="drillcore in response.results">
                   <td>{{drillcore.id}}</td>
                   <td>
-                    <router-link :to="{ path: 'drillcore/' + drillcore.id }">{{drillcore.name}}</router-link>
+                    <router-link :to="{ path: '/drillcore/' + drillcore.id }">{{drillcore.name}}</router-link>
                   </td>
                   <td>
-                    <router-link :to="{ path: 'deposit/' + drillcore.id }">{{drillcore.deposit__name}}</router-link>
+                    <router-link :to="{ path: '/deposit/' + drillcore.id }">{{drillcore.deposit__name}}</router-link>
                   </td>
                   <td>{{drillcore.deposit__main_commodity}}</td>
                   <td>{{drillcore.latitude}}</td>
@@ -140,7 +138,7 @@
                   <td>{{drillcore.hole_dip}}</td>
                   <td>{{drillcore.hole_azimuth}}</td>
                   <td>
-                    <router-link :to="{ path: 'drillcore_data/' + drillcore.id }">Show data</router-link>
+                    <router-link :to="{ path: '/drillcore_data/' + drillcore.id }">Show data</router-link>
                   </td>
                 </tr>
               </tbody>
@@ -331,6 +329,7 @@
         return url;
       },
 
+      // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
       changeOrder(orderValue) {
         if (this.searchParameters.orderBy === orderValue) {
           if (orderValue.charAt(0) !== '-') {
