@@ -92,6 +92,10 @@
       </div>
 
       <div class="col">
+        <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
+      </div>
+
+      <div class="col">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
         </b-pagination>
@@ -106,7 +110,7 @@
               <thead class="thead-light">
                 <tr class="th-sort">
                   <th><span @click="changeOrder('id')">ID</span></th>
-                  <th><span @click="changeOrder('id')">Name</span></th>
+                  <th><span @click="changeOrder('name')">Name</span></th>
                   <th><span @click="changeOrder('deposit__name')">Deposit</span></th>
                   <th><span @click="changeOrder('deposit__main_commodity')">Commodity</span></th>
                   <th><span @click="changeOrder('latitude')">Latitude</span></th>
@@ -181,6 +185,15 @@
           results: []
         },
         autocompleteResults: [],
+        paginationOptions: [
+          { value: 10, text: 'Sort by 10' },
+          { value: 25, text: 'Sort by 25' },
+          { value: 50, text: 'Sort by 50' },
+          { value: 100, text: 'Sort by 100' },
+          { value: 250, text: 'Sort by 250' },
+          { value: 500, text: 'Sort by 500' },
+          { value: 1000, text: 'Sort by 1000' }
+        ]
       }
     },
     watch: {
@@ -205,8 +218,10 @@
       },
       'searchParameters.page': function () {
         this.searchEntities(this.searchParameters);
+      },
+      'searchParameters.paginateBy': function () {
+        this.searchEntities(this.searchParameters);
       }
-      //  TODO: add watcher for paginateBy then call searchEntities method
     },
     methods: {
 
