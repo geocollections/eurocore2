@@ -15,8 +15,8 @@
         <!--TODO: Find better autocomplete or make yourself-->
 
         <div class="form-group">
-          <!--VUE-INSTANT-->
           <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
+          <!--<autocomplete-field v-model="searchParameters.drillcoreName.name" autocomplete-results="autocompleteResults"></autocomplete-field>-->
           <vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">
           </vue-instant>
@@ -36,7 +36,7 @@
 
         <div class="form-group">
           <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <vue-instant :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"
+          <vue-instant :filterable="false" :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"
                        v-model="searchParameters.depositName.name" placeholder="search..." type="google">
           </vue-instant>
           <!--<input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="search..." autocomplete="off" />-->
@@ -119,17 +119,16 @@
           <div class="table-responsive">
             <table class="table table-hover table-bordered ">
               <thead class="thead-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Deposit</th>
-                  <th>Commodity</th>
-                  <th>Latitude</th>
-                  <th>Longitude</th>
-                  <!--<th>Elevation</th>-->
-                  <th>Length</th>
-                  <th>Dip</th>
-                  <th>Azimuth</th>
+                <tr class="th-sort">
+                  <th><span @click="changeOrder('id')">ID</span></th>
+                  <th><span @click="changeOrder('id')">Name</span></th>
+                  <th><span @click="changeOrder('deposit__name')">Deposit</span></th>
+                  <th><span @click="changeOrder('deposit__main_commodity')">Commodity</span></th>
+                  <th><span @click="changeOrder('latitude')">Latitude</span></th>
+                  <th><span @click="changeOrder('longitude')">Longitude</span></th>
+                  <th><span @click="changeOrder('hole_length')">Length</span></th>
+                  <th><span @click="changeOrder('hole_dip')">Dip</span></th>
+                  <th><span @click="changeOrder('hole_azimuth')">Azimuth</span></th>
                   <th></th>
                 </tr>
               </thead>
@@ -145,7 +144,6 @@
                   <td>{{drillcore.deposit__main_commodity}}</td>
                   <td>{{drillcore.latitude}}</td>
                   <td>{{drillcore.longitude}}</td>
-                  <!--<td></td>-->
                   <td>{{drillcore.hole_length}}</td>
                   <td>{{drillcore.hole_dip}}</td>
                   <td>{{drillcore.hole_azimuth}}</td>
@@ -164,10 +162,12 @@
 
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
+  import AutocompleteField from '../main/partial/AutocompleteField'
 
   export default {
     components: {
-      SelectDefault
+      SelectDefault,
+      AutocompleteField,
     },
     name: "drillcore",
     data() {
@@ -187,11 +187,13 @@
           count: 0,
           results: []
         },
-        autocompleteResults: [],
+        autocompleteResults: ['fo'],
+        isSortingActive: false
       }
     },
     watch: {
       'searchParameters.drillcoreName.name': function (newValue, oldValue) {
+        console.log(newValue + ' ' + oldValue);
         this.getAutocompleteResults(this.searchParameters.drillcoreName);
       },
       'searchParameters.depositName.name': function () {
@@ -205,10 +207,14 @@
       },
       'searchParameters.coreDepositor.name': function () {
         this.getAutocompleteResults(this.searchParameters.coreDepositor);
+      },
+      'searchParameters.orderBy': function () {
+        this.searchEntities(this.searchParameters);
       }
-    //  TODO: add watcher for page, paginateBy and orderBy and then call searchEntities method
+    //  TODO: add watcher for page and paginateBy then call searchEntities method
     },
     methods: {
+
       // _.debounce is a function provided by lodash to limit how
       // often a particularly expensive operation can be run.
       // In this case, we want to limit how often we access
@@ -249,11 +255,6 @@
         }
       },
 
-      buildSearchUrl(params) {
-        let url = this.API_URL + 'drillcore/';
-        return url;
-      },
-
       searchEntities(searchParameters) {
         console.log(searchParameters);
         let url = this.buildSearchUrl(searchParameters);
@@ -261,18 +262,64 @@
 
         this.$http.jsonp(url, {params: {format: 'jsonp', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
           console.log(response);
-          this.devFuncPrintResults(response.body.results);
+          // this.devFuncPrintResults(response.body.results);
 
-          if (response.body.results != null) {
-            this.response.count = response.body.count;
-            this.response.results = response.body.results;
-          }
+          this.response.count = response.body.count;
+          this.response.results = response.body.results;
 
         }, errResponse => {
           console.log('ERROR: ');
           console.log(errResponse);
         })
 
+      },
+
+      buildSearchUrl(params) {
+        let url = this.API_URL + 'drillcore/?';
+        for (const key in params) {
+          if (typeof(params[key]) === 'object') {
+
+            console.log(params[key]) // object
+
+            if (params[key].name != '') {
+
+              if (url.slice(-1) !== '?') {
+                if (url.slice(-1) !== '&') {
+                  url += '&'
+                }
+              }
+
+              console.log(params[key].fields) // fields
+
+              if (params[key].fields.includes(',')) {
+                //  MULTI
+                url += 'multi_search=value:' + params[key].name + ';fields:' + params[key].fields + ';lookuptype:' + params[key].lookUpType
+              } else {
+                //  REGULAR
+                url += params[key].fields + '__' + params[key].lookUpType + '=' + params[key].name;
+              }
+            } else {
+              console.log('name is empty')
+            }
+          }
+        }
+
+        if (url.slice(-1) === '?') {
+          url = this.API_URL + 'drillcore/'
+        }
+        return url;
+      },
+
+      changeOrder(orderValue) {
+        if (this.searchParameters.orderBy === orderValue) {
+          if (orderValue.charAt(0) !== '-') {
+            orderValue = '-' + orderValue;
+          } else {
+            orderValue = orderValue.substring(1);
+          }
+        }
+        this.searchParameters.orderBy = orderValue;
+        this.isSortingActive = true;
       },
 
       resetSearchParameters() {
@@ -283,7 +330,10 @@
             depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
             oreType: { lookUpType: 'icontains', name: '', table:'ore_genetic_type', fields: 'name' },
             commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
-            coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' }
+            coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
+            page: 1,
+            paginateBy: 25,
+            orderBy: 'id'
           };
         console.log(this.searchParameters);
       },
@@ -293,6 +343,11 @@
           console.log(results[entity]);
         }
       }
+    },
+    beforeMount: function () {
+      // TODO: Params should come from URL if exists, otherwise default
+      //this.searchEntitiesFromUrl(this.searchParameters)
+      this.searchEntities(this.searchParameters)
     }
   }
 </script>
@@ -309,6 +364,14 @@
 
   .searchButtons {
     margin: 0.75rem 0;
+  }
+
+  .th-sort > th > span {
+    cursor: pointer;
+  }
+
+  .sortingHead {
+    color: #004393!important;
   }
 
   .autocomplete-results {
