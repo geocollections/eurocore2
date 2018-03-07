@@ -87,29 +87,14 @@
 
     <div class="row align-items-center pagination-row">
       <div class="col ">
-        <!--<p *ngIf="sites">Found {{siteCount}} result(s). </p>-->
-        <!--<p *ngIf="!sites">No results found. Please try again. </p>-->
         <p v-if="response.results != ''">Found {{response.count}} result(s). </p>
         <p v-else>No results found. Please try again. </p>
       </div>
 
       <div class="col">
-        <nav aria-label="Page navigation example" class="float-right">
-          <!--<ul class="pagination " *ngIf="siteCount>10">-->
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="javascript:void(0);">Previous</a>
-            </li>
-
-            <!--<li *ngFor="let page of pageCount; let index = index" class="page-item" [ngClass]="{'active': pageNumber== index + 1 }">-->
-            <li class="page-item">
-              <a class="page-link" href="javascript:void(0);"> page nr </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="javascript:void(0);">Next</a>
-            </li>
-          </ul>
-        </nav>
+        <b-pagination
+          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
+        </b-pagination>
       </div>
     </div>
 
@@ -157,6 +142,14 @@
         </div>
     </div>
 
+    <div class="row">
+      <div class="col">
+        <b-pagination
+          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
+        </b-pagination>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -187,8 +180,7 @@
           count: 0,
           results: []
         },
-        autocompleteResults: ['fo'],
-        isSortingActive: false
+        autocompleteResults: [],
       }
     },
     watch: {
@@ -210,8 +202,11 @@
       },
       'searchParameters.orderBy': function () {
         this.searchEntities(this.searchParameters);
+      },
+      'searchParameters.page': function () {
+        this.searchEntities(this.searchParameters);
       }
-    //  TODO: add watcher for page and paginateBy then call searchEntities method
+      //  TODO: add watcher for paginateBy then call searchEntities method
     },
     methods: {
 
