@@ -85,13 +85,16 @@
     </div>
 
 
-    <div class="row align-items-center pagination-row">
-      <div class="col ">
-        <p v-if="response.results != ''">Found {{response.count}} result(s). </p>
+    <div class="row">
+      <div class="col">
+        <p v-if="response.results != ''">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>
       </div>
+    </div>
 
-      <div class="col">
+
+    <div class="row">
+      <div class="col-xs-1 pl-3 pr-3">
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
@@ -146,8 +149,12 @@
         </div>
     </div>
 
-    <div class="row">
-      <div class="col">
+    <div class="row mt-3">
+      <div class="col-xs-1 pl-3 pr-3 mb-3">
+        <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
+      </div>
+
+      <div class="col mb-3">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
         </b-pagination>
