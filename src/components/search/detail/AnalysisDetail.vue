@@ -1,14 +1,19 @@
 <template>
   <div>
+
     <div class="row">
-      <h1>About</h1>
+      <div class="col">
+        <h2>{{id}}</h2>
+      </div>
     </div>
+
   </div>
 </template>
 
 <script>
     export default {
-        name: "about"
+      props: ['id'],
+      name: "analysis-detail"
     }
 </script>
 

@@ -176,7 +176,7 @@
         searchParameters: {
           drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
           depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-          oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name' },
+          oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name', },
           commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
           coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
           page: 1,
@@ -201,35 +201,11 @@
     },
     watch: {
       // TODO: Add debounce to input fields, so the request will be sent if typing stops
-      'searchParameters.drillcoreName.name': function (newValue, oldValue) {
-        console.log(newValue + ' ' + oldValue);
-        this.searchEntities(this.searchParameters);
-        // this.getAutocompleteResults(this.searchParameters.drillcoreName);
-      },
-      'searchParameters.depositName.name': function () {
-        this.searchEntities(this.searchParameters);
-        // this.getAutocompleteResults(this.searchParameters.depositName);
-      },
-      'searchParameters.oreType.name': function () {
-        this.searchEntities(this.searchParameters);
-        // this.getAutocompleteResults(this.searchParameters.oreType);
-      },
-      'searchParameters.commodity.name': function () {
-        this.searchEntities(this.searchParameters);
-        // this.getAutocompleteResults(this.searchParameters.commodity);
-      },
-      'searchParameters.coreDepositor.name': function () {
-        this.searchEntities(this.searchParameters);
-        // this.getAutocompleteResults(this.searchParameters.coreDepositor);
-      },
-      'searchParameters.orderBy': function () {
-        this.searchEntities(this.searchParameters);
-      },
-      'searchParameters.page': function () {
-        this.searchEntities(this.searchParameters);
-      },
-      'searchParameters.paginateBy': function () {
-        this.searchEntities(this.searchParameters);
+      'searchParameters': {
+        handler: function () {
+          this.searchEntities(this.searchParameters);
+        },
+        deep: true
       }
     },
     methods: {
@@ -256,9 +232,10 @@
           if (response.body.results != null) {
             this.autocompleteResults = response.body.results;
           }
-        }, response => {
-          console.log('ERROR: ');
-          console.log(response);
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+          this.$router.push('/404/')
         })
       },
         // This is the number of milliseconds we wait for the
@@ -339,7 +316,6 @@
           }
         }
         this.searchParameters.orderBy = orderValue;
-        this.isSortingActive = true;
       },
 
       resetSearchParameters() {
@@ -348,7 +324,7 @@
           {
             drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
             depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-            oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_tpye__name' },
+            oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name' },
             commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
             coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
             page: 1,
@@ -364,20 +340,22 @@
         }
       }
     },
-    beforeMount: function () {
-      // TODO: Params should come from URL if exists, otherwise default
-      //this.searchEntitiesFromUrl(this.searchParameters)
-      this.searchEntities(this.searchParameters)
+    created: function () {
+      // TODO: Params should come from URL if exists
+      // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
+      if (this.$session.exists() && this.$session.get('drillcore') != null) {
+        this.searchParameters = this.$session.get('drillcore')
+      } else {
+        this.searchEntities(this.searchParameters)
+      }
+    },
+    beforeDestroy: function () {
+      this.$session.set('drillcore', this.searchParameters);
     }
   }
 </script>
 
 <style scoped>
-  h2 {
-    color: #6bb745;
-    font-weight: 600;
-  }
-
   .form-group {
     margin-bottom: 0;
   }

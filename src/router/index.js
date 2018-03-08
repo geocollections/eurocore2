@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import FrontPage from '../components/main/FrontPage.vue'
-import About from '../components/main/About'
-import TeachingAids from '../components/main/TeachingAids'
 import Drillcore from '../components/search/Drillcore'
 import DrillcoreDetail from '../components/search/detail/DrillcoreDetail'
+import SampleDetail from '../components/search/detail/SampleDetail'
+import AnalysisDetail from '../components/search/detail/AnalysisDetail'
 import DataSearch from '../components/search/DataSearch'
+import TeachingAids from '../components/main/TeachingAids'
 
 Vue.use(Router);
 
@@ -28,14 +29,21 @@ export default new Router({
       props: true
     },
     {
+      path: '/sample/:id',
+      name: 'SampleDetail',
+      component: SampleDetail,
+      props: true
+    },
+    {
+      path: '/analysis/:id',
+      name: 'AnalysisDetail',
+      component: AnalysisDetail,
+      props: true
+    },
+    {
       path: '/data_search',
       name: 'DataSearch',
       component: DataSearch
-    },
-    {
-      path: '/about',
-      name: 'About',
-      component: About
     },
     {
       path: '/teaching_aids',

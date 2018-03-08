@@ -23,11 +23,11 @@
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="/about">ABOUT DATA PORTAL</router-link>
+            <router-link class="nav-link" to="/teaching_aids">TEACHING AIDS</router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="/teaching_aids">TEACHING AIDS</router-link>
+            <a href="http://schema.eurocore.rocks/" class="nav-link" target="_blank">ABOUT DATABASE</a>
           </li>
 
         </ul>

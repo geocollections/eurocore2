@@ -11,3 +11,12 @@ body {
   margin-bottom: 123px;
   background-color: rgba(0,68,148,.03)!important;
 }
+
+h2 {
+  color: #6bb745;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: none;
+}

@@ -114,11 +114,6 @@
 </script>
 
 <style scoped>
-  h2 {
-    color: #6bb745;
-    font-weight: 600;
-  }
-
   .th-styles tr td:first-child {
     color: #495057;
     background-color: #e9ecef;
