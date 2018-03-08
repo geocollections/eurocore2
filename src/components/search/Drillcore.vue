@@ -189,13 +189,13 @@
         },
         autocompleteResults: [],
         paginationOptions: [
-          { value: 10, text: 'Sort by 10' },
-          { value: 25, text: 'Sort by 25' },
-          { value: 50, text: 'Sort by 50' },
-          { value: 100, text: 'Sort by 100' },
-          { value: 250, text: 'Sort by 250' },
-          { value: 500, text: 'Sort by 500' },
-          { value: 1000, text: 'Sort by 1000' }
+          { value: 10, text: 'Show 10 results per page' },
+          { value: 25, text: 'Show 25 results per page' },
+          { value: 50, text: 'Show 50 results per page' },
+          { value: 100, text: 'Show 100 results per page' },
+          { value: 250, text: 'Show 250 results per page' },
+          { value: 500, text: 'Show 500 results per page' },
+          { value: 1000, text: 'Show 1000 results per page' }
         ]
       }
     },

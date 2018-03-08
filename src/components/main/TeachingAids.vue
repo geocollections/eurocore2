@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="row">
-      <h1>Teaching Aids</h1>
+      <div class="col">
+        <h2>Teaching Aids</h2>
+      </div>
     </div>
   </div>
 </template>

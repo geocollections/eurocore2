@@ -11,14 +11,32 @@
       <div class="col">
         <div class="form-group">
           <label>Drillcore name(s)</label>
+          <vue-multiselect
+            v-model="searchParameters.drillcoreNames"
+            :options="drillcoreNames"
+            :multiple="true"
+            track-by="name"
+            :custom-label="customLabelForDrillcores"></vue-multiselect>
         </div>
 
         <div class="form-group">
           <label>Analytical method(s)</label>
+          <vue-multiselect
+            v-model="searchParameters.analyticalMethods"
+            :options="analyticalMethods"
+            :multiple="true"
+            track-by="analysis_method"
+            :custom-label="customLabelForAnalysis"></vue-multiselect>
         </div>
 
         <div class="form-group">
           <label>Show parameter(s)</label>
+          <vue-multiselect
+            v-model="currentlyShownParameters"
+            :options="showParameters"
+            :multiple="true"
+            track-by="parameter__parameter"
+            :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
       </div>
     </div>
@@ -69,6 +87,7 @@
               <th><span @click="changeOrder('sample_number')">Sample</span></th>
               <th><span @click="changeOrder('analysis_id')">Analysis ID</span></th>
               <th><span @click="changeOrder('analysis_method')">Method</span></th>
+              <th v-for="parameter in currentlyShownParameters">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</th>
             </tr>
             </thead>
             <tbody>
@@ -89,6 +108,7 @@
                 <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
               </td>
               <td>{{entity.analysis_method}}</td>
+              <td v-for="parameterResult in currentlyShownParameters">{{entity.s_pct}}</td>
             </tr>
             </tbody>
           </table>
@@ -112,12 +132,18 @@
 </template>
 
 <script>
+    import VueMultiselect from "vue-multiselect/src/Multiselect";
+
     export default {
+      components: {VueMultiselect},
       name: "data-search",
       data() {
         return {
           API_URL: 'http://api.eurocore.rocks/',
           searchParameters: {
+            drillcoreNames: [],
+            analyticalMethods: [],
+            // showParameters: [],
             page: 1,
             paginateBy: 100,
             orderBy: 'id',
@@ -126,14 +152,18 @@
             count: 0,
             results: []
           },
+          drillcoreNames: [],
+          analyticalMethods: [],
+          showParameters: [],
+          currentlyShownParameters: [],
           paginationOptions: [
-            { value: 10, text: 'Sort by 10' },
-            { value: 25, text: 'Sort by 25' },
-            { value: 50, text: 'Sort by 50' },
-            { value: 100, text: 'Sort by 100' },
-            { value: 250, text: 'Sort by 250' },
-            { value: 500, text: 'Sort by 500' },
-            { value: 1000, text: 'Sort by 1000' }
+            { value: 10, text: 'Show 10 results per page' },
+            { value: 25, text: 'Show 25 results per page' },
+            { value: 50, text: 'Show 50 results per page' },
+            { value: 100, text: 'Show 100 results per page' },
+            { value: 250, text: 'Show 250 results per page' },
+            { value: 500, text: 'Show 500 results per page' },
+            { value: 1000, text: 'Show 1000 results per page' }
           ]
         }
       },
@@ -146,12 +176,17 @@
             this.searchEntities(this.searchParameters);
           },
           deep: true
+        },
+        'currentlyShownParameters': function () {
+          console.log('higgrgrgr')
         }
       },
       methods: {
         searchEntities(params) {
           console.log(params);
-          this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+          let url = this.buildSearchUrl(params);
+
+          this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
             console.log(response);
 
             this.response.count = response.body.count;
@@ -162,6 +197,116 @@
             console.log(errResponse);
             this.$router.push('/404/')
           })
+        },
+
+        buildSearchUrl(params) {
+          let url = this.API_URL + '/analysis_summary/?';
+          Object.keys(params).forEach(function (key) {
+            // console.log(key + ' ' + params[key]);
+            if (key === 'drillcoreNames' && params[key].length > 0) {
+              console.log('DRILLCORE');
+              if (params[key].length > 1) {
+                url += 'drillcore_id__in=';
+              } else {
+                url += 'drillcore_id=';
+              }
+
+              for (const drillcore in params[key]) {
+                url += params[key][drillcore].id + ',';
+              }
+
+              url = url.slice(0, -1);
+              url += '&';
+            }
+            if (key === 'analyticalMethods' && params[key].length > 0) {
+              console.log('ANALYTICAL');
+              if (params[key].length > 1) {
+                url += 'analysis_method__in=';
+              } else {
+                url += 'analysis_method=';
+              }
+
+              for (const analysis in params[key]) {
+                url += params[key][analysis].analysis_method + ',';
+              }
+
+              url = url.slice(0, -1);
+              url += '&';
+            }
+          });
+
+          if (url.slice(-1) === '?') {
+            url = this.API_URL + '/analysis_summary/'
+          }
+          if (url.slice(-1) === '&') {
+            url = url.slice(0, -1);
+          }
+
+          return url;
+        },
+
+        getCorrectParameterFormat(param) {
+          console.log(param);
+          if (param !== 'undefined') {
+            let unformattedParam = param;
+            let firstHalf = unformattedParam.parameter__parameter.toLowerCase();
+            let secondHalf = unformattedParam.unit__unit.toLowerCase();
+            if (secondHalf === '%') {
+              secondHalf = 'pct';
+            }
+            console.log(firstHalf + '_' + secondHalf);
+            return firstHalf + '_' + secondHalf;
+          }
+        },
+
+        populateDrillcoreNames() {
+          this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
+            console.log(response);
+
+            this.drillcoreNames = response.body.results;
+          }, errResponse => {
+            console.log('*** ERROR ***');
+            console.log(errResponse);
+          })
+        },
+
+        populateAnalyticalMethods() {
+          this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
+            console.log(response);
+
+            this.analyticalMethods = response.body.results;
+          }, errResponse => {
+            console.log('*** ERROR ***');
+            console.log(errResponse);
+          })
+        },
+
+        populateShowParameters() {
+          this.$http.jsonp(this.API_URL + 'analysis_result' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
+            console.log(response);
+
+            this.showParameters = response.body.results;
+            for (const i in this.showParameters) {
+              console.log(this.showParameters[i]);
+              // this.showParameters[i].push({'formattedValue': this.getCorrectParameterFormat(this.showParameters[i])});
+            }
+            console.log(this.showParameters)
+          }, errResponse => {
+            console.log('*** ERROR ***');
+            console.log(errResponse);
+          })
+        },
+
+        customLabelForDrillcores(option) {
+          return `${option.name}`
+        },
+
+        customLabelForAnalysis(option) {
+          return `${option.analysis_method}`
+        },
+
+        customLabelForParameters(option) {
+          return `${option.parameter__parameter} ${option.unit__unit}`
         },
 
         // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
@@ -180,6 +325,9 @@
           console.log(this.searchParameters);
           this.searchParameters =
             {
+              drillcoreNames: [],
+              analyticalMethods: [],
+              showParameters: [],
               page: 1,
               paginateBy: 100,
               orderBy: 'id',
@@ -193,6 +341,10 @@
         }
       },
       created: function () {
+        this.populateDrillcoreNames();
+        this.populateAnalyticalMethods();
+        this.populateShowParameters();
+
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
@@ -215,4 +367,9 @@
   .th-sort > th > span {
     cursor: pointer;
   }
+
+  .hide-column {
+    display: none;
+  }
+
 </style>

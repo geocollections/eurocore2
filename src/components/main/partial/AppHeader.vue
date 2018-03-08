@@ -30,6 +30,15 @@
             <a href="http://schema.eurocore.rocks/" class="nav-link" target="_blank">ABOUT DATABASE</a>
           </li>
 
+          <li class="nav-item">
+            <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT</a>
+          </li>
+
+          <!--TODO: Drillcore fast search-->
+          <!--<li class="nav-item">-->
+            <!--<input class="form-control"/>-->
+          <!--</li>-->
+
         </ul>
       </div>
     </div>

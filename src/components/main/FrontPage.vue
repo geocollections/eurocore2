@@ -18,9 +18,7 @@
           exploited for developing advanced practical workshops on mineral exploration for MSc training. The data portal allows
           user to search over wide range of information including geological descriptions, raw analytical data, image files,
           etc. Data tables and graphs could be exported to the external applications via common spreadsheet and vector graphic
-          formats. EUROCORE portal software is developed as open source project (<a target="_blank" href="https://github.com/geocollections/eurocore">https://github.com/geocollections/eurocore</a>)
-          and hosted by Tallinn University of Technology. All data and materials accessible through the portal could be freely
-          used for non-commercial purposes, taken that appropriate reference to the data owner and EUROCORE portal are provided.
+          formats.
         </p>
       </div>
       <div class="col">
