@@ -23,7 +23,7 @@
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="/teaching_aids">TEACHING AIDS</router-link>
+            <router-link class="nav-link" to="/teaching_aids">TEACHING</router-link>
           </li>
 
           <li class="nav-item">
@@ -31,7 +31,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT</a>
+            <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT HOME</a>
           </li>
 
           <!--TODO: Drillcore fast search-->
