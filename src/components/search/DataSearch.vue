@@ -108,7 +108,7 @@
                 <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
               </td>
               <td>{{entity.analysis_method}}</td>
-              <td v-for="parameterResult in currentlyShownParameters">{{entity.s_pct}}</td>
+              <td v-for="parameterResult in currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
             </tr>
             </tbody>
           </table>
@@ -245,20 +245,6 @@
           return url;
         },
 
-        getCorrectParameterFormat(param) {
-          console.log(param);
-          if (param !== 'undefined') {
-            let unformattedParam = param;
-            let firstHalf = unformattedParam.parameter__parameter.toLowerCase();
-            let secondHalf = unformattedParam.unit__unit.toLowerCase();
-            if (secondHalf === '%') {
-              secondHalf = 'pct';
-            }
-            console.log(firstHalf + '_' + secondHalf);
-            return firstHalf + '_' + secondHalf;
-          }
-        },
-
         populateDrillcoreNames() {
           this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
             console.log(response);
@@ -287,14 +273,27 @@
 
             this.showParameters = response.body.results;
             for (const i in this.showParameters) {
-              console.log(this.showParameters[i]);
-              // this.showParameters[i].push({'formattedValue': this.getCorrectParameterFormat(this.showParameters[i])});
+              this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
             }
-            console.log(this.showParameters)
+            // console.log(this.showParameters)
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
           })
+        },
+
+        getCorrectParameterFormat(param) {
+          // console.log(param);
+          if (param !== 'undefined') {
+            let unformattedParam = param;
+            let firstHalf = unformattedParam.parameter__parameter.toLowerCase();
+            let secondHalf = unformattedParam.unit__unit.toLowerCase();
+            if (secondHalf === '%') {
+              secondHalf = 'pct';
+            }
+            // console.log(firstHalf + '_' + secondHalf);
+            return firstHalf + '_' + secondHalf;
+          }
         },
 
         customLabelForDrillcores(option) {
