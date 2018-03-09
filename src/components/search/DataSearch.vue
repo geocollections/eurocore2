@@ -12,30 +12,30 @@
         <div class="form-group">
           <label>Drillcore name(s)</label>
           <vue-multiselect
-            v-model="searchParameters.drillcoreNames"
+            v-model="searchParameters.watched.drillcoreNames"
             :options="drillcoreNames"
             :multiple="true"
             track-by="name"
-            :custom-label="customLabelForDrillcores"></vue-multiselect>
+            label="name"></vue-multiselect>
         </div>
 
         <div class="form-group">
           <label>Analytical method(s)</label>
           <vue-multiselect
-            v-model="searchParameters.analyticalMethods"
+            v-model="searchParameters.watched.analyticalMethods"
             :options="analyticalMethods"
             :multiple="true"
             track-by="analysis_method"
-            :custom-label="customLabelForAnalysis"></vue-multiselect>
+            label="analysis_method"></vue-multiselect>
         </div>
 
         <div class="form-group">
           <label>Show parameter(s)</label>
           <vue-multiselect
-            v-model="currentlyShownParameters"
+            v-model="searchParameters.currentlyShownParameters"
             :options="showParameters"
             :multiple="true"
-            track-by="parameter__parameter"
+            track-by="formattedValue"
             :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
       </div>
@@ -44,7 +44,7 @@
 
     <div class="searchButtons row">
           <span class="mr-2 mb-2">
-            <button class="btn btn-primary" title="Sends request with inserted data" @click="searchEntities(searchParameters)">SEARCH</button>
+            <button class="btn btn-primary" title="Sends request with inserted data" @click="searchEntities(searchParameters.watched)">SEARCH</button>
           </span>
 
       <span class="mr-2 mb-2">
@@ -63,12 +63,12 @@
 
     <div class="row" v-if="response.count > 0">
       <div class="col-xs-1 pl-3 pr-3">
-        <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
+        <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
       <div class="col">
         <b-pagination
-          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
+          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
         </b-pagination>
       </div>
     </div>
@@ -80,20 +80,21 @@
           <table class="table table-hover table-bordered ">
             <thead class="thead-light">
             <tr class="th-sort">
-              <!--TODO: should chagen to drillcore name-->
-              <th><span @click="changeOrder('drillcore_id')">Drillcore</span></th>
-              <th><span @click="changeOrder('depth')">Depth from (m)</span></th>
-              <th><span @click="changeOrder('end_depth')">Depth to (m)</span></th>
-              <th><span @click="changeOrder('sample_number')">Sample</span></th>
-              <th><span @click="changeOrder('analysis_id')">Analysis ID</span></th>
-              <th><span @click="changeOrder('analysis_method')">Method</span></th>
-              <th v-for="parameter in currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
+              <!--TODO: should change to drillcore name-->
+              <th><span v-b-tooltip.hover.bottom title="Sort by Drillcore" @click="changeOrder('drillcore_id')">Drillcore</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Analysis ID" @click="changeOrder('analysis_id')">Analysis ID</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Method" @click="changeOrder('analysis_method')">Method</span></th>
+              <th v-for="parameter in searchParameters.currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter.parameter__parameter + ' ' + parameter.unit__unit" @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="entity in response.results">
               <td>
-                <!--TODO: change to drillcore name maybe by creating new Vue-->
+                <!--TODO: fix opening in new window maybe by creating new Vue-->
+                <!--TODO: should change to drillcore name-->
                 <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_id}}</router-link>
               </td>
               <td>{{entity.depth}}</td>
@@ -108,7 +109,7 @@
                 <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
               </td>
               <td>{{entity.analysis_method}}</td>
-              <td v-for="parameterResult in currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
+              <td v-for="parameterResult in searchParameters.currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
             </tr>
             </tbody>
           </table>
@@ -118,12 +119,12 @@
 
     <div class="row mt-3" v-if="response.count > 0">
       <div class="col-xs-1 pl-3 pr-3 mb-3">
-        <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
+        <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions"></b-form-select>
       </div>
 
       <div class="col mb-3">
         <b-pagination
-          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
+          size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
         </b-pagination>
       </div>
     </div>
@@ -142,14 +143,19 @@
           API_URL: 'http://api.eurocore.rocks/',
           searchParameters: {
             watched: {
+              drillcoreNames: [],
+              analyticalMethods: [],
+              page: 1,
+              paginateBy: 100,
+              orderBy: 'id',
             //  TODO: Add watched parameters here
             },
-            drillcoreNames: [],
-            analyticalMethods: [],
-            // showParameters: [],
-            page: 1,
-            paginateBy: 100,
-            orderBy: 'id',
+            currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
+            // drillcoreNames: [],
+            // analyticalMethods: [],
+            // page: 1,
+            // paginateBy: 100,
+            // orderBy: 'id',
           },
           response: {
             count: 0,
@@ -158,7 +164,7 @@
           drillcoreNames: [],
           analyticalMethods: [],
           showParameters: [],
-          currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
+          // currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
           paginationOptions: [
             { value: 10, text: 'Show 10 results per page' },
             { value: 25, text: 'Show 25 results per page' },
@@ -174,13 +180,13 @@
 
       },
       watch: {
-        'searchParameters': {
+        'searchParameters.watched': {
           handler: function () {
-            this.searchEntities(this.searchParameters);
+            this.searchEntities(this.searchParameters.watched);
           },
           deep: true
         },
-        'currentlyShownParameters': function () {
+        'searchParameters.currentlyShownParameters': function () {
           console.log('higgrgrgr')
         }
       },
@@ -304,14 +310,6 @@
           }
         },
 
-        customLabelForDrillcores(option) {
-          return `${option.name}`
-        },
-
-        customLabelForAnalysis(option) {
-          return `${option.analysis_method}`
-        },
-
         customLabelForParameters(option) {
           return `${option.parameter__parameter} ${option.unit__unit}`
         },
@@ -319,26 +317,34 @@
         // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
         changeOrder(orderValue) {
           orderValue = orderValue.toLowerCase();
-          if (this.searchParameters.orderBy === orderValue) {
+          if (this.searchParameters.watched.orderBy === orderValue) {
             if (orderValue.charAt(0) !== '-') {
               orderValue = '-' + orderValue;
             } else {
               orderValue = orderValue.substring(1);
             }
           }
-          this.searchParameters.orderBy = orderValue;
+          this.searchParameters.watched.orderBy = orderValue;
         },
 
         resetSearchParameters() {
           console.log(this.searchParameters);
           this.searchParameters =
             {
-              drillcoreNames: [],
-              analyticalMethods: [],
-              showParameters: [],
-              page: 1,
-              paginateBy: 100,
-              orderBy: 'id',
+              watched: {
+                drillcoreNames: [],
+                analyticalMethods: [],
+                page: 1,
+                paginateBy: 100,
+                orderBy: 'id',
+                //  TODO: Add watched parameters here
+              },
+              currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
+              // drillcoreNames: [],
+              // analyticalMethods: [],
+              // page: 1,
+              // paginateBy: 100,
+              // orderBy: 'id',
             };
           console.log(this.searchParameters);
         },
@@ -358,7 +364,7 @@
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
           this.searchParameters = this.$session.get('dataSearch');
         } else {
-          this.searchEntities(this.searchParameters)
+          this.searchEntities(this.searchParameters.watched)
         }
       },
       beforeDestroy: function () {
@@ -374,6 +380,12 @@
 
   .th-sort > th > span {
     cursor: pointer;
+  }
+
+  .th-sort > th > span:hover {
+    font-size: 1.025rem ;
+    color: #000;
+    /*opacity: 0.6;*/
   }
 
   .hide-column {

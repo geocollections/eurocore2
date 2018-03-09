@@ -399,6 +399,12 @@
     cursor: pointer;
   }
 
+  .th-sort > th > span:hover {
+    font-size: 1.025rem ;
+    color: #000;
+    /*opacity: 0.6;*/
+  }
+
   .sortingHead {
     color: #004393!important;
   }
