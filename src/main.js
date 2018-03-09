@@ -6,13 +6,10 @@ import App from './App'
 import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import './assets/css/styles.css'
-import 'vue-instant/dist/vue-instant.css'
 import VueSession from 'vue-session'
-import VueInstant from 'vue-instant'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
-Vue.use(VueInstant);
 Vue.use(VueSession);
 
 Vue.config.productionTip = false;

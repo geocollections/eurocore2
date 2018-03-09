@@ -19,11 +19,6 @@ export default {
   },
   name: 'App'
 }
-
-// Enables tooltips
-// $(function () {
-//   $('[data-toggle="tooltip"]').tooltip()
-// });
 </script>
 
 <style>

@@ -11,57 +11,49 @@
     <div class="row align-items-center">
       <div class="col">
 
-
         <div class="form-group">
-          <select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>
-          <input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="start typing..." autocomplete="off" />
-          <!--<vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"-->
-                       <!--v-model="searchParameters.drillcoreName.name" placeholder="search..." type="google">-->
-          <!--</vue-instant>-->
-        </div>
-
-        <!--<div class="form-group">-->
-          <!--<select-default label="Drillcore name" v-model="searchParameters.drillcoreName.lookUpType"></select-default>-->
-          <!--<input type="text" v-model="searchParameters.drillcoreName.name" class="form-control" placeholder="search..." autocomplete="off"/>-->
-
-          <!--<ul class="autocomplete-results" v-show="response.count > 0 && searchParameters.drillcoreName.name.length > 0">-->
-            <!--<li class="autocomplete-results-item" v-for="entity in response.results" @click="selectEntity(searchParameters.drillcoreName.name, entity.name)">-->
-              <!--{{entity.name}}-->
-            <!--</li>-->
-          <!--</ul>-->
-
-        <!--</div>-->
-
-        <div class="form-group">
-          <select-default label="Deposit name" v-model="searchParameters.depositName.lookUpType"></select-default>
-          <!--<vue-instant :filterable="false" :suggestion-attribute="'deposit__name'" :suggestions="autocompleteResults" :autofocus="false"-->
-                       <!--v-model="searchParameters.depositName.name" placeholder="search..." type="google">-->
-          <!--</vue-instant>-->
-          <input type="text" v-model="searchParameters.depositName.name" class="form-control" placeholder="start typing..." autocomplete="off" />
+          <vue-multiselect
+            v-model="searchParameters.drillcoreName.name"
+            :options="drillcoreNames"
+            placeholder="Drillcore Name"
+            label="name"
+            track-by="name" />
         </div>
 
         <div class="form-group">
-          <select-default label="Ore type" v-model="searchParameters.oreType.lookUpType"></select-default>
-          <!--<vue-instant :suggestion-attribute="'name'" :suggestions="autocompleteResults" :autofocus="false"-->
-                       <!--v-model="searchParameters.oreType.name" placeholder="search..." type="google">-->
-          <!--</vue-instant>-->
-          <input type="text" v-model="searchParameters.oreType.name" class="form-control" placeholder="start typing..." autocomplete="off" />
+          <vue-multiselect
+            v-model="searchParameters.depositName.name"
+            :options="depositNames"
+            placeholder="Deposit Name"
+            label="deposit__name"
+            track-by="deposit__name" />
         </div>
 
         <div class="form-group">
-          <select-default label="Main commodity" v-model="searchParameters.commodity.lookUpType"></select-default>
-          <!--<vue-instant :suggestion-attribute="'deposit__main_commodity'" :suggestions="autocompleteResults" :autofocus="false"-->
-                       <!--v-model="searchParameters.commodity.name" placeholder="search..." type="google">-->
-          <!--</vue-instant>-->
-          <input type="text" v-model="searchParameters.commodity.name" class="form-control" placeholder="start typing..." autocomplete="off" />
+          <vue-multiselect
+            v-model="searchParameters.oreType.name"
+            :options="oreTypes"
+            placeholder="Ore type"
+            label="deposit__genetic_type__name"
+            track-by="deposit__genetic_type__name" />
         </div>
 
         <div class="form-group">
-          <select-default label="Core depositor" v-model="searchParameters.coreDepositor.lookUpType"></select-default>
-          <!--<vue-instant :suggestion-attribute="'core_depositor__name'" :suggestions="autocompleteResults" :autofocus="false"-->
-                       <!--v-model="searchParameters.coreDepositor.name" placeholder="search..." type="google">-->
-          <!--</vue-instant>-->
-          <input type="text" v-model="searchParameters.coreDepositor.name" class="form-control" placeholder="start typing..." autocomplete="off" />
+          <vue-multiselect
+            v-model="searchParameters.commodity.name"
+            :options="commodities"
+            placeholder="Main commodity"
+            label="deposit__main_commodity"
+            track-by="deposit__main_commodity" />
+        </div>
+
+        <div class="form-group">
+          <vue-multiselect
+            v-model="searchParameters.coreDepositor.name"
+            :options="coreDepositors"
+            placeholder="Core depositor"
+            track-by="core_depositor__acronym"
+            :custom-label="customLabelForCoreDepositors" />
         </div>
 
         <div class="searchButtons row">
@@ -73,13 +65,12 @@
             <button class="btn btn-danger" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
           </span>
         </div>
-
       </div>
+
 
       <div class="col">
         <div id="map" class="map"></div>
       </div>
-
     </div>
 
 
@@ -164,9 +155,11 @@
 
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
+  import VueMultiselect from "vue-multiselect/src/Multiselect";
 
   export default {
     components: {
+      VueMultiselect,
       SelectDefault,
     },
     name: "drillcore",
@@ -174,11 +167,11 @@
       return {
         API_URL: 'http://api.eurocore.rocks/',
         searchParameters: {
-          drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
-          depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-          oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name', },
-          commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
-          coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
+          drillcoreName: { name: '', field: 'name' },
+          depositName: { name: '', field: 'deposit__name' },
+          oreType: { name: '', field: 'deposit__genetic_type__name', },
+          commodity: { name: '', field: 'deposit__main_commodity' },
+          coreDepositor: { name: '', field: 'core_depositor__acronym' },
           page: 1,
           paginateBy: 25,
           orderBy: 'id'
@@ -187,7 +180,11 @@
           count: 0,
           results: []
         },
-        autocompleteResults: [],
+        drillcoreNames: [],
+        depositNames: [],
+        oreTypes: [],
+        commodities: [],
+        coreDepositors: [],
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -200,55 +197,23 @@
       }
     },
     watch: {
-      // TODO: Add debounce to input fields, so the request will be sent if typing stops
+      // TODO: Got to test it performance wise, maybe dependent search isnt necessary here
       'searchParameters': {
         handler: function () {
-          this.searchEntities(this.searchParameters);
+          this.searchEntitiesAndPopulate(this.searchParameters)
         },
         deep: true
       }
     },
     methods: {
 
-      // _.debounce is a function provided by lodash to limit how
-      // often a particularly expensive operation can be run.
-      // In this case, we want to limit how often we access
-      // api.eurocore.rocks, waiting until the user has completely
-      // finished typing before making the ajax request. To learn
-      // more about the _.debounce function (and its cousin
-      // _.throttle), visit: https://lodash.com/docs#debounce
-      getAutocompleteResults: _.debounce(
-        function(params) {
-        console.log(params);
-
-        let url = this.buildAutocompleteUrl(params);
-        console.log(url);
-
-        this.$http.jsonp(url, {params: {format: 'jsonp', fields: params.fields, distinct: true}}).then(response => {
-          console.log(response);
-          this.devFuncPrintResults(response.body.results);
-          // console.log(response.body.results);
-
-          if (response.body.results != null) {
-            this.autocompleteResults = response.body.results;
-          }
-        }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
-          this.$router.push('/404/')
-        })
-      },
-        // This is the number of milliseconds we wait for the
-        // user to stop typing.
-        0
-      ),
-
-      buildAutocompleteUrl(params) {
-        if (params.fields.includes(',')) {
-          return this.API_URL + params.table + '/?multi_search=value:' + params.name.trim() + ';fields:' + params.fields + ';lookuptype:' + params.lookUpType;
-        } else {
-          return this.API_URL + params.table + '/?' + params.fields + '__' + params.lookUpType + '=' + params.name.trim();
-        }
+      searchEntitiesAndPopulate(params) {
+        this.searchEntities(params);
+        this.populateDrillcoreNames(params);
+        this.populateDepositNames(params);
+        this.populateOreTypes(params);
+        this.populateCommodities(params);
+        this.populateCoreDepositors(params);
       },
 
       searchEntities(searchParameters) {
@@ -272,38 +237,101 @@
 
       buildSearchUrl(params) {
         let url = this.API_URL + 'drillcore/?';
-        for (const key in params) {
+
+        Object.keys(params).forEach(function (key) {
+          // console.log(key + ' ' + params[key]);
+
           if (typeof(params[key]) === 'object') {
 
-            console.log(params[key]) // object
-
-            if (params[key].name != '') {
-
-              if (url.slice(-1) !== '?') {
-                if (url.slice(-1) !== '&') {
-                  url += '&'
-                }
-              }
-
-              console.log(params[key].fields) // fields
-
-              if (params[key].fields.includes(',')) {
-                //  MULTI
-                url += 'multi_search=value:' + params[key].name + ';fields:' + params[key].fields + ';lookuptype:' + params[key].lookUpType
-              } else {
-                //  REGULAR
-                url += params[key].fields + '__' + params[key].lookUpType + '=' + params[key].name;
-              }
-            } else {
-              console.log('name is empty')
+            if (params[key].name !== '' && params[key].name != null) {
+              // console.log(params[key].field + '=' + params[key].name[params[key].field]); deposit__name=Kevitsa
+              url += params[key].field + '=' + params[key].name[params[key].field] + '&'
             }
           }
-        }
 
-        if (url.slice(-1) === '?') {
-          url = this.API_URL + 'drillcore/'
+        });
+
+        if (url.slice(-1) === '?' || url.slice(-1) === '&') {
+          url = url.slice(0, -1);
         }
         return url;
+      },
+
+
+      /***************************************
+       ***** MULTISELECT POPULATE START ******
+       ***************************************/
+      populateDrillcoreNames(params) {
+        let url = this.buildSearchUrl(params);
+        console.log(url);
+        this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'name'}}).then(response => {
+          console.log(response);
+
+          this.drillcoreNames = response.body.results;
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+        })
+      },
+
+      populateDepositNames(params) {
+        let url = this.buildSearchUrl(params);
+        console.log(url);
+        this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
+          console.log(response);
+
+          this.depositNames = response.body.results;
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+        })
+      },
+
+      populateOreTypes(params) {
+        let url = this.buildSearchUrl(params);
+        console.log(url);
+        this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
+          console.log(response);
+
+          this.oreTypes = response.body.results;
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+        })
+      },
+
+      populateCommodities(params) {
+        let url = this.buildSearchUrl(params);
+        console.log(url);
+        this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
+          console.log(response);
+
+          this.commodities = response.body.results;
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+        })
+      },
+
+      populateCoreDepositors(params) {
+        let url = this.buildSearchUrl(params);
+        console.log(url);
+        this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
+          console.log(response);
+
+          this.coreDepositors = response.body.results;
+        }, errResponse => {
+          console.log('*** ERROR ***');
+          console.log(errResponse);
+        })
+      },
+      /***************************************
+       *****  MULTISELECT POPULATE END  ******
+       ***************************************/
+
+
+      customLabelForCoreDepositors(option) {
+        return `${option.core_depositor__acronym} - ${option.core_depositor__name}`
       },
 
       // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
@@ -319,18 +347,21 @@
       },
 
       resetSearchParameters() {
+        console.log("BEFORE");
         console.log(this.searchParameters);
         this.searchParameters =
           {
-            drillcoreName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'name' },
-            depositName: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__name,deposit__alternative_names' },
-            oreType: { lookUpType: 'icontains', name: '', table:'drillcore', fields: 'deposit__genetic_type__name' },
-            commodity: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'deposit__main_commodity' },
-            coreDepositor: { lookUpType: 'icontains', name: '', table: 'drillcore', fields: 'core_depositor__name,core_depositor__acronym' },
+            drillcoreName: { name: '', field: 'name' },
+            depositName: { name: '', field: 'deposit__name' },
+            oreType: { name: '', field: 'deposit__genetic_type__name', },
+            commodity: { name: '', field: 'deposit__main_commodity' },
+            coreDepositor: { name: '', field: 'core_depositor__acronym' },
             page: 1,
             paginateBy: 25,
             orderBy: 'id'
           };
+        this.$session.remove('drillcore');
+        console.log("AFTER");
         console.log(this.searchParameters);
       },
 
@@ -344,9 +375,9 @@
       // TODO: Params should come from URL if exists
       // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
       if (this.$session.exists() && this.$session.get('drillcore') != null) {
-        this.searchParameters = this.$session.get('drillcore')
+        this.searchParameters = this.$session.get('drillcore');
       } else {
-        this.searchEntities(this.searchParameters)
+        this.searchEntitiesAndPopulate(this.searchParameters);
       }
     },
     beforeDestroy: function () {
@@ -356,9 +387,9 @@
 </script>
 
 <style scoped>
-  .form-group {
-    margin-bottom: 0;
-  }
+  /*.form-group {*/
+    /*margin-bottom: 0;*/
+  /*}*/
 
   .searchButtons {
     margin: 0.75rem 0;

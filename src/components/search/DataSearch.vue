@@ -87,19 +87,19 @@
               <th><span @click="changeOrder('sample_number')">Sample</span></th>
               <th><span @click="changeOrder('analysis_id')">Analysis ID</span></th>
               <th><span @click="changeOrder('analysis_method')">Method</span></th>
-              <th v-for="parameter in currentlyShownParameters">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</th>
+              <th v-for="parameter in currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="entity in response.results">
               <td>
-                <!--TODO: change to drillcore name-->
+                <!--TODO: change to drillcore name maybe by creating new Vue-->
                 <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_id}}</router-link>
               </td>
               <td>{{entity.depth}}</td>
               <td>{{entity.end_depth}}</td>
               <td>
-                <!--TODO: fix opening in new window-->
+                <!--TODO: fix opening in new window maybe by creating new Vue-->
                 <router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>
                 <!--<a href @click="openInNewWindow({object: 'sample', id: entity.sample_id})" >{{entity.sample_number}}</a>-->
               </td>
@@ -141,6 +141,9 @@
         return {
           API_URL: 'http://api.eurocore.rocks/',
           searchParameters: {
+            watched: {
+            //  TODO: Add watched parameters here
+            },
             drillcoreNames: [],
             analyticalMethods: [],
             // showParameters: [],
@@ -155,7 +158,7 @@
           drillcoreNames: [],
           analyticalMethods: [],
           showParameters: [],
-          currentlyShownParameters: [],
+          currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
           paginationOptions: [
             { value: 10, text: 'Show 10 results per page' },
             { value: 25, text: 'Show 25 results per page' },
@@ -203,21 +206,24 @@
           let url = this.API_URL + '/analysis_summary/?';
           Object.keys(params).forEach(function (key) {
             // console.log(key + ' ' + params[key]);
+            // TODO: Should optimise this block | START
             if (key === 'drillcoreNames' && params[key].length > 0) {
               console.log('DRILLCORE');
               if (params[key].length > 1) {
-                url += 'drillcore_id__in=';
+                url += 'drillcore_id__in='; // MULTI
               } else {
-                url += 'drillcore_id=';
+                url += 'drillcore_id='; // SINGLE
               }
 
               for (const drillcore in params[key]) {
                 url += params[key][drillcore].id + ',';
               }
 
-              url = url.slice(0, -1);
+              url = url.slice(0, -1); // removes comma
               url += '&';
             }
+            // TODO: Should optimise this block | END
+
             if (key === 'analyticalMethods' && params[key].length > 0) {
               console.log('ANALYTICAL');
               if (params[key].length > 1) {
@@ -235,16 +241,18 @@
             }
           });
 
-          if (url.slice(-1) === '?') {
-            url = this.API_URL + '/analysis_summary/'
-          }
-          if (url.slice(-1) === '&') {
+          if (url.slice(-1) === '?' || url.slice(-1) === '&') {
             url = url.slice(0, -1);
           }
+          // if (url.slice(-1) === '&') {
+          //   url = url.slice(0, -1);
+          // }
 
           return url;
         },
 
+
+        // TODO: Make these 3 run after each change to be dependent on each other + that needs url builder methods.
         populateDrillcoreNames() {
           this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
             console.log(response);
@@ -275,7 +283,7 @@
             for (const i in this.showParameters) {
               this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
             }
-            // console.log(this.showParameters)
+            console.log(this.showParameters)
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
@@ -310,6 +318,7 @@
 
         // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
         changeOrder(orderValue) {
+          orderValue = orderValue.toLowerCase();
           if (this.searchParameters.orderBy === orderValue) {
             if (orderValue.charAt(0) !== '-') {
               orderValue = '-' + orderValue;
