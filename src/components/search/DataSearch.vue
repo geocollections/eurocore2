@@ -81,7 +81,7 @@
             <thead class="thead-light">
             <tr class="th-sort">
               <!--TODO: should change to drillcore name-->
-              <th><span v-b-tooltip.hover.bottom title="Sort by Drillcore" @click="changeOrder('drillcore_id')">Drillcore</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_id')">Drillcore</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>

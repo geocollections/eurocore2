@@ -101,15 +101,15 @@
             <table class="table table-hover table-bordered ">
               <thead class="thead-light">
                 <tr class="th-sort">
-                  <th><span @click="changeOrder('id')">ID</span></th>
-                  <th><span @click="changeOrder('name')">Name</span></th>
-                  <th><span @click="changeOrder('deposit__name')">Deposit</span></th>
-                  <th><span @click="changeOrder('deposit__main_commodity')">Commodity</span></th>
-                  <th><span @click="changeOrder('latitude')">Latitude</span></th>
-                  <th><span @click="changeOrder('longitude')">Longitude</span></th>
-                  <th><span @click="changeOrder('hole_length')">Length</span></th>
-                  <th><span @click="changeOrder('hole_dip')">Dip</span></th>
-                  <th><span @click="changeOrder('hole_azimuth')">Azimuth</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by ID" @click="changeOrder('id')">ID</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Name" @click="changeOrder('name')">Name</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Deposit" @click="changeOrder('deposit__name')">Deposit</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Commodity" @click="changeOrder('deposit__main_commodity')">Commodity</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Latitude" @click="changeOrder('latitude')">Latitude</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Longitude" @click="changeOrder('longitude')">Longitude</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Length" @click="changeOrder('hole_length')">Length</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Dip" @click="changeOrder('hole_dip')">Dip</span></th>
+                  <th><span v-b-tooltip.hover.bottom title="Order by Azimuth" @click="changeOrder('hole_azimuth')">Azimuth</span></th>
                   <th></th>
                 </tr>
               </thead>
