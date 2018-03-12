@@ -79,6 +79,24 @@
         <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
+      <div class="col mb-3">
+        <b-dropdown text="EXPORT" variant="primary">
+          <b-dropdown-item>
+            <export-button
+              :data="response.results"
+              :fields="exportFields"
+              name="data.xls"></export-button>
+          </b-dropdown-item>
+          <b-dropdown-item>
+            <export-button
+              :data="response.results"
+              :fields="exportFields"
+              type="csv"
+              name="data.csv"></export-button>
+          </b-dropdown-item>
+        </b-dropdown>
+      </div>
+
       <div class="col">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
@@ -147,9 +165,13 @@
 
 <script>
     import VueMultiselect from "vue-multiselect/src/Multiselect";
+    import ExportButton from 'vue-json-excel'
 
     export default {
-      components: {VueMultiselect},
+      components: {
+        VueMultiselect,
+        ExportButton
+      },
       name: "data-search",
       data() {
         return {
@@ -165,7 +187,19 @@
               paginateBy: 100,
               orderBy: 'id',
             },
-            currentlyShownParameters: [],
+            currentlyShownParameters: [
+              { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
+              { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
+              { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
+              { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
+              { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+              { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
+              { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
+              { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+              { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
+              { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
+              { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+            ],
           },
           response: {
             count: 0,
@@ -188,7 +222,26 @@
             { value: 500, text: 'Show 500 results per page' },
             { value: 1000, text: 'Show 1000 results per page' }
           ],
-          numOfComparableParameters: 1
+          numOfComparableParameters: 1,
+          exportFields: {
+            'Drillcore': 'drillcore_id',
+            'Depth from (m)': 'depth',
+            'Depth to (m)': 'end_depth',
+            'Sample': 'sample_number',
+            'Analysis ID': 'analysis_id',
+            'Method': 'analysis_method',
+            'Au ppm': 'au_ppm',
+            'Co %': 'co_pct',
+            'Co ppm': 'co_ppm',
+            'Cu %': 'cu_pct',
+            'Cu ppm': 'cu_ppm',
+            'Fe %': 'fe_pct',
+            'Ni %': 'ni_pct',
+            'Ni ppm': 'ni_ppm',
+            'S %': 's_pct',
+            'Zn %': 'zn_pct',
+            'Zn ppm': 'zn_ppm',
+          },
         }
       },
       watch: {
@@ -199,6 +252,8 @@
           deep: true
         },
         'searchParameters.currentlyShownParameters': function () {
+          console.log(this.searchParameters.currentlyShownParameters)
+          console.log(this.showParameters)
           console.log('higgrgrgr')
         },
         // 'searchParameters.comparableParameter': function (n,o) {
@@ -393,7 +448,19 @@
                 paginateBy: 100,
                 orderBy: 'id',
               },
-              currentlyShownParameters: [],
+              currentlyShownParameters: [
+                { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
+                { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
+                { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
+                { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
+                { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+                { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
+                { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
+                { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+                { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
+                { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
+                { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+              ],
             };
           console.log(this.searchParameters);
         },
@@ -438,6 +505,11 @@
 
   .button-right {
     float: right;
+  }
+
+  .export-buttons {
+    text-align: right;
+    margin-bottom: 1rem;
   }
 
   .hide-column {

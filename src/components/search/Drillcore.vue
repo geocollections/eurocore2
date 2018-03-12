@@ -87,6 +87,24 @@
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
+      <div class="col mb-3">
+        <b-dropdown text="EXPORT" variant="primary">
+          <b-dropdown-item>
+            <export-button
+              :data="response.results"
+              :fields="exportFields"
+              name="drillcore.xls"></export-button>
+          </b-dropdown-item>
+          <b-dropdown-item>
+            <export-button
+              :data="response.results"
+              :fields="exportFields"
+              type="csv"
+              name="drillcore.csv"></export-button>
+          </b-dropdown-item>
+        </b-dropdown>
+      </div>
+
       <div class="col">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
@@ -156,11 +174,14 @@
 <script>
   import SelectDefault from '../main/partial/SelectDefault'
   import VueMultiselect from "vue-multiselect/src/Multiselect";
+  import ExportButton from 'vue-json-excel'
+
 
   export default {
     components: {
       VueMultiselect,
       SelectDefault,
+      ExportButton
     },
     name: "drillcore",
     data() {
@@ -193,7 +214,18 @@
           { value: 250, text: 'Show 250 results per page' },
           { value: 500, text: 'Show 500 results per page' },
           { value: 1000, text: 'Show 1000 results per page' }
-        ]
+        ],
+        exportFields: {
+          'ID': 'id',
+          'Name': 'name',
+          'Deposit': 'deposit__name',
+          'Commodity': 'deposit__main_commodity',
+          'Latitude': 'latitude',
+          'Longitude': 'longitude',
+          'length': 'hole_length',
+          'Dip': 'hole_dip',
+          'Azimuth': 'hole_azimuth',
+        },
       }
     },
     watch: {
