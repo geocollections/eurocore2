@@ -38,6 +38,19 @@
             track-by="formattedValue"
             :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
+
+        <label>Parameter filter</label>
+        <div class="form-group" v-for="(item, key) in numOfComparableParameters">
+          <div class="input-group">
+            <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
+              <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.parameter__parameter}} {{parameter.unit__unit}}</option>
+            </b-form-select>
+            <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
+            <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number"></b-form-input>
+            <button class="btn btn-danger ml-2" :disabled="numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+          </div>
+        </div>
+        <button class="btn btn-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
       </div>
     </div>
 
@@ -145,17 +158,14 @@
             watched: {
               drillcoreNames: [],
               analyticalMethods: [],
+              comparableParameter: [''],
+              comparableParameterOperator: ['gt'],
+              comparableParameterValue: [''],
               page: 1,
               paginateBy: 100,
               orderBy: 'id',
-            //  TODO: Add watched parameters here
             },
-            currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
-            // drillcoreNames: [],
-            // analyticalMethods: [],
-            // page: 1,
-            // paginateBy: 100,
-            // orderBy: 'id',
+            currentlyShownParameters: [],
           },
           response: {
             count: 0,
@@ -164,7 +174,11 @@
           drillcoreNames: [],
           analyticalMethods: [],
           showParameters: [],
-          // currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
+          parameterOptions: [
+            { value: 'iexact', text: 'Equals' },
+            { value: 'gt', text: 'Greater than' },
+            { value: 'lt', text: 'Smaller than' }
+          ],
           paginationOptions: [
             { value: 10, text: 'Show 10 results per page' },
             { value: 25, text: 'Show 25 results per page' },
@@ -173,11 +187,9 @@
             { value: 250, text: 'Show 250 results per page' },
             { value: 500, text: 'Show 500 results per page' },
             { value: 1000, text: 'Show 1000 results per page' }
-          ]
+          ],
+          numOfComparableParameters: 1
         }
-      },
-      computed: {
-
       },
       watch: {
         'searchParameters.watched': {
@@ -188,7 +200,19 @@
         },
         'searchParameters.currentlyShownParameters': function () {
           console.log('higgrgrgr')
-        }
+        },
+        // 'searchParameters.comparableParameter': function (n,o) {
+        //   console.log(this.searchParameters.comparableParameter);
+        //   console.log(n + ' ' + o)
+        // },
+        // 'searchParameters.comparableParameterOperator': function (n,o) {
+        //   console.log(this.searchParameters.comparableParameterOperator);
+        //   console.log(n + ' ' + o)
+        // },
+        // 'searchParameters.comparableParameterValue': function (n,o) {
+        //   console.log(this.searchParameters.comparableParameterValue);
+        //   console.log(n + ' ' + o)
+        // },
       },
       methods: {
         searchEntities(params) {
@@ -211,7 +235,7 @@
         buildSearchUrl(params) {
           let url = this.API_URL + '/analysis_summary/?';
           Object.keys(params).forEach(function (key) {
-            // console.log(key + ' ' + params[key]);
+            console.log(key + ' ' + params[key]);
             // TODO: Should optimise this block | START
             if (key === 'drillcoreNames' && params[key].length > 0) {
               console.log('DRILLCORE');
@@ -244,6 +268,16 @@
 
               url = url.slice(0, -1);
               url += '&';
+            }
+
+            if (key === 'comparableParameter') {
+              console.log('COMPARABLE');
+              console.log(params[key]);
+              for (const i in params[key]) {
+                if (params['comparableParameter'][i].length > 0 && params['comparableParameterValue'][i].length > 0) {
+                  url += params['comparableParameter'][i] + '__' + params['comparableParameterOperator'][i] + '=' + params['comparableParameterValue'][i] + '&'
+                }
+              }
             }
           });
 
@@ -327,6 +361,24 @@
           this.searchParameters.watched.orderBy = orderValue;
         },
 
+        addParameterField() {
+          if (this.numOfComparableParameters < (this.showParameters.length * 2)) {
+            this.searchParameters.watched.comparableParameter.push('');
+            this.searchParameters.watched.comparableParameterOperator.push('gt');
+            this.searchParameters.watched.comparableParameterValue.push('');
+            this.numOfComparableParameters += 1;
+          }
+        },
+
+        deleteParameterField(fieldToDelete) {
+          if (this.numOfComparableParameters > 1) {
+            this.searchParameters.watched.comparableParameter.splice(fieldToDelete, 1);
+            this.searchParameters.watched.comparableParameterOperator.splice(fieldToDelete, 1);
+            this.searchParameters.watched.comparableParameterValue.splice(fieldToDelete, 1);
+            this.numOfComparableParameters -= 1;
+          }
+        },
+
         resetSearchParameters() {
           console.log(this.searchParameters);
           this.searchParameters =
@@ -334,17 +386,14 @@
               watched: {
                 drillcoreNames: [],
                 analyticalMethods: [],
+                comparableParameter: [''],
+                comparableParameterOperator: ['gt'],
+                comparableParameterValue: [''],
                 page: 1,
                 paginateBy: 100,
                 orderBy: 'id',
-                //  TODO: Add watched parameters here
               },
-              currentlyShownParameters: [], // TODO: This should be saved to session storage but without sending new request if it changes.
-              // drillcoreNames: [],
-              // analyticalMethods: [],
-              // page: 1,
-              // paginateBy: 100,
-              // orderBy: 'id',
+              currentlyShownParameters: [],
             };
           console.log(this.searchParameters);
         },
@@ -383,9 +432,12 @@
   }
 
   .th-sort > th > span:hover {
-    font-size: 1.025rem ;
     color: #000;
     /*opacity: 0.6;*/
+  }
+
+  .button-right {
+    float: right;
   }
 
   .hide-column {

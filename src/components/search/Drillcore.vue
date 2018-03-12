@@ -400,7 +400,6 @@
   }
 
   .th-sort > th > span:hover {
-    font-size: 1.025rem ;
     color: #000;
     /*opacity: 0.6;*/
   }
