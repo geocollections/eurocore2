@@ -74,7 +74,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <p v-if="response.results != ''">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>

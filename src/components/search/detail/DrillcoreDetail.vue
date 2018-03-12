@@ -70,7 +70,20 @@
         </table>
       </div>
 
-      <div class="col"></div>
+      <div class="col">
+        <!--TODO: MAP goes here-->
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col" id="tab-styles">
+        <b-tabs>
+          <b-tab :title="tab.name + ' (' + tab.count + ')'" v-for="tab in response">
+            <br>I'm the first fading tab
+          </b-tab>
+        </b-tabs>
+      </div>
     </div>
 
   </div>
@@ -86,7 +99,20 @@
       data() {
         return {
           API_URL: 'http://api.eurocore.rocks/drillcore/',
-          drillcore: [],
+          drillcore: null,
+          response: [
+            { name: 'Core boxes', count: 0, results: [] },
+            { name: 'Lithology', count: 0, results: [] },
+            { name: 'Dip/Azimuth', count: 0, results: [] },
+            { name: 'RQD', count: 0, results: [] },
+            { name: 'Structures', count: 0, results: [] },
+            { name: 'Stratigraphy', count: 0, results: [] },
+            { name: 'Samples', count: 0, results: [] },
+            { name: 'Analyses', count: 0, results: [] },
+            { name: 'CT scans', count: 0, results: [] },
+            { name: 'Linked files', count: 0, results: [] },
+            { name: 'References', count: 0, results: [] },
+          ]
         }
       },
       name: "drillcore-detail",
@@ -98,16 +124,32 @@
       methods: {
         getDrillcoreById(id) {
           this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
-            console.log(response.body.results[0]);
-            this.drillcore = response.body.results;
+            console.log(response.body.results);
+            if (response.status === 200) {
+              this.drillcore = response.body.results;
+            }
           }, errResponse => {
             console.log('ERROR: ');
-            this.drillcore = errResponse.body;
             console.log(errResponse);
+            console.log(errResponse.status);
           })
         }
       },
-      beforeMount: function () {
+
+      getLithologyByDrillcoreId(drillcoreId) {
+        this.$http.jsonp('http://api.eurocore.rocks/lithology/', {params: {drillcore__id__exact: drillcoreId, format: 'jsonp'}}).then(response => {
+          console.log(response.body.results);
+          if (response.status === 200) {
+            this.drillcore = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+          console.log(errResponse.status);
+        })
+      },
+
+      created: function () {
         this.getDrillcoreById(this.id)
       }
     }
@@ -119,5 +161,13 @@
     background-color: #e9ecef;
     border-color: #dee2e6;
     font-weight: bold;
+  }
+
+  #tab-styles > div {
+    background-color: #fff!important;
+  }
+
+  .card {
+    border: none;
   }
 </style>
