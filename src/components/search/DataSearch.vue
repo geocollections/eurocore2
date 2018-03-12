@@ -111,8 +111,7 @@
           <table class="table table-hover table-bordered ">
             <thead class="thead-light">
             <tr class="th-sort">
-              <!--TODO: should change to drillcore name-->
-              <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_id')">Drillcore</span></th>
+              <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_name')">Drillcore</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
               <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
@@ -125,8 +124,7 @@
             <tr v-for="entity in response.results">
               <td>
                 <!--TODO: fix opening in new window maybe by creating new Vue-->
-                <!--TODO: should change to drillcore name-->
-                <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_id}}</router-link>
+                <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_name}}</router-link>
               </td>
               <td>{{entity.depth}}</td>
               <td>{{entity.end_depth}}</td>
@@ -224,7 +222,7 @@
           ],
           numOfComparableParameters: 1,
           exportFields: {
-            'Drillcore': 'drillcore_id',
+            'Drillcore': 'drillcore_name',
             'Depth from (m)': 'depth',
             'Depth to (m)': 'end_depth',
             'Sample': 'sample_number',

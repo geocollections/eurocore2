@@ -69,7 +69,7 @@
 
 
       <div class="col">
-        <div id="map" class="map"></div>
+        <drillcore-map></drillcore-map>
       </div>
     </div>
 
@@ -172,15 +172,14 @@
 </template>
 
 <script>
-  import SelectDefault from '../main/partial/SelectDefault'
   import VueMultiselect from "vue-multiselect/src/Multiselect";
-  import ExportButton from 'vue-json-excel'
-
+  import ExportButton from 'vue-json-excel';
+  import DrillcoreMap from "../main/partial/DrillcoreMap";
 
   export default {
     components: {
+      DrillcoreMap,
       VueMultiselect,
-      SelectDefault,
       ExportButton
     },
     name: "drillcore",
