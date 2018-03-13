@@ -48,6 +48,11 @@
 <script>
     export default {
       name: "app-header",
+      mounted: function () {
+        $(".navbar-nav li a").click(function() {
+          $(".navbar-collapse").collapse('hide');
+        });
+      }
     }
 </script>
 

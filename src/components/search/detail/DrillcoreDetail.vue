@@ -79,9 +79,9 @@
     <div class="row">
       <div class="col" id="tab-styles">
         <b-tabs>
-          <b-tab :title="tab.name + ' (' + tab.count + ')'" v-for="tab in response">
-            <br>I'm the first fading tab
-          </b-tab>
+          <!--<b-tab :title="tab.name + ' (' + tab.count + ')'" v-for="tab in response">-->
+            <!--<br>I'm the first fading tab-->
+          <!--</b-tab>-->
         </b-tabs>
       </div>
     </div>
