@@ -8,14 +8,14 @@
               <export-button
                 :data="results"
                 :fields="exportFields"
-                name="lithology.xls">Export to XLS</export-button>
+                name="rqd.xls">Export to XLS</export-button>
             </b-dropdown-item>
             <b-dropdown-item>
               <export-button
                 :data="results"
                 :fields="exportFields"
                 type="csv"
-                name="lithology.csv">Export to CSV</export-button>
+                name="rqd.csv">Export to CSV</export-button>
             </b-dropdown-item>
           </b-dropdown>
         </div>
@@ -27,27 +27,17 @@
         <tr>
           <th>Depth from (m)</th>
           <th>Depth to (m)</th>
-          <th>Rock class</th>
-          <th>Rock name</th>
-          <th>Field name</th>
-          <th>Color</th>
-          <th>Description</th>
-          <th>Minerals</th>
-          <th>Remarks</th>
+          <th>RQD %</th>
+          <th>Fractures</th>
           <th>Person/Institution</th>
           <th>Date</th>
         </tr>
         </thead>
         <tr v-for="entity in results">
-          <td>{{entity.start_depth}}</td>
+          <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
-          <td>{{entity.rock_class__name}}</td>
-          <td>{{entity.rock_name__name}}</td>
-          <td>{{entity.field_name}}</td>
-          <td>{{entity.color_attribute__attribute}} {{entity.color__color}}</td>
-          <td>{{entity.description}}</td>
-          <td>{{entity.mineralogical_rock_name}}</td>
-          <td>{{entity.remarks}}</td>
+          <td>{{entity.rqd}}</td>
+          <td>{{entity.fractures}}</td>
           <td></td>
           <td></td>
         </tr>
@@ -67,24 +57,19 @@
       ExportButton
     },
     props: ['results'],
-    name: "lithology",
+    name: "rqd",
     data() {
       return {
         exportFields: {
-          'Depth from (m)': 'start_depth',
-          'Depth to (m)': 'end_depth',
-          'Rock class': 'rock_class__name',
-          'Rock name': 'rock_name__name',
-          'Field name': 'field_name',
-          'Color': 'color__color',
-          'Description': 'description',
-          'Minerals': 'mineralogical_rock_name',
-          'Remarks': 'remarks',
+          'Depth from (m)': 'depth',
+          'Dip to (m)': 'end_depth',
+          'RQD %': 'rqd',
+          'Fractures': 'fractures',
           'Person/Institution': '',
           'Date': '',
         }
       }
-    },
+    }
   }
 </script>
 

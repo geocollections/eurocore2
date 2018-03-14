@@ -93,14 +93,14 @@
             <export-button
               :data="response.results"
               :fields="exportFields"
-              name="drillcore.xls"></export-button>
+              name="drillcore.xls">Export to XLS</export-button>
           </b-dropdown-item>
           <b-dropdown-item>
             <export-button
               :data="response.results"
               :fields="exportFields"
               type="csv"
-              name="drillcore.csv"></export-button>
+              name="drillcore.csv">Export to CSV</export-button>
           </b-dropdown-item>
         </b-dropdown>
       </div>

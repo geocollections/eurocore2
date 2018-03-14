@@ -8,14 +8,14 @@
               <export-button
                 :data="results"
                 :fields="exportFields"
-                name="lithology.xls">Export to XLS</export-button>
+                name="analysis.xls">Export to XLS</export-button>
             </b-dropdown-item>
             <b-dropdown-item>
               <export-button
                 :data="results"
                 :fields="exportFields"
                 type="csv"
-                name="lithology.csv">Export to CSV</export-button>
+                name="analysis.csv">Export to CSV</export-button>
             </b-dropdown-item>
           </b-dropdown>
         </div>
@@ -25,31 +25,27 @@
       <table class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
+          <th>ID</th>
+          <th>Number</th>
           <th>Depth from (m)</th>
-          <th>Depth to (m)</th>
-          <th>Rock class</th>
-          <th>Rock name</th>
-          <th>Field name</th>
-          <th>Color</th>
-          <th>Description</th>
-          <th>Minerals</th>
-          <th>Remarks</th>
+          <th>Depth (m, interval)</th>
+          <th>Method</th>
           <th>Person/Institution</th>
           <th>Date</th>
         </tr>
         </thead>
         <tr v-for="entity in results">
-          <td>{{entity.start_depth}}</td>
+          <td>
+            <router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>
+          </td>
+          <td>
+            <router-link :to="{ path: '/sample/' + entity.sample__id }">{{entity.sample__sample_number}}</router-link>
+          </td>
+          <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
-          <td>{{entity.rock_class__name}}</td>
-          <td>{{entity.rock_name__name}}</td>
-          <td>{{entity.field_name}}</td>
-          <td>{{entity.color_attribute__attribute}} {{entity.color__color}}</td>
-          <td>{{entity.description}}</td>
-          <td>{{entity.mineralogical_rock_name}}</td>
-          <td>{{entity.remarks}}</td>
-          <td></td>
-          <td></td>
+          <td>{{entity.analysis_method__method}}</td>
+          <td>{{entity.agent__name}}</td>
+          <td>{{entity.date}}</td>
         </tr>
         <tbody>
 
@@ -67,24 +63,20 @@
       ExportButton
     },
     props: ['results'],
-    name: "lithology",
+    name: "analysis",
     data() {
       return {
         exportFields: {
-          'Depth from (m)': 'start_depth',
-          'Depth to (m)': 'end_depth',
-          'Rock class': 'rock_class__name',
-          'Rock name': 'rock_name__name',
-          'Field name': 'field_name',
-          'Color': 'color__color',
-          'Description': 'description',
-          'Minerals': 'mineralogical_rock_name',
-          'Remarks': 'remarks',
-          'Person/Institution': '',
-          'Date': '',
+          'ID': 'id',
+          'Number': 'sample__sample_number',
+          'Depth from (m)': 'depth',
+          'Depth (m, interval)': 'end_depth',
+          'Method': 'analysis_method__method',
+          'Person/Institution': 'agent__name',
+          'Date': 'date',
         }
       }
-    },
+    }
   }
 </script>
 

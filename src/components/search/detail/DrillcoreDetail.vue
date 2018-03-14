@@ -77,11 +77,55 @@
 
 
     <div class="row">
-      <div class="col" id="tab-styles">
-        <b-tabs>
-          <!--<b-tab :title="tab.name + ' (' + tab.count + ')'" v-for="tab in response">-->
-            <!--<br>I'm the first fading tab-->
-          <!--</b-tab>-->
+      <div class="col">
+        <b-tabs v-if="drillcoreSummary != null">
+          <!--<b-tab v-if="drillcoreSummary[0].boxes > 0" :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'" @click="getResultsByDrillcoreId('drillcore_box', id, 'start_depth')">-->
+          <b-tab v-if="drillcoreSummary[0].boxes > 0" :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
+            <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
+            <infinite-loading @infinite="infiniteHandler">
+              <span slot="no-more"></span>
+            </infinite-loading>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].lithologies > 0" :title="'Lithology' + ' (' + drillcoreSummary[0].lithologies + ')'" @click="getResultsByDrillcoreId('lithology', id, 'start_depth')">
+            <lithology :results="response.lithology.results"></lithology>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].dips > 0" :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'" @click="getResultsByDrillcoreId('dip', id, 'depth')">
+            <dip :results="response.dip.results"></dip>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].rqds > 0" :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'" @click="getResultsByDrillcoreId('rqd', id, 'depth')">
+            <rqd :results="response.rqd.results"></rqd>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].structures > 0" :title="'Structures' + ' (' + drillcoreSummary[0].structures + ')'">
+            <br>I'm the first fading tab
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].stratigraphies > 0" :title="'Stratigraphy' + ' (' + drillcoreSummary[0].stratigraphies + ')'">
+            <br>I'm the first fading tab
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].samples > 0" :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'" @click="getResultsByDrillcoreId('sample', id, 'depth')">
+            <sample :results="response.sample.results"></sample>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].analyses > 0" :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'" @click="getResultsByDrillcoreId('analysis', id, 'depth')">
+            <analysis :results="response.analysis.results"></analysis>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].ctscans > 0" :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'" @click="getCTscansByDrillcoreId(id)">
+            <ct-scans :results="response.ctscans.results"></ct-scans>
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].attachments > 0" :title="'Linked files' + ' (' + drillcoreSummary[0].attachments + ')'" @click="getResultsByDrillcoreId('attachment_link', id, 'depth')">
+            <br>I'm the first fading tab
+          </b-tab>
+
+          <b-tab v-if="drillcoreSummary[0].references > 0" :title="'References' + ' (' + drillcoreSummary[0].references + ')'">
+            <br>I'm the first fading tab
+          </b-tab>
         </b-tabs>
       </div>
     </div>
@@ -94,37 +138,58 @@
 </template>
 
 <script>
+  import InfiniteLoading from 'vue-infinite-loading';
+  import DrillcoreBox from './tables/DrillcoreBox'
+  import Lithology from './tables/Lithology';
+  import Dip from './tables/Dip';
+  import Rqd from './tables/Rqd';
+  import Sample from './tables/Sample';
+  import Analysis from './tables/Analysis';
+  import CtScans from './tables/CtScans';
+
     export default {
+      components: {
+        InfiniteLoading,
+        DrillcoreBox,
+        Lithology,
+        Dip,
+        Rqd,
+        Sample,
+        Analysis,
+        CtScans
+      },
       props: ['id'],
       data() {
         return {
           API_URL: 'http://api.eurocore.rocks/drillcore/',
           drillcore: null,
-          response: [
-            { name: 'Core boxes', count: 0, results: [] },
-            { name: 'Lithology', count: 0, results: [] },
-            { name: 'Dip/Azimuth', count: 0, results: [] },
-            { name: 'RQD', count: 0, results: [] },
-            { name: 'Structures', count: 0, results: [] },
-            { name: 'Stratigraphy', count: 0, results: [] },
-            { name: 'Samples', count: 0, results: [] },
-            { name: 'Analyses', count: 0, results: [] },
-            { name: 'CT scans', count: 0, results: [] },
-            { name: 'Linked files', count: 0, results: [] },
-            { name: 'References', count: 0, results: [] },
-          ]
+          drillcoreSummary: null,
+          response: {
+            drillcore_box: { page: 0, paginateBy: 5, count: 0, results: [] },
+            lithology: { count: 0, results: [] },
+            dip: { count: 0, results: [] },
+            rqd: { count: 0, results: [] },
+            structures: { count: 0, results: [] },
+            stratigraphy: { count: 0, results: [] },
+            sample: { count: 0, results: [] },
+            analysis: { count: 0, results: [] },
+            ctscans: { count: 0, results: [] },
+            attachment_link: { count: 0, results: [] },
+            references: { count: 0, results: [] }
+          }
         }
       },
       name: "drillcore-detail",
       watch: {
         'id': function () {
           this.getDrillcoreById(this.id);
+          this.getDrillcoreSummary(this.id);
         }
       },
       methods: {
         getDrillcoreById(id) {
           this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
-            console.log(response.body.results);
+            console.log(response);
             if (response.status === 200) {
               this.drillcore = response.body.results;
             }
@@ -133,24 +198,82 @@
             console.log(errResponse);
             console.log(errResponse.status);
           })
-        }
-      },
+        },
 
-      getLithologyByDrillcoreId(drillcoreId) {
-        this.$http.jsonp('http://api.eurocore.rocks/lithology/', {params: {drillcore__id__exact: drillcoreId, format: 'jsonp'}}).then(response => {
-          console.log(response.body.results);
-          if (response.status === 200) {
-            this.drillcore = response.body.results;
+        getDrillcoreSummary(id) {
+          this.$http.jsonp('http://api.eurocore.rocks/drillcore_summary/' + id, {params: {format: 'jsonp'}}).then(response => {
+            console.log(response);
+            if (response.status === 200) {
+              this.drillcoreSummary = response.body.results;
+              // console.log(this.drillcoreSummary)
+            }
+          }, errResponse => {
+            console.log('ERROR: ');
+            console.log(errResponse);
+            console.log(errResponse.status);
+          })
+        },
+
+        getCTscansByDrillcoreId(id) {
+          if (!(this.response.ctscans.count > 0 && this.response.ctscans.results.length > 0 && typeof(this.response.ctscans.results !== 'undefined'))) {
+            this.$http.jsonp('http://api.eurocore.rocks/analysis/', {params: {drillcore__id: id, analysis_method__method: 'CT', format: 'jsonp'}}).then(response => {
+              console.log(response.body.results);
+              if (response.status === 200) {
+                this.response.ctscans.count = response.body.count;
+                this.response.ctscans.results = response.body.results;
+              }
+            }, errResponse => {
+              console.log('ERROR: ');
+              console.log(errResponse);
+              console.log(errResponse.status);
+            })
           }
-        }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
-        })
-      },
+        },
 
+        getResultsByDrillcoreId(table, drillcoreId, orderBy) {
+          if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
+            this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, order_by: orderBy, format: 'jsonp'}}).then(response => {
+              console.log(response.body.results);
+              if (response.status === 200) {
+                this.response[table].count = response.body.count;
+                this.response[table].results = response.body.results;
+              }
+            }, errResponse => {
+              console.log('ERROR: ');
+              console.log(errResponse);
+              console.log(errResponse.status);
+            })
+          }
+        },
+
+        infiniteHandler($state) {
+          if (this.response.drillcore_box.results.length < this.drillcoreSummary[0].boxes) {
+            this.response.drillcore_box.page += 1;
+            this.$http.jsonp('http://api.eurocore.rocks/drillcore_box/', {params: {drillcore__id: this.id, page: this.response.drillcore_box.page, paginate_by: this.response.drillcore_box.paginateBy, order_by: 'start_depth', format: 'jsonp'}}).then(response => {
+              console.log(response);
+              console.log(response.body.results);
+              if (response.status === 200) {
+                for (const item in response.body.results) {
+                  this.response.drillcore_box.results.push(response.body.results[item]);
+                }
+                $state.loaded();
+              }
+            }, errResponse => {
+              console.log('ERROR: ');
+              console.log(errResponse);
+              console.log(errResponse.status);
+            })
+          } else {
+            $state.complete();
+          }
+        }
+
+      },
       created: function () {
-        this.getDrillcoreById(this.id)
+        this.getDrillcoreById(this.id);
+        this.getDrillcoreSummary(this.id);
+        console.log(this.response.drillcore_box.results);
+
       }
     }
 </script>
@@ -161,10 +284,6 @@
     background-color: #e9ecef;
     border-color: #dee2e6;
     font-weight: bold;
-  }
-
-  #tab-styles > div {
-    background-color: #fff!important;
   }
 
   .card {
