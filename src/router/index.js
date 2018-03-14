@@ -4,6 +4,7 @@ import FrontPage from '../components/main/FrontPage.vue'
 import Drillcore from '../components/search/Drillcore'
 import DrillcoreDetail from '../components/search/detail/DrillcoreDetail'
 import DepositDetail from '../components/search/detail/DepositDetail'
+import CoreboxDetail from '../components/search/detail/CoreboxDetail'
 import SampleDetail from '../components/search/detail/SampleDetail'
 import AnalysisDetail from '../components/search/detail/AnalysisDetail'
 import DataSearch from '../components/search/DataSearch'
@@ -33,6 +34,12 @@ export default new Router({
       path: '/deposit/:id',
       name: 'DepositDetail',
       component: DepositDetail,
+      props: true
+    },
+    {
+      path: '/corebox/:id',
+      name: 'CoreboxDetail',
+      component: CoreboxDetail,
       props: true
     },
     {

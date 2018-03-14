@@ -113,14 +113,14 @@
         target: 'map',
         layers: [basemaps, overlays, allVectorsLayer],
         view: new View({
-          center: Proj.fromLonLat([29.34424401655, 62.856645860855]),
+          center: Proj.fromLonLat([25, 64]),
           zoom: 4
         })
       });
 
       this.map.addLayer(vectorLayer);
       this.map.addControl(new LayerSwitcher());
-      // this.addAllPoints(this.results);
+      this.addAllPoints(this.results);
       // this.addPoints(this.results);
 
     },
