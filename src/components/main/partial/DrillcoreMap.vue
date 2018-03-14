@@ -20,19 +20,17 @@
   import Text from 'ol/style/text';
   import Condition from 'ol/events/condition';
   import DragBoxInteraction from 'ol/interaction/dragbox';
-  import SourceImageArcGISRest from 'ol/source/imagearcgisrest';
 
 
   import View from 'ol/view';
   import Proj from 'ol/proj';
   import LayerGroup from 'ol/layer/group';
-  import LayerImage from 'ol/layer/image';
   import LayerTile from 'ol/layer/tile';
   import SourceOSM from 'ol/source/osm';
   import SourceStamen from 'ol/source/stamen';
   import TileWMS from "ol/source/tilewms";
-  import '../../../assets/css/ol.css'
-  import '../../../assets/css/ol-layerswitcher.css'
+  import 'ol/ol.css'
+  import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
   export default {
     name: "drillcore-map",

@@ -70,8 +70,10 @@
         </table>
       </div>
 
-      <div class="col">
-        <!--TODO: MAP goes here-->
+      <div class="col" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
+        <detail-map :lat="drillcore[0].latitude" :lon="drillcore[0].longitude" :name="drillcore[0].name"></detail-map>
+        <br>
+        <router-link :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary">Show analytical data</router-link>
       </div>
     </div>
 
@@ -79,7 +81,6 @@
     <div class="row">
       <div class="col">
         <b-tabs v-if="drillcoreSummary != null">
-          <!--<b-tab v-if="drillcoreSummary[0].boxes > 0" :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'" @click="getResultsByDrillcoreId('drillcore_box', id, 'start_depth')">-->
           <b-tab v-if="drillcoreSummary[0].boxes > 0" :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
             <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
             <infinite-loading @infinite="infiniteHandler">
@@ -139,7 +140,8 @@
 
 <script>
   import InfiniteLoading from 'vue-infinite-loading';
-  import DrillcoreBox from './tables/DrillcoreBox'
+  import DetailMap from './partial/DetailMap';
+  import DrillcoreBox from './tables/DrillcoreBox';
   import Lithology from './tables/Lithology';
   import Dip from './tables/Dip';
   import Rqd from './tables/Rqd';
@@ -150,6 +152,7 @@
     export default {
       components: {
         InfiniteLoading,
+        DetailMap,
         DrillcoreBox,
         Lithology,
         Dip,
@@ -182,6 +185,7 @@
       name: "drillcore-detail",
       watch: {
         'id': function () {
+          this.resetData();
           this.getDrillcoreById(this.id);
           this.getDrillcoreSummary(this.id);
         }
@@ -253,6 +257,7 @@
               console.log(response);
               console.log(response.body.results);
               if (response.status === 200) {
+                // this.response.drillcore_box.count = response.body.count;
                 for (const item in response.body.results) {
                   this.response.drillcore_box.results.push(response.body.results[item]);
                 }
@@ -266,14 +271,30 @@
           } else {
             $state.complete();
           }
+        },
+
+        resetData() {
+          this.drillcore = null;
+          this.drillcoreSummary = null;
+          this.response = {
+            drillcore_box: { page: 0, paginateBy: 5, count: 0, results: [] },
+            lithology: { count: 0, results: [] },
+            dip: { count: 0, results: [] },
+            rqd: { count: 0, results: [] },
+            structures: { count: 0, results: [] },
+            stratigraphy: { count: 0, results: [] },
+            sample: { count: 0, results: [] },
+            analysis: { count: 0, results: [] },
+            ctscans: { count: 0, results: [] },
+            attachment_link: { count: 0, results: [] },
+            references: { count: 0, results: [] }
+          }
         }
 
       },
       created: function () {
         this.getDrillcoreById(this.id);
         this.getDrillcoreSummary(this.id);
-        console.log(this.response.drillcore_box.results);
-
       }
     }
 </script>

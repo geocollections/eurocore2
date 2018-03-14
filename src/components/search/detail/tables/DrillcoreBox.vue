@@ -45,7 +45,6 @@
 <script>
   import ExportButton from 'vue-json-excel';
 
-
   export default {
     components: {
       ExportButton
