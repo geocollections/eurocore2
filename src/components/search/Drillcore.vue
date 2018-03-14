@@ -69,7 +69,7 @@
 
 
       <div class="col">
-        <drillcore-map></drillcore-map>
+        <drillcore-map :results="response.results"></drillcore-map>
       </div>
     </div>
 
@@ -93,14 +93,14 @@
             <export-button
               :data="response.results"
               :fields="exportFields"
-              name="drillcore.xls">Export to XLS</export-button>
+              name="drillcoreSearch.xls">Export to XLS</export-button>
           </b-dropdown-item>
           <b-dropdown-item>
             <export-button
               :data="response.results"
               :fields="exportFields"
               type="csv"
-              name="drillcore.csv">Export to CSV</export-button>
+              name="drillcoreSearch.csv">Export to CSV</export-button>
           </b-dropdown-item>
         </b-dropdown>
       </div>

@@ -85,14 +85,14 @@
             <export-button
               :data="response.results"
               :fields="exportFields"
-              name="data.xls"></export-button>
+              name="dataSearch.xls">Export to XLS</export-button>
           </b-dropdown-item>
           <b-dropdown-item>
             <export-button
               :data="response.results"
               :fields="exportFields"
               type="csv"
-              name="data.csv"></export-button>
+              name="dataSearch.csv">Export to CSV</export-button>
           </b-dropdown-item>
         </b-dropdown>
       </div>

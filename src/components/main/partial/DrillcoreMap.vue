@@ -20,8 +20,6 @@
   import Text from 'ol/style/text';
   import Condition from 'ol/events/condition';
   import DragBoxInteraction from 'ol/interaction/dragbox';
-
-
   import View from 'ol/view';
   import Proj from 'ol/proj';
   import LayerGroup from 'ol/layer/group';
@@ -33,18 +31,24 @@
   import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
   export default {
+    props: ['results'],
     name: "drillcore-map",
+    data() {
+      return {
+        map: undefined,
+        vectorSource: new SourceVector({}),
+        allVectors: new SourceVector({}),
+      }
+    },
     mounted: function () {
 
-      // this.vectorSource = new SourceVector({});
       const vectorLayer = new LayerVector({
-        source: new SourceVector(),
+        source: this.vectorSource,
         zIndex: 100
       });
 
-      // this.allVectors = new SourceVector({});
       const allVectorsLayer = new LayerVector({
-        source: new SourceVector(),
+        source: this.allVectors,
         zIndex: 100
       });
 
@@ -105,7 +109,7 @@
         ]
       });
 
-      let map = new Map({
+      this.map = new Map({
         target: 'map',
         layers: [basemaps, overlays, allVectorsLayer],
         view: new View({
@@ -114,8 +118,10 @@
         })
       });
 
-      map.addLayer(vectorLayer);
-      map.addControl(new LayerSwitcher());
+      this.map.addLayer(vectorLayer);
+      this.map.addControl(new LayerSwitcher());
+      // this.addAllPoints(this.results);
+      // this.addPoints(this.results);
 
     },
     methods: {
@@ -220,9 +226,10 @@
       },
 
       addAllPoints(sites) {
-        for (var i = 0; i < Object.keys(sites).length; i++) {
-          if (sites[i].longitude != undefined) {
-            var point = new Feature({
+        console.log(sites);
+        for (let i = 0; i < Object.keys(sites).length; i++) {
+          if (sites[i].longitude !== undefined) {
+            let point = new Feature({
               name: sites[i].name,
               id: sites[i].id,
               geometry: new GeomPoint(Proj.fromLonLat([sites[i].longitude, sites[i].latitude]))

@@ -111,8 +111,7 @@
 
       this.map.addLayer(vectorLayer);
       this.map.addControl(new LayerSwitcher());
-      this.addPointWithName(this.name, this.lon, this.lat)
-      this.map.updateSize()
+      this.addPointWithName(this.name, this.lon, this.lat);
     },
     methods: {
       addPointWithName(name, longitude, latitude) {
