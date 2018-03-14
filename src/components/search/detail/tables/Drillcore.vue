@@ -35,6 +35,7 @@
             <th></th>
           </tr>
         </thead>
+        <tbody>
           <tr v-for="entity in results">
             <td>{{entity.id}}</td>
             <td>
@@ -49,8 +50,6 @@
               <router-link :to="{ path: '/drillcore_data/' + entity.id }">Show data</router-link>
             </td>
           </tr>
-        <tbody>
-
         </tbody>
       </table>
     </div>
