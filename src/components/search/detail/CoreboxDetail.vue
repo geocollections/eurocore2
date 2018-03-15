@@ -11,7 +11,7 @@
     <div class="row mt-2 mb-3">
       <div class="col">
         <a :href="'http://eurocore.rocks/' + corebox[0].attachmentlink__attachment__url" target="_blank">
-          <img ref="imgZoom" id="imgZoom" width="100%" :src="buildCoreboxUrl('2000', corebox[0].attachmentlink__attachment__url)" />
+          <img width="100%" :src="buildCoreboxUrl('2000', corebox[0].attachmentlink__attachment__url)" />
         </a>
       </div>
     </div>
