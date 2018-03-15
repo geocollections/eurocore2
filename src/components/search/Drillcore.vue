@@ -418,10 +418,6 @@
 </script>
 
 <style scoped>
-  /*.form-group {*/
-    /*margin-bottom: 0;*/
-  /*}*/
-
   .searchButtons {
     margin: 0.75rem 0;
   }

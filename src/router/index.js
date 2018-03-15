@@ -7,6 +7,7 @@ import DepositDetail from '../components/search/detail/DepositDetail'
 import CoreboxDetail from '../components/search/detail/CoreboxDetail'
 import SampleDetail from '../components/search/detail/SampleDetail'
 import AnalysisDetail from '../components/search/detail/AnalysisDetail'
+import SpectrumDetail from '../components/search/detail/SpectrumDetail'
 import DataSearch from '../components/search/DataSearch'
 import TeachingAids from '../components/main/TeachingAids'
 
@@ -52,6 +53,12 @@ export default new Router({
       path: '/analysis/:id',
       name: 'AnalysisDetail',
       component: AnalysisDetail,
+      props: true
+    },
+    {
+      path: '/spectrum/:analysisId',
+      name: 'SpectrumDetail',
+      component: SpectrumDetail,
       props: true
     },
     {
