@@ -42,7 +42,7 @@
         </table>
       </div>
     </div>
-    
+
 
     <div class="row">
       <div class="col">
@@ -52,14 +52,14 @@
           </b-tab>
 
           <b-tab v-if="response.analysis.count > 0" :title="'Analyses (' + response.analysis.count + ')'">
-
+            <analysis :results="response.analysis.results"></analysis>
           </b-tab>
 
           <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
-
+            <!--<reference :results="response.reference.results"></reference>-->
           </b-tab>
 
-          <b-tab v-if="response.attachment.count > 0" :title="'Linked files (' + response.attachment.count + ')'">
+          <b-tab v-if="response.attachment_link.count > 0" :title="'Linked files (' + response.attachment_link.count + ')'">
 
           </b-tab>
         </b-tabs>
@@ -75,10 +75,14 @@
 
 <script>
   import Sample from './tables/Sample';
+  import Analysis from './tables/Analysis'
+  // import Reference from './tables/Reference'
 
   export default {
     components: {
-      Sample
+      Sample,
+      Analysis,
+      // Reference
     },
     props: ['id'],
     name: "corebox-detail",
@@ -90,14 +94,20 @@
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
           reference: { count: 0, results: [] },
-          attachment: { count: 0, results: [] },
+          attachment_link: { count: 0, results: [] },
         },
       }
     },
     watch: {
       'id': function () {
-        this.getCoreboxById(this.id)
-      //  TODO: add reset + analyses, samples, references and linked files
+        this.getCoreboxById(this.id);
+        //  TODO: add reset + analyses, samples, references and linked files
+      },
+      'corebox': function () {
+        this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+        this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+        // this.getCoreboxDataById('reference', this.corebox[0].drillcore_box__id);
+        // this.getCoreboxDataById('attachment', this.corebox[0].drillcore_box__id);
       }
     },
     methods: {
@@ -111,14 +121,29 @@
           console.log('ERROR: ');
           console.log(errResponse);
           console.log(errResponse.status);
+        });
+      },
+
+      getCoreboxDataByDepth(table, drillcoreId, startDepth, endDepth) {
+        this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.response[table].count = response.body.count;
+            this.response[table].results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+          console.log(errResponse.status);
         })
       },
 
-      getCoreboxRelatedData(table, coreboxId, startDepth, endDepth) {
-        this.$http.jsonp('http://api.eurocore.rocks/' + table, {params: {format: 'jsonp'}}).then(response => {
+      getCoreboxDataById(table, coreboxId) {
+        this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.corebox = response.body.results;
+            this.response[table].count = response.body.count;
+            this.response[table].results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ');
@@ -134,7 +159,6 @@
     },
     created: function () {
       this.getCoreboxById(this.id);
-      //  TODO: add reset + analyses, samples, references and linked files
     },
   }
 </script>
