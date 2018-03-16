@@ -68,7 +68,7 @@
 
     <div class="row">
       <div class="col">
-        <p v-if="response.results != ''">Found <b>{{response.count}}</b> result(s). </p>
+        <p v-if="response.count > 0 || response.count !== undefined">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>
       </div>
     </div>
@@ -105,41 +105,42 @@
     </div>
 
 
-    <div v-if="response.count > 0" class="row">
+    <div class="row">
       <div class="col">
         <div class="table-responsive">
           <table class="table table-hover table-bordered ">
             <thead class="thead-light">
-            <tr class="th-sort">
-              <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_name')">Drillcore</span></th>
-              <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
-              <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
-              <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
-              <th><span v-b-tooltip.hover.bottom title="Order by Analysis ID" @click="changeOrder('analysis_id')">Analysis ID</span></th>
-              <th><span v-b-tooltip.hover.bottom title="Order by Method" @click="changeOrder('analysis_method')">Method</span></th>
-              <th v-for="parameter in searchParameters.currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter.parameter__parameter + ' ' + parameter.unit__unit" @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
-            </tr>
+              <tr class="th-sort">
+                <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_name')">Drillcore</span></th>
+                <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
+                <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
+                <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
+                <th><span v-b-tooltip.hover.bottom title="Order by Analysis ID" @click="changeOrder('analysis_id')">Analysis ID</span></th>
+                <th><span v-b-tooltip.hover.bottom title="Order by Method" @click="changeOrder('analysis_method')">Method</span></th>
+                <th v-for="parameter in searchParameters.currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter.parameter__parameter + ' ' + parameter.unit__unit" @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
+              </tr>
             </thead>
             <tbody>
-            <tr v-for="entity in response.results">
-              <td>
-                <!--TODO: fix opening in new window maybe by creating new Vue-->
-                <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_name}}</router-link>
-              </td>
-              <td>{{entity.depth}}</td>
-              <td>{{entity.end_depth}}</td>
-              <td>
-                <!--TODO: fix opening in new window maybe by creating new Vue-->
-                <router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>
-                <!--<a href @click="openInNewWindow({object: 'sample', id: entity.sample_id})" >{{entity.sample_number}}</a>-->
-              </td>
-              <td>
-                <router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>
-                <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
-              </td>
-              <td>{{entity.analysis_method}}</td>
-              <td v-for="parameterResult in searchParameters.currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
-            </tr>
+              <tr v-if="response.count === 0 || response.count === undefined"><br></tr> <!-- Adds empty line so title can fit -->
+              <tr v-for="entity in response.results">
+                <td>
+                  <!--TODO: fix opening in new window maybe by creating new Vue-->
+                  <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_name}}</router-link>
+                </td>
+                <td>{{entity.depth}}</td>
+                <td>{{entity.end_depth}}</td>
+                <td>
+                  <!--TODO: fix opening in new window maybe by creating new Vue-->
+                  <router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>
+                  <!--<a href @click="openInNewWindow({object: 'sample', id: entity.sample_id})" >{{entity.sample_number}}</a>-->
+                </td>
+                <td>
+                  <router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>
+                  <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
+                </td>
+                <td>{{entity.analysis_method}}</td>
+                <td v-for="parameterResult in searchParameters.currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -274,10 +275,10 @@
 
           this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
             console.log(response);
-
-            this.response.count = response.body.count;
-            this.response.results = response.body.results;
-
+            if (response.status === 200) {
+              this.response.count = response.body.count;
+              this.response.results = response.body.results;
+            }
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
@@ -349,8 +350,9 @@
         populateDrillcoreNames() {
           this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
             console.log(response);
-
-            this.drillcoreNames = response.body.results;
+            if (response.status === 200) {
+              this.drillcoreNames = response.body.results;
+            }
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
@@ -360,8 +362,9 @@
         populateAnalyticalMethods() {
           this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
             console.log(response);
-
-            this.analyticalMethods = response.body.results;
+            if (response.status === 200) {
+              this.analyticalMethods = response.body.results;
+            }
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
@@ -371,10 +374,11 @@
         populateShowParameters() {
           this.$http.jsonp(this.API_URL + 'analysis_result' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
             console.log(response);
-
-            this.showParameters = response.body.results;
-            for (const i in this.showParameters) {
-              this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
+            if (response.status === 200) {
+              this.showParameters = response.body.results;
+              for (const i in this.showParameters) {
+                this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
+              }
             }
             console.log(this.showParameters)
           }, errResponse => {
