@@ -317,7 +317,7 @@
       resetData() {
         this.searchParameters = {
           page: 1,
-          paginateBy: 100,
+          paginateBy: 250,
           orderBy: 'depth'
         };
         this.response = {
@@ -342,30 +342,34 @@
         const results = this.response.results;
         let data = [];
         const graphName = this.drillcoreName[0].name;
-        for (let l = 0; l < this.currentlyShownParameters.length; l++) {
+
+        for (const parameter in this.currentlyShownParameters) {
           let x = [];
           let y = [];
-          let name = this.currentlyShownParameters[l];
-          console.log(name);
-          for (let k = 0; k < results.length; k++) {
-            if (results[k].analysis_method) {
-              if (this.currentlyShownParameters[l].includes(results[k].analysis_method)) { // If currently shown parameter has
-                let name = this.formatParameterForTableData(this.currentlyShownParameters[l]);
-                if (results[k][name]) {
-                  x.push(results[k].depth);
-                  y.push(results[k][name]);
+          const name = this.currentlyShownParameters[parameter];
+
+          for (const result in results) {
+            if (results[result].analysis_method) {
+
+              if (this.currentlyShownParameters[parameter].includes(results[result].analysis_method)) {
+                const name = this.formatParameterForTableData(this.currentlyShownParameters[parameter]);
+
+                if (results[result][name]) {
+                  x.push(results[result].depth);
+                  y.push(results[result][name]);
                 }
               }
             } else {
-              let name = this.formatParameterForTableData(this.currentlyShownParameters[l]);
-              if (results[k][name]) {
-                x.push(results[k].depth);
-                y.push(results[k][name]);
+              const name = this.formatParameterForTableData(this.currentlyShownParameters[parameter]);
+
+              if (results[result][name]) {
+                x.push(results[result].depth);
+                y.push(results[result][name]);
               }
             }
           }
 
-          if (this.currentlyShownParameters[l].includes('ppm')) {
+          if (this.currentlyShownParameters[parameter].includes('ppm')) {
             data.push({
               x,
               y,
@@ -450,8 +454,7 @@
 
         let d3 = Plotly.d3;
 
-        let WIDTH_IN_PERCENT_OF_PARENT = 90,
-          HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
 
         let gd3 = d3.select(this.$refs.plotlyChart)
         //.append('div')
