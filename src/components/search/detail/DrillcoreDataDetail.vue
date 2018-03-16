@@ -395,6 +395,7 @@
         }
 
         let layout = {
+          autosize: true,
           showlegend: true,
           margin: {
             l: 10,
@@ -486,9 +487,9 @@
         //var end = window.performance.now();
         //console.log(end - start + 'ms');
         // let x=this.route.routeConfig.path;
-        window.onresize = function () {
-          Plotly.Plots.resize(gd);
-        };
+        // window.onresize = function () {
+        //   Plotly.Plots.resize(gd);
+        // };
         Plotly.Plots.resize(gd);
 
         // document.getElementById("chartTabLink").addEventListener("click", function () {

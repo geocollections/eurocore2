@@ -52,10 +52,12 @@
           </b-tab>
 
           <b-tab v-if="response.analysis.count > 0" :title="'Analyses (' + response.analysis.count + ')'">
+            <!--TODO: make that into analysis_summary-->
             <analysis :results="response.analysis.results"></analysis>
           </b-tab>
 
           <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
+            <!--TODO: Here comes analysis summary graph-->
             <!--<reference :results="response.reference.results"></reference>-->
           </b-tab>
 
@@ -93,6 +95,7 @@
         response: {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
+          analysis_summary: { count: 0, results: [] },
           reference: { count: 0, results: [] },
           attachment_link: { count: 0, results: [] },
         },
@@ -106,6 +109,7 @@
       'corebox': function () {
         this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
         this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+        // this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
         // this.getCoreboxDataById('reference', this.corebox[0].drillcore_box__id);
         // this.getCoreboxDataById('attachment', this.corebox[0].drillcore_box__id);
       }
@@ -130,6 +134,20 @@
           if (response.status === 200) {
             this.response[table].count = response.body.count;
             this.response[table].results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+          console.log(errResponse.status);
+        })
+      },
+
+      getAnalysisSummary(drillcoreId, startDepth, endDepth) {
+        this.$http.jsonp('http://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.response.analysis_summary.count = response.body.count;
+            this.response.analysis_summary.results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ');
