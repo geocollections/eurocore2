@@ -69,7 +69,8 @@
                         <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)" @click="changeOrder('end_depth')">Depth to (m)</span></th>
                         <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
                         <th><span v-b-tooltip.hover.bottom title="Order by Analysis" @click="changeOrder('analysis_id')">Analysis</span></th>
-                        <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>
+                        <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
+                        <th v-for="parameter in currentlyShownParameters">{{parameter}}</th>
                       </tr>
                     </thead>
 
@@ -84,7 +85,16 @@
                         <td>
                           <router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>
                         </td>
-                        <td v-for="parameter in currentlyShownParameters">{{entity[formatParameterForTableData(parameter)]}}</td>
+                        <td v-for="parameter in currentlyShownParameters">
+                          <div v-if="entity.analysis_method">
+                            <span v-if="parameter.includes(entity.analysis_method)">
+                              {{entity[formatParameterForTableData(parameter)]}}
+                            </span>
+                          </div>
+                          <div v-else>
+                            {{entity[formatParameterForTableData(parameter)]}}
+                          </div>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -319,8 +329,9 @@
         this.parameters = [];
         this.allSelected = false;
         this.indeterminate = false;
-        this.isChartOpen = false;
       },
+
+
 
       openChart() {
         this.isChartOpen = !this.isChartOpen;
@@ -329,19 +340,28 @@
 
       filterChartData() {
         const results = this.response.results;
-        console.log(results);
         let data = [];
-        let fName = this.drillcoreName[0].name;
+        const graphName = this.drillcoreName[0].name;
         for (let l = 0; l < this.currentlyShownParameters.length; l++) {
           let x = [];
           let y = [];
           let name = this.currentlyShownParameters[l];
           console.log(name);
           for (let k = 0; k < results.length; k++) {
-            let name = this.formatParameterForTableData(this.currentlyShownParameters[l]);
-            if (results[k][name]) {
-              x.push(results[k].depth);
-              y.push(results[k][name]);
+            if (results[k].analysis_method) {
+              if (this.currentlyShownParameters[l].includes(results[k].analysis_method)) { // If currently shown parameter has
+                let name = this.formatParameterForTableData(this.currentlyShownParameters[l]);
+                if (results[k][name]) {
+                  x.push(results[k].depth);
+                  y.push(results[k][name]);
+                }
+              }
+            } else {
+              let name = this.formatParameterForTableData(this.currentlyShownParameters[l]);
+              if (results[k][name]) {
+                x.push(results[k].depth);
+                y.push(results[k][name]);
+              }
             }
           }
 
@@ -379,7 +399,7 @@
             t: 120,
             pad: 4
           },
-          title: fName,
+          title: graphName,
           legend: {
             x: 0,
             y: 1.1,
@@ -454,7 +474,7 @@
               icon: Plotly.Icons.camera,
               click: function (gd) {
 
-                Plotly.downloadImage(gd, { filename: fName, format: 'svg', height: 600, width: 900 })
+                Plotly.downloadImage(gd, { filename: graphName, format: 'svg', height: 600, width: 900 })
               }
             }],
             displaylogo: false
