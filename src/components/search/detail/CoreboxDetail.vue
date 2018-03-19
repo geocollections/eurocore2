@@ -8,17 +8,8 @@
     </div>
 
 
-    <div class="row mt-2 mb-3">
-      <div class="col">
-        <a :href="'http://eurocore.rocks/' + corebox[0].attachmentlink__attachment__url" target="_blank">
-          <img width="100%" :src="buildCoreboxUrl('2000', corebox[0].attachmentlink__attachment__url)" />
-        </a>
-      </div>
-    </div>
-
-
     <div class="row">
-      <div class="col">
+      <div class="col-6">
         <table class="table table-bordered table-hover th-styles">
           <tr>
             <td>ID</td>
@@ -40,6 +31,15 @@
             <td>{{corebox[0].end_depth}}</td>
           </tr>
         </table>
+      </div>
+    </div>
+
+
+    <div class="row mt-2 mb-3">
+      <div class="col">
+        <a :href="'http://eurocore.rocks/' + corebox[0].image__url" target="_blank">
+          <img width="100%" :src="buildCoreboxUrl('2000', corebox[0].image__url)" />
+        </a>
       </div>
     </div>
 

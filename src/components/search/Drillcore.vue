@@ -69,7 +69,7 @@
 
 
       <div class="col">
-        <drillcore-map :results="response.results"></drillcore-map>
+        <drillcore-map v-if="mapResponse.count > 0" :results="mapResponse.results" :currentResults="response.results" ></drillcore-map>
       </div>
     </div>
 
@@ -200,6 +200,11 @@
           count: 0,
           results: []
         },
+        mapResponse: {
+          count: 0,
+          results: []
+        },
+        activeDrillcores: null,
         drillcoreNames: [],
         depositNames: [],
         oreTypes: [],
@@ -360,6 +365,19 @@
        *****  MULTISELECT POPULATE END  ******
        ***************************************/
 
+      getMapData() {
+        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.mapResponse.count = response.body.count;
+            this.mapResponse.results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+        })
+      },
+
 
       customLabelForCoreDepositors(option) {
         return `${option.core_depositor__acronym} - ${option.core_depositor__name}`
@@ -410,6 +428,7 @@
       } else {
         this.searchEntitiesAndPopulate(this.searchParameters);
       }
+      this.getMapData();
     },
     beforeDestroy: function () {
       this.$session.set('drillcore', this.searchParameters);

@@ -34,7 +34,7 @@
 
       <div class="col-8">
         <router-link :to="{ path: '/corebox/' + entity.id }">
-          <img :src="buildDrillcoreBoxUrl('1000', entity.attachmentlink__attachment__url)" width="100%" title="Click for box details" />
+          <img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" />
         </router-link>
       </div>
     </div>
@@ -57,7 +57,7 @@
           'Corebox number': 'number',
           'Depth from (m)': 'start_depth',
           'Depth to (m)': 'end_depth',
-          'corebox url': 'attachmentlink__attachment__url'
+          'corebox url': 'image__url'
         }
       }
     },

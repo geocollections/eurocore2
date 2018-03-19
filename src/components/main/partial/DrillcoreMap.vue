@@ -31,7 +31,7 @@
   import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
   export default {
-    props: ['results'],
+    props: ['results', 'currentResults'],
     name: "drillcore-map",
     data() {
       return {
@@ -122,47 +122,14 @@
       this.map.addControl(new LayerSwitcher());
       this.addAllPoints(this.results);
       // this.addPoints(this.results);
+      this.addPointerMoveInteraction();
+      this.addSelectInteraction()
 
     },
     methods: {
 
-      addPointWithName(name, longitude, latitude) {
-        this.vectorSource.clear();
-        if (longitude != undefined) {
-          var pointWithName = new Feature({
-            geometry: new GeomPoint(Proj.fromLonLat([longitude, latitude]))
-          });
-          pointWithName.setStyle(new Style({
-            image: new Circle({
-              radius: 7,
-              fill: new Fill({ color: '#CD154F' }),
-              stroke: new Stroke({
-                color: 'black',
-                width: 1
-              })
-            }),
-            text: new Text({
-              scale: 1.4,
-              text: name,
-              offsetY: -25,
-              fill: new Fill({
-                color: 'black'
-              }),
-              stroke: new Stroke({
-                color: 'white',
-                width: 3.5
-              })
-            })
-          }));
-
-          this.vectorSource.addFeature(pointWithName);
-          this.map.getView().setZoom(5);
-          this.map.getView().setCenter(Proj.fromLonLat([longitude, latitude]));
-        }
-      },
-
-      addPointeMoveInteraction() {
-        var selectPointerMove = new Select({
+      addPointerMoveInteraction() {
+        let selectPointerMove = new Select({
           condition: Condition.pointerMove
         });
         this.map.addInteraction(selectPointerMove);
@@ -178,45 +145,48 @@
       },
 
 
-      addSelectInteraction(siteSearchComponent) {
-        var select = new Select({
-        multi: true,
+      addSelectInteraction() {
+        let select = new Select({
+          multi: true,
         });
         this.select = select;
-        var selectedFeatures = this.select.getFeatures();
+        let selectedFeatures = this.select.getFeatures();
 
         this.map.addInteraction(this.select);
 
         this.select.on("select", function () {
-          var siteIds = [];
+          let drillcoreIds = [];
 
           selectedFeatures.getArray().map(function (feature) {
-            siteIds.push(feature.getId().toString());
+            drillcoreIds.push(feature.getId().toString());
           })
-          //console.log("select " + siteIds);
-          siteSearchComponent.searchDrillcoreId = siteIds.toString();
-          siteSearchComponent.searchSites();
+          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
+          // siteSearchComponent.searchSites();
+          // TODO: Send ids to drillcore component
+          console.log(drillcoreIds);
         })
 
-        var dragBox = new DragBoxInteraction({
+        let dragBox = new DragBoxInteraction({
           //condition: ol.events.condition.platformModifierKeyOnly
         });
         this.map.addInteraction(dragBox);
 
-        var allSites = this.allVectors;
+        let allDrillcores = this.allVectors;
 
         dragBox.on('boxend', function () {
-          var siteIds = [];
+          let drillcoreIds = [];
           // features that intersect the box are added to the collection of
           // selected features
           selectedFeatures.clear();
-          var extent = dragBox.getGeometry().getExtent();
-          allSites.forEachFeatureIntersectingExtent(extent, function (feature) {
+          let extent = dragBox.getGeometry().getExtent();
+          allDrillcores.forEachFeatureIntersectingExtent(extent, function (feature) {
             selectedFeatures.push(feature);
-            siteIds.push(feature.getId().toString());
+            drillcoreIds.push(feature.getId().toString());
           });
-          siteSearchComponent.searchDrillcoreId = siteIds.toString();
-          siteSearchComponent.searchSites();
+          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
+          // siteSearchComponent.searchSites();
+          // TODO: Send ids to drillcore component
+          console.log(drillcoreIds);
         });
       },
 
@@ -225,16 +195,16 @@
           this.select.getFeatures().clear();
       },
 
-      addAllPoints(sites) {
-        console.log(sites);
-        for (let i = 0; i < Object.keys(sites).length; i++) {
-          if (sites[i].longitude !== undefined) {
+      addAllPoints(results) {
+        console.log(results);
+        for (const entity in results) {
+          if (results[entity].longitude !== undefined) {
             let point = new Feature({
-              name: sites[i].name,
-              id: sites[i].id,
-              geometry: new GeomPoint(Proj.fromLonLat([sites[i].longitude, sites[i].latitude]))
+              name: results[entity].name,
+              id: results[entity].id,
+              geometry: new GeomPoint(Proj.fromLonLat([results[entity].longitude, results[entity].latitude]))
             });
-            point.setId(sites[i].id);
+            point.setId(results[entity].id);
             point.setStyle(new Style({
               image: new Circle({
                 radius: 7,
@@ -247,7 +217,7 @@
               zIndex: 100,
               text: new Text({
                 scale: 0,
-                text: sites[i].name,
+                text: results[entity].name,
                 offsetY: -25,
                 fill: new Fill({
                   color: 'black'
@@ -265,7 +235,7 @@
       },
 
       addPoints(sites) {
-        for (var k = 0; k < this.allVectors.getFeatures().length; k++) {
+        for (let k = 0; k < this.allVectors.getFeatures().length; k++) {
           this.allVectors.getFeatures()[k].setStyle(new Style({
             image: new Circle({
               radius: 7,
@@ -292,7 +262,7 @@
         }
 
         if (sites && Object.keys(sites).length < this.allVectors.getFeatures().length) {
-          for (var i = 0; i < Object.keys(sites).length; i++) {
+          for (let i = 0; i < Object.keys(sites).length; i++) {
             this.allVectors.getFeatureById(sites[i].id).setStyle(new Style({
               image: new Circle({
                 radius: 7,
