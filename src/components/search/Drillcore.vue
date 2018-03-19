@@ -138,7 +138,7 @@
                     <router-link :to="{ path: '/drillcore/' + drillcore.id }">{{drillcore.name}}</router-link>
                   </td>
                   <td>
-                    <router-link :to="{ path: '/deposit/' + drillcore.id }">{{drillcore.deposit__name}}</router-link>
+                    <router-link :to="{ path: '/deposit/' + drillcore.deposit__id }">{{drillcore.deposit__name}}</router-link>
                   </td>
                   <td>{{drillcore.deposit__main_commodity}}</td>
                   <td>{{drillcore.latitude}}</td>
