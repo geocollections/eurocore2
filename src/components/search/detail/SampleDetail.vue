@@ -3,7 +3,7 @@
 
     <div class="row">
       <div class="col">
-        <h2>Sample ID: {{id}}</h2>
+        <h2>Sample {{sample[0].sample_number}}</h2>
       </div>
     </div>
 

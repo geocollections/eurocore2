@@ -56,14 +56,16 @@
             <analysis :results="response.analysis.results"></analysis>
           </b-tab>
 
+          <b-tab v-if="response.analysis_summary.count > 0" title="Graph" @click="openGraph()">
+            <div ref="coreboxGraph" class="mt-3">
+              <!-- Graph is drawn here -->
+            </div>
+          </b-tab>
+
           <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
-            <!--TODO: Here comes analysis summary graph-->
             <!--<reference :results="response.reference.results"></reference>-->
           </b-tab>
 
-          <b-tab v-if="response.attachment_link.count > 0" :title="'Linked files (' + response.attachment_link.count + ')'">
-
-          </b-tab>
         </b-tabs>
       </div>
     </div>
@@ -92,6 +94,8 @@
       return {
         API_URL: 'http://api.eurocore.rocks/drillcore_box/',
         corebox: null,
+        parameters: [],
+        isGraphOpen: false,
         response: {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -104,15 +108,19 @@
     watch: {
       'id': function () {
         this.getCoreboxById(this.id);
-        //  TODO: add reset + analyses, samples, references and linked files
       },
       'corebox': function () {
         this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
         this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
-        // this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
-        // this.getCoreboxDataById('reference', this.corebox[0].drillcore_box__id);
-        // this.getCoreboxDataById('attachment', this.corebox[0].drillcore_box__id);
+        this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+        this.getAllParameters();
+        if (this.parameters.length > 0) {
+          this.drawGraph(this.response.analysis_summary.results, this.parameters);
+        }
       }
+    },
+    created: function () {
+      this.getCoreboxById(this.id);
     },
     methods: {
       getCoreboxById(id) {
@@ -156,28 +164,196 @@
         })
       },
 
-      getCoreboxDataById(table, coreboxId) {
-        this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {format: 'jsonp'}}).then(response => {
+      getAllParameters() {
+        this.$http.jsonp('http://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.response[table].count = response.body.count;
-            this.response[table].results = response.body.results;
+            this.parameters = response.body.results;
+            for (const i in this.parameters) {
+              this.parameters[i].formattedValue = this.getCorrectParameterFormat(this.parameters[i]);
+            }
           }
+          console.log(this.parameters)
         }, errResponse => {
           console.log('ERROR: ');
           console.log(errResponse);
-          console.log(errResponse.status);
         })
+      },
+
+      getCorrectParameterFormat(param) {
+        if (param !== 'undefined') {
+          let firstHalf = param.parameter__parameter.toLowerCase();
+          let secondHalf = param.unit__unit.toLowerCase();
+          if (secondHalf === '%') {
+            secondHalf = 'pct';
+          }
+          return firstHalf + '_' + secondHalf;
+        }
       },
 
       buildCoreboxUrl(size, url) {
         return 'http://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
       },
 
-    },
-    created: function () {
-      this.getCoreboxById(this.id);
-    },
+      openGraph() {
+        this.isGraphOpen = true;
+        this.drawGraph(this.response.analysis_summary.results, this.parameters);
+      },
+
+      drawGraph(results, parameters) {
+        let data = [];
+        const graphName = this.corebox[0].number;
+
+        for (const parameter in parameters) {
+          let x = [];
+          let y = [];
+          const name = parameters[parameter].parameter__parameter + ' ' + parameters[parameter].unit__unit
+          const fieldName = parameters[parameter].formattedValue;
+
+          for (const result in results) {
+            // if (results[result].analysis_method) {
+            //
+            //   if (parameters[parameter].includes(results[result].analysis_method)) {
+            //
+            //     if (results[result][name]) {
+            //       x.push(results[result].depth);
+            //       y.push(results[result][name]);
+            //     }
+            //   }
+            // } else {
+
+              if (results[result][fieldName]) {
+                x.push(results[result].depth);
+                y.push(results[result][fieldName]);
+              }
+            // }
+          }
+
+          if (parameters[parameter].formattedValue.includes('ppm')) {
+            data.push({
+              x,
+              y,
+              type: 'scattergl',
+              mode: 'lines+markers',
+              name: name,
+              yaxis: 'y2',
+            })
+          }
+          else {
+            data.push({
+              x,
+              y,
+              type: 'scattergl',
+              mode: 'lines+markers',
+              name: name
+            })
+          }
+        }
+
+        let layout = {
+          autosize: true,
+          showlegend: true,
+          margin: {
+            l: 10,
+            r: 10,
+            b: 40,
+            t: 120,
+            pad: 4
+          },
+          title: graphName,
+          legend: {
+            x: 0,
+            y: 1.1,
+            "orientation": "h",
+          },
+          xaxis: {
+            title: 'Depth',
+            domain: [0.05, 0.95],
+            linecolor: 'black',
+            linewidth: 1,
+            // mirror: true,
+            autotick: true,
+            ticks: "outside",
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: 'black'
+          },
+          yaxis: {
+            side: 'left',
+            title: '%',
+            linecolor: 'black',
+            linewidth: 1,
+            mirror: true,
+            autotick: true,
+            ticks: "outside",
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: 'black'
+          },
+          yaxis2: {
+            title: 'ppm',
+            titlefont: { color: 'rgb(148, 103, 189)' },
+            tickfont: { color: 'rgb(148, 103, 189)' },
+            overlaying: 'y',
+            side: 'right',
+            linecolor: 'black',
+            linewidth: 1,
+            mirror: true,
+            autotick: true,
+            ticks: "outside",
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: 'black',
+            showgrid: false,
+          }
+        };
+
+
+        let d3 = Plotly.d3;
+
+        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+
+        let gd3 = d3.select(this.$refs.coreboxGraph)
+        //.append('div')
+          .style({
+            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+            height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+            //height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+            //'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+          });
+
+        let gd = gd3.node();
+
+        //var start = window.performance.now();
+        Plotly.newPlot(gd, data, layout,
+          {
+            modeBarButtonsToRemove: ['toImage'],
+            modeBarButtonsToAdd: [{
+              name: 'Download plot as a SVG',
+              icon: Plotly.Icons.camera,
+              click: function (gd) {
+
+                Plotly.downloadImage(gd, { filename: graphName, format: 'svg', height: 600, width: 900 })
+              }
+            }],
+            displaylogo: false
+          }
+        );
+        //var end = window.performance.now();
+        //console.log(end - start + 'ms');
+        // let x=this.route.routeConfig.path;
+        // window.onresize = function () {
+        //   Plotly.Plots.resize(gd);
+        // };
+        Plotly.Plots.resize(gd);
+
+        // document.getElementById("chartTabLink").addEventListener("click", function () {
+        //   Plotly.Plots.resize(gd);
+        // })
+      },
+
+    }
   }
 </script>
 

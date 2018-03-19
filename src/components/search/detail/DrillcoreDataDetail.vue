@@ -331,8 +331,6 @@
         this.indeterminate = false;
       },
 
-
-
       openChart() {
         this.isChartOpen = !this.isChartOpen;
         this.filterChartData();
