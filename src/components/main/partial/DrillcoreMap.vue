@@ -181,6 +181,7 @@
 
         dragBox.on('boxend', function () {
           let drillcoreIds = [];
+
           // features that intersect the box are added to the collection of
           // selected features
           selectedFeatures.clear();

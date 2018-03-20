@@ -231,8 +231,8 @@
         },
         drillcoreIdsFromMap: null,
         map: undefined,
-        vectorSource: new SourceVector({}),
-        allVectors: new SourceVector({}),
+        vectorSource: new SourceVector(),
+        allVectors: new SourceVector(),
         mapResponse: {
           count: 0,
           results: []
@@ -617,43 +617,139 @@
         this.select = select;
         let selectedFeatures = this.select.getFeatures();
 
+        let allDrillcores = myComponent.allVectors;
+        let allFeatures = allDrillcores.getFeatures();
+
         this.map.addInteraction(this.select);
 
+        /*** ONE CLICK SELECT ***/
         this.select.on("select", function () {
+
+          // STYLES ALL POINTS TO GREEN BEFORE NEW SELECT
+          allDrillcores.getFeatures().forEach(function (feature) {
+            feature.setStyle(new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: '#6BB745' }),
+                stroke: new Stroke({
+                  color: 'black',
+                  width: 1
+                })
+              }),
+              zIndex: 100,
+              text: new Text({
+                scale: 0,
+                text: feature.get('name'),
+                offsetY: -25,
+                fill: new Fill({
+                  color: 'black'
+                }),
+                stroke: new Stroke({
+                  color: 'white',
+                  width: 3.5
+                })
+              })
+            }));
+          });
+
           let drillcoreIds = [];
 
           selectedFeatures.getArray().map(function (feature) {
             drillcoreIds.push(feature.getId().toString());
-          })
-          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
-          // siteSearchComponent.searchSites();
-          // TODO: Send ids to drillcore component
-          myComponent.drillcoreIdsFromMap = drillcoreIds
-          console.log(drillcoreIds);
-        })
+            feature.setStyle(new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: '#CD154F' }),
+                stroke: new Stroke({
+                  color: 'black',
+                  width: 1
+                })
+              }),
+              zIndex: 100,
+              text: new Text({
+                scale: 0,
+                text: feature.get('name'),
+                offsetY: -25,
+                fill: new Fill({
+                  color: 'black'
+                }),
+                stroke: new Stroke({
+                  color: 'white',
+                  width: 3.5
+                })
+              })
+            }))
+          });
 
-        let dragBox = new DragBoxInteraction({
-          //condition: ol.events.condition.platformModifierKeyOnly
+          myComponent.drillcoreIdsFromMap = drillcoreIds
         });
+
+        let dragBox = new DragBoxInteraction();
         this.map.addInteraction(dragBox);
 
-        let allDrillcores = this.allVectors;
-
+        /*** DRAGBOX SELECT ***/
         dragBox.on('boxend', function () {
+
+          // STYLES ALL POINTS TO GREEN BEFORE NEW SELECT
+          allDrillcores.getFeatures().forEach(function (feature) {
+            feature.setStyle(new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: '#6BB745' }),
+                stroke: new Stroke({
+                  color: 'black',
+                  width: 1
+                })
+              }),
+              zIndex: 100,
+              text: new Text({
+                scale: 0,
+                text: feature.get('name'),
+                offsetY: -25,
+                fill: new Fill({
+                  color: 'black'
+                }),
+                stroke: new Stroke({
+                  color: 'white',
+                  width: 3.5
+                })
+              })
+            }));
+          });
+
           let drillcoreIds = [];
-          // features that intersect the box are added to the collection of
-          // selected features
+
           selectedFeatures.clear();
           let extent = dragBox.getGeometry().getExtent();
           allDrillcores.forEachFeatureIntersectingExtent(extent, function (feature) {
             selectedFeatures.push(feature);
             drillcoreIds.push(feature.getId().toString());
+            feature.setStyle(new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: '#CD154F' }),
+                stroke: new Stroke({
+                  color: 'black',
+                  width: 1
+                })
+              }),
+              zIndex: 100,
+              text: new Text({
+                scale: 0,
+                text: feature.get('name'),
+                offsetY: -25,
+                fill: new Fill({
+                  color: 'black'
+                }),
+                stroke: new Stroke({
+                  color: 'white',
+                  width: 3.5
+                })
+              })
+            }))
           });
+
           myComponent.drillcoreIdsFromMap = drillcoreIds
-          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
-          // siteSearchComponent.searchSites();
-          // TODO: Send ids to drillcore component
-          console.log(drillcoreIds);
         });
       },
 
