@@ -63,7 +63,7 @@
     },
     methods: {
       buildDrillcoreBoxUrl(size, url) {
-        return 'http://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
       }
     }
   }

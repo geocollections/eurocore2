@@ -185,6 +185,11 @@
         },
       }
     },
+    metaInfo () {
+      return {
+        title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId
+      }
+    },
     watch: {
       'drillcoreId': function () {
         this.resetData();

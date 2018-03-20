@@ -30,6 +30,11 @@
         spectrumData: { count: 0, results: [] }
       }
     },
+    metaInfo () {
+      return {
+        title: 'EUROCORE Data Portal: Spectrum ' + this.analysisId
+      }
+    },
     watch: {
       'analysisId': function () {
         this.resetData();

@@ -162,6 +162,7 @@
         CtScans
       },
       props: ['id'],
+      name: "drillcore-detail",
       data() {
         return {
           API_URL: 'https://api.eurocore.rocks/drillcore/',
@@ -182,7 +183,11 @@
           }
         }
       },
-      name: "drillcore-detail",
+      metaInfo () {
+        return {
+          title: 'EUROCORE Data Portal: Drillcore ' + this.id
+        }
+      },
       watch: {
         'id': function () {
           this.resetData();

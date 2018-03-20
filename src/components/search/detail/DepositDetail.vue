@@ -261,6 +261,11 @@
         },
       }
     },
+    metaInfo () {
+      return {
+        title: 'EUROCORE Data Portal: Deposit ' + this.id
+      }
+    },
     watch: {
       'id': function () {
         this.resetData();

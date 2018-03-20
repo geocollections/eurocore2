@@ -84,6 +84,9 @@
 <script>
     export default {
       name: "front-page",
+      metaInfo: {
+        title: 'EUROCORE Data Portal'
+      },
       methods: {
         check: function () {
           $('#hi').tooltip('show');

@@ -265,6 +265,9 @@
         },
       }
     },
+    metaInfo: {
+      title: 'EUROCORE Data Portal: Drillcores'
+    },
     watch: {
       // TODO: Got to test it performance wise, maybe dependent search isnt necessary here
       'searchParameters': {

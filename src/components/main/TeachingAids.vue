@@ -10,7 +10,10 @@
 
 <script>
     export default {
-        name: "teaching-aids"
+        name: "teaching-aids",
+      metaInfo: {
+        title: 'EUROCORE Data Portal: Teaching Aids'
+      },
     }
 </script>
 

@@ -138,6 +138,11 @@
           spectraCount: 0
         }
       },
+      metaInfo () {
+        return {
+          title: 'EUROCORE Data Portal: Analysis ' + this.id
+        }
+      },
       watch: {
         'id': function () {
           this.getAnalysisById(this.id);

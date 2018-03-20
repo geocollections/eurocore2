@@ -105,6 +105,11 @@
         },
       }
     },
+    metaInfo () {
+      return {
+        title: 'EUROCORE Data Portal: Corebox ' + this.id
+      }
+    },
     watch: {
       'id': function () {
         this.getCoreboxById(this.id);

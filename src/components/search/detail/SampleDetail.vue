@@ -112,6 +112,11 @@
           analysis: null
         }
       },
+      metaInfo () {
+        return {
+          title: 'EUROCORE Data Portal: Sample ' + this.id
+        }
+      },
       watch: {
         'id': function () {
           this.getSampleById(this.id);

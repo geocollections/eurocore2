@@ -243,6 +243,9 @@
           },
         }
       },
+      metaInfo: {
+        title: 'EUROCORE Data Portal: Data Search'
+      },
       watch: {
         'searchParameters.watched': {
           handler: function () {

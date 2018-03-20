@@ -11,8 +11,10 @@ import AnalysisDetail from '../components/search/detail/AnalysisDetail'
 import SpectrumDetail from '../components/search/detail/SpectrumDetail'
 import DataSearch from '../components/search/DataSearch'
 import TeachingAids from '../components/main/TeachingAids'
+import Meta from "vue-meta";
 
 Vue.use(Router);
+Vue.use(Meta)
 
 export default new Router({
   routes: [
