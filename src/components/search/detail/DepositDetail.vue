@@ -9,7 +9,7 @@
 
 
     <div class="row">
-      <div class="col">
+      <div class="col-md-12 col-lg-6">
         <b-tabs>
           <b-tab title="Deposit data">
             <table class="table table-bordered table-hover th-styles mt-2">
@@ -210,7 +210,7 @@
         </b-tabs>
       </div>
 
-      <div class="col" v-if="deposit[0].latitude != null || deposit[0].longitude != null">
+      <div class="col-md-12 col-lg-6" v-if="deposit[0].latitude != null || deposit[0].longitude != null">
         <detail-map :lat="deposit[0].latitude" :lon="deposit[0].longitude" :name="deposit[0].name"></detail-map>
       </div>
     </div>

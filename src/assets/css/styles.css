@@ -28,3 +28,7 @@ a:hover {
   border-color: #dee2e6;
   font-weight: bold;
 }
+
+.layer-switcher {
+  top: 0.5rem;
+}

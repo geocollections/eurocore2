@@ -35,8 +35,18 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link">LOGIN</a>
+            <router-link class="nav-link" to="/login">LOGIN</router-link>
           </li>
+
+          <!--<li class="nav-item dropdown">-->
+            <!--<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+              <!--USER-->
+            <!--</a>-->
+            <!--<div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+              <!--<router-link class="dropdown-item" to="/login">Sign In</router-link>-->
+              <!--<a class="dropdown-item" href="#">Log out</a>-->
+            <!--</div>-->
+          <!--</li>-->
 
           <!--TODO: Drillcore fast search-->
           <!--<li class="nav-item">-->

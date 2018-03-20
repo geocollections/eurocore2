@@ -9,7 +9,7 @@
 
 
     <div class="row">
-      <div class="col">
+      <div class="col-md-12 col-lg-6">
         <table class="table table-bordered table-hover th-styles">
           <tr v-if="drillcore[0].id">
             <td>ID</td>
@@ -70,7 +70,7 @@
         </table>
       </div>
 
-      <div class="col" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
+      <div class="col-md-12 col-lg-6" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
         <detail-map :lat="drillcore[0].latitude" :lon="drillcore[0].longitude" :name="drillcore[0].name"></detail-map>
         <br>
         <router-link :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary">Show analytical data</router-link>
@@ -133,6 +133,7 @@
 
   </div>
   <div v-else>
+    <!--TODO: Make loading interface to every component-->
     Sorry but we didn't find any results!
     Check your id <b>{{id}}</b>
   </div>

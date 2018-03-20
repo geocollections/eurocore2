@@ -11,10 +11,11 @@ import AnalysisDetail from '../components/search/detail/AnalysisDetail'
 import SpectrumDetail from '../components/search/detail/SpectrumDetail'
 import DataSearch from '../components/search/DataSearch'
 import TeachingAids from '../components/main/TeachingAids'
-import Meta from "vue-meta";
+import Login from '../components/main/Login'
+import Meta from "vue-meta"; // https://github.com/declandewet/vue-meta
 
 Vue.use(Router);
-Vue.use(Meta)
+Vue.use(Meta);
 
 export default new Router({
   routes: [
@@ -80,5 +81,10 @@ export default new Router({
       name: 'TeachingAids',
       component: TeachingAids
     },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    }
   ]
 })

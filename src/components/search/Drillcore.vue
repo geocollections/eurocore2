@@ -9,7 +9,7 @@
 
 
     <div class="row align-items-center">
-      <div class="col">
+      <div class="col-md-12 col-lg-6">
 
         <div class="form-group">
           <vue-multiselect
@@ -68,7 +68,7 @@
       </div>
 
 
-      <div class="col">
+      <div class="col-md-12 col-lg-6">
         <!--<drillcore-map v-if="mapResponse.count > 0 && response.count > 0" :results="mapResponse.results" :currentResults="response.results"></drillcore-map>-->
         <div id="map" class="map"></div>
       </div>
