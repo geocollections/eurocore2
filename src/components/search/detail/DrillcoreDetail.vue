@@ -164,7 +164,7 @@
       props: ['id'],
       data() {
         return {
-          API_URL: 'http://api.eurocore.rocks/drillcore/',
+          API_URL: 'https://api.eurocore.rocks/drillcore/',
           drillcore: null,
           drillcoreSummary: null,
           response: {
@@ -205,7 +205,7 @@
         },
 
         getDrillcoreSummary(id) {
-          this.$http.jsonp('http://api.eurocore.rocks/drillcore_summary/' + id, {params: {format: 'jsonp'}}).then(response => {
+          this.$http.jsonp('https://api.eurocore.rocks/drillcore_summary/' + id, {params: {format: 'jsonp'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.drillcoreSummary = response.body.results;
@@ -220,7 +220,7 @@
 
         getCTscansByDrillcoreId(id) {
           if (!(this.response.ctscans.count > 0 && this.response.ctscans.results.length > 0 && typeof(this.response.ctscans.results !== 'undefined'))) {
-            this.$http.jsonp('http://api.eurocore.rocks/analysis/', {params: {drillcore__id: id, analysis_method__method: 'CT', format: 'jsonp'}}).then(response => {
+            this.$http.jsonp('https://api.eurocore.rocks/analysis/', {params: {drillcore__id: id, analysis_method__method: 'CT', format: 'jsonp'}}).then(response => {
               console.log(response.body.results);
               if (response.status === 200) {
                 this.response.ctscans.count = response.body.count;
@@ -253,7 +253,7 @@
         infiniteHandler($state) {
           if (this.response.drillcore_box.results.length < this.drillcoreSummary[0].boxes) {
             this.response.drillcore_box.page += 1;
-            this.$http.jsonp('http://api.eurocore.rocks/drillcore_box/', {params: {drillcore__id: this.id, page: this.response.drillcore_box.page, paginate_by: this.response.drillcore_box.paginateBy, order_by: 'start_depth', format: 'jsonp'}}).then(response => {
+            this.$http.jsonp('https://api.eurocore.rocks/drillcore_box/', {params: {drillcore__id: this.id, page: this.response.drillcore_box.page, paginate_by: this.response.drillcore_box.paginateBy, order_by: 'start_depth', format: 'jsonp'}}).then(response => {
               console.log(response);
               console.log(response.body.results);
               if (response.status === 200) {

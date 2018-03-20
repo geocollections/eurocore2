@@ -107,7 +107,7 @@
       name: "sample-detail",
       data() {
         return {
-          API_URL: 'http://api.eurocore.rocks/sample/',
+          API_URL: 'https://api.eurocore.rocks/sample/',
           sample: null,
           analysis: null
         }
@@ -137,7 +137,7 @@
         },
 
         getAnalysisBySampleId(sampleId) {
-          this.$http.jsonp('http://api.eurocore.rocks/analysis/', {params: {sample__id: sampleId, format: 'jsonp'}}).then(response => {
+          this.$http.jsonp('https://api.eurocore.rocks/analysis/', {params: {sample__id: sampleId, format: 'jsonp'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.analysis = response.body.results;

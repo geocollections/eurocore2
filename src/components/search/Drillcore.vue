@@ -69,7 +69,8 @@
 
 
       <div class="col">
-        <drillcore-map v-if="mapResponse.count > 0" :results="mapResponse.results" :currentResults="response.results" ></drillcore-map>
+        <!--<drillcore-map v-if="mapResponse.count > 0 && response.count > 0" :results="mapResponse.results" :currentResults="response.results"></drillcore-map>-->
+        <div id="map" class="map"></div>
       </div>
     </div>
 
@@ -174,18 +175,46 @@
 <script>
   import VueMultiselect from "vue-multiselect/src/Multiselect";
   import ExportButton from 'vue-json-excel';
-  import DrillcoreMap from "../main/partial/DrillcoreMap";
+  // import DrillcoreMap from "../main/partial/DrillcoreMap";
+
+  /* MAP IMPORTS START */
+  import LayerSwitcher from 'ol-layerswitcher/dist/ol-layerswitcher'
+
+  import Map from 'ol/map';
+  import SourceVector from 'ol/source/vector';
+  import LayerVector from 'ol/layer/vector';
+  import Select from 'ol/interaction/select';
+  import SourceXYZ from 'ol/source/xyz';
+  import Feature from 'ol/feature';
+  import GeomPoint from 'ol/geom/point';
+  import Style from 'ol/style/style';
+  import Circle from 'ol/style/circle';
+  import Fill from 'ol/style/fill';
+  import Stroke from 'ol/style/stroke';
+  import Text from 'ol/style/text';
+  import Condition from 'ol/events/condition';
+  import DragBoxInteraction from 'ol/interaction/dragbox';
+  import View from 'ol/view';
+  import Proj from 'ol/proj';
+  import LayerGroup from 'ol/layer/group';
+  import LayerTile from 'ol/layer/tile';
+  import SourceOSM from 'ol/source/osm';
+  import SourceStamen from 'ol/source/stamen';
+  import TileWMS from "ol/source/tilewms";
+  import 'ol/ol.css'
+  import 'ol-layerswitcher/src/ol-layerswitcher.css'
+  /* MAP IMPORTS END */
 
   export default {
     components: {
-      DrillcoreMap,
+      // DrillcoreMap,
       VueMultiselect,
       ExportButton
     },
     name: "drillcore",
     data() {
       return {
-        API_URL: 'http://api.eurocore.rocks/',
+        API_URL: 'https://api.eurocore.rocks/',
         searchParameters: {
           drillcoreName: { name: '', field: 'name' },
           depositName: { name: '', field: 'deposit__name' },
@@ -200,16 +229,20 @@
           count: 0,
           results: []
         },
+        drillcoreIdsFromMap: null,
+        map: undefined,
+        vectorSource: new SourceVector({}),
+        allVectors: new SourceVector({}),
         mapResponse: {
           count: 0,
           results: []
         },
-        activeDrillcores: null,
         drillcoreNames: [],
         depositNames: [],
         oreTypes: [],
         commodities: [],
         coreDepositors: [],
+        isError: false,
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -236,20 +269,72 @@
       // TODO: Got to test it performance wise, maybe dependent search isnt necessary here
       'searchParameters': {
         handler: function () {
-          this.searchEntitiesAndPopulate(this.searchParameters)
+          this.searchEntitiesAndPopulate(this.searchParameters, this.drillcoreIdsFromMap)
         },
         deep: true
+      },
+      'drillcoreIdsFromMap': function (newVal, oldVal) {
+        console.log('New: ' + newVal + ' Old: ' + oldVal);
+        if (newVal != null) {
+          if (newVal.length > 0) {
+            this.searchEntitiesUsingMap(this.drillcoreIdsFromMap);
+          }
+        }
+      },
+      'mapResponse.results': function () {
+        // this.initMap();
+        this.addAllPoints(this.mapResponse.results);
       }
+    },
+    created: function () {
+      // TODO: Params should come from URL if exists
+      // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
+      if (this.$session.exists() && this.$session.get('drillcore') != null) {
+        this.searchParameters = this.$session.get('drillcore');
+      } else {
+        this.searchEntitiesAndPopulate(this.searchParameters);
+      }
+      this.getMapData();
+    },
+    mounted: function () {
+      this.initMap();
+    },
+    beforeDestroy: function () {
+      this.$session.set('drillcore', this.searchParameters);
     },
     methods: {
 
-      searchEntitiesAndPopulate(params) {
-        this.searchEntities(params);
-        this.populateDrillcoreNames(params);
-        this.populateDepositNames(params);
-        this.populateOreTypes(params);
-        this.populateCommodities(params);
-        this.populateCoreDepositors(params);
+      searchEntitiesAndPopulate(params, drillcoreIds) {
+        if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
+          this.searchEntitiesUsingMap(drillcoreIds)
+        } else {
+          this.searchEntities(params);
+          this.populateDrillcoreNames(params);
+          this.populateDepositNames(params);
+          this.populateOreTypes(params);
+          this.populateCommodities(params);
+          this.populateCoreDepositors(params);
+        }
+      },
+
+      searchEntitiesUsingMap(drillcoreIds) {
+        drillcoreIds += '';
+        let ids = 'id=';
+        if (drillcoreIds.includes(',')) {
+          ids = 'id__in=';
+        }
+        console.log(drillcoreIds);
+        this.$http.jsonp(this.API_URL + 'drillcore/?' + ids + drillcoreIds, {params: {format: 'jsonp', page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.response.count = response.body.count;
+            this.response.results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+          this.isError = true;
+        })
       },
 
       searchEntities(searchParameters) {
@@ -259,14 +344,14 @@
 
         this.$http.jsonp(url, {params: {format: 'jsonp', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
           console.log(response);
-          // this.devFuncPrintResults(response.body.results);
-
-          this.response.count = response.body.count;
-          this.response.results = response.body.results;
-
+          if (response.status === 200) {
+            this.response.count = response.body.count;
+            this.response.results = response.body.results;
+          }
         }, errResponse => {
           console.log('ERROR: ');
           console.log(errResponse);
+          this.isError = true;
         })
 
       },
@@ -302,8 +387,9 @@
         console.log(url);
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'name'}}).then(response => {
           console.log(response);
-
-          this.drillcoreNames = response.body.results;
+          if (response.status === 200) {
+            this.drillcoreNames = response.body.results;
+          }
         }, errResponse => {
           console.log('*** ERROR ***');
           console.log(errResponse);
@@ -315,8 +401,9 @@
         console.log(url);
         this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
           console.log(response);
-
-          this.depositNames = response.body.results;
+          if (response.status === 200) {
+            this.depositNames = response.body.results;
+          }
         }, errResponse => {
           console.log('*** ERROR ***');
           console.log(errResponse);
@@ -328,8 +415,9 @@
         console.log(url);
         this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
           console.log(response);
-
-          this.oreTypes = response.body.results;
+          if (response.status === 200) {
+            this.oreTypes = response.body.results;
+          }
         }, errResponse => {
           console.log('*** ERROR ***');
           console.log(errResponse);
@@ -341,8 +429,9 @@
         console.log(url);
         this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
           console.log(response);
-
-          this.commodities = response.body.results;
+          if (response.status === 200) {
+            this.commodities = response.body.results;
+          }
         }, errResponse => {
           console.log('*** ERROR ***');
           console.log(errResponse);
@@ -354,8 +443,9 @@
         console.log(url);
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
           console.log(response);
-
-          this.coreDepositors = response.body.results;
+          if (response.status === 200) {
+            this.coreDepositors = response.body.results;
+          }
         }, errResponse => {
           console.log('*** ERROR ***');
           console.log(errResponse);
@@ -365,25 +455,12 @@
        *****  MULTISELECT POPULATE END  ******
        ***************************************/
 
-      getMapData() {
-        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
-          console.log(response);
-          if (response.status === 200) {
-            this.mapResponse.count = response.body.count;
-            this.mapResponse.results = response.body.results;
-          }
-        }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-        })
-      },
-
 
       customLabelForCoreDepositors(option) {
         return `${option.core_depositor__acronym} - ${option.core_depositor__name}`
       },
 
-      // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
+      // TODO: Maybe order should be object like sortField: { order: 'fields', direction: 'ASC' }
       changeOrder(orderValue) {
         if (this.searchParameters.orderBy === orderValue) {
           if (orderValue.charAt(0) !== '-') {
@@ -409,29 +486,218 @@
             paginateBy: 25,
             orderBy: 'id'
           };
+        this.drillcoreIdsFromMap = null;
         this.$session.remove('drillcore');
         console.log("AFTER");
         console.log(this.searchParameters);
       },
 
-      devFuncPrintResults(results) {
+
+      /*****************************
+       *****  MAP CODE START  ******
+       *****************************/
+      getMapData() {
+        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.mapResponse.count = response.body.count;
+            this.mapResponse.results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+        })
+      },
+
+      initMap() {
+        const vectorLayer = new LayerVector({
+          source: this.vectorSource,
+          zIndex: 100
+        });
+
+        const allVectorsLayer = new LayerVector({
+          source: this.allVectors,
+          zIndex: 100
+        });
+
+        const basemaps = new LayerGroup({
+          title: 'Base maps',
+          layers: [
+            new LayerTile({
+              title: 'Stamen dark',
+              type: 'base',
+              visible: false,
+              source: new SourceStamen({
+                layer: 'toner'
+              })
+            }),
+            new LayerTile({
+              title: 'Stamen terrain',
+              type: 'base',
+              group: 'group-name',
+              visible: false,
+              source: new SourceStamen({
+                layer: 'terrain'
+              })
+            }),
+            new LayerTile({
+              title: 'OpenStreetMap',
+              type: 'base',
+              visible: false,
+              source: new SourceOSM()
+            }),
+            new LayerTile({
+              title: 'MapBox grayscale',
+              type: 'base',
+              visible: true,
+              source: new SourceXYZ({
+                url: 'https://api.tiles.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3V1dG9iaW5lIiwiYSI6ImNpZWlxdXAzcjAwM2Nzd204enJvN2NieXYifQ.tp6-mmPsr95hfIWu3ASz2w'
+              })
+            })
+          ]
+        });
+
+        const overlays = new LayerGroup({
+          title: 'Overlays',
+          layers: [
+            new LayerTile({
+              /* extent: [-13884991, 2870341, -7455066, 6338219],*/
+              title: 'Bedrock age <br /><img src="http://gis.geokogud.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
+              visible: true,
+              source: new TileWMS({
+                url: 'http://gis.geokogud.info/geoserver/wms',
+                params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
+                serverType: 'geoserver',
+                // Countries have transparency, so do not fade tiles:
+                // transition: 0,
+                projection: ''
+              }),
+              opacity: 0.5,
+            })
+          ]
+        });
+
+        this.map = new Map({
+          target: 'map',
+          layers: [basemaps, overlays, allVectorsLayer],
+          view: new View({
+            center: Proj.fromLonLat([25, 64]),
+            zoom: 4
+          })
+        });
+
+        this.map.addLayer(vectorLayer);
+        this.map.addControl(new LayerSwitcher());
+        console.log(this.mapResponse.results);
+        // this.addAllPoints(this.mapResponse.results);
+        this.addPointerMoveInteraction();
+        this.addSelectInteraction(this);
+      },
+
+      addPointerMoveInteraction() {
+        let selectPointerMove = new Select({
+          condition: Condition.pointerMove
+        });
+        this.map.addInteraction(selectPointerMove);
+
+        selectPointerMove.on('select', function (e) {
+          if (e.selected.length != 0) {
+            e.selected[0].getStyle().getText().setScale(1.4);
+          }
+          if (e.deselected.length != 0) {
+            e.deselected[0].getStyle().getText().setScale(0)
+          }
+        });
+      },
+
+      addSelectInteraction(myComponent) {
+        let select = new Select({
+          multi: true,
+        });
+        this.select = select;
+        let selectedFeatures = this.select.getFeatures();
+
+        this.map.addInteraction(this.select);
+
+        this.select.on("select", function () {
+          let drillcoreIds = [];
+
+          selectedFeatures.getArray().map(function (feature) {
+            drillcoreIds.push(feature.getId().toString());
+          })
+          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
+          // siteSearchComponent.searchSites();
+          // TODO: Send ids to drillcore component
+          myComponent.drillcoreIdsFromMap = drillcoreIds
+          console.log(drillcoreIds);
+        })
+
+        let dragBox = new DragBoxInteraction({
+          //condition: ol.events.condition.platformModifierKeyOnly
+        });
+        this.map.addInteraction(dragBox);
+
+        let allDrillcores = this.allVectors;
+
+        dragBox.on('boxend', function () {
+          let drillcoreIds = [];
+          // features that intersect the box are added to the collection of
+          // selected features
+          selectedFeatures.clear();
+          let extent = dragBox.getGeometry().getExtent();
+          allDrillcores.forEachFeatureIntersectingExtent(extent, function (feature) {
+            selectedFeatures.push(feature);
+            drillcoreIds.push(feature.getId().toString());
+          });
+          myComponent.drillcoreIdsFromMap = drillcoreIds
+          // siteSearchComponent.searchDrillcoreId = siteIds.toString();
+          // siteSearchComponent.searchSites();
+          // TODO: Send ids to drillcore component
+          console.log(drillcoreIds);
+        });
+      },
+
+      addAllPoints(results) {
+        console.log(results);
         for (const entity in results) {
-          console.log(results[entity]);
+          if (results[entity].longitude !== undefined) {
+            let point = new Feature({
+              name: results[entity].name,
+              id: results[entity].id,
+              geometry: new GeomPoint(Proj.fromLonLat([results[entity].longitude, results[entity].latitude]))
+            });
+            point.setId(results[entity].id);
+            point.setStyle(new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: '#6BB745' }),
+                stroke: new Stroke({
+                  color: 'black',
+                  width: 1
+                })
+              }),
+              zIndex: 100,
+              text: new Text({
+                scale: 0,
+                text: results[entity].name,
+                offsetY: -25,
+                fill: new Fill({
+                  color: 'black'
+                }),
+                stroke: new Stroke({
+                  color: 'white',
+                  width: 3.5
+                })
+              })
+
+            }));
+            this.allVectors.addFeature(point);
+          }
         }
-      }
-    },
-    created: function () {
-      // TODO: Params should come from URL if exists
-      // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
-      if (this.$session.exists() && this.$session.get('drillcore') != null) {
-        this.searchParameters = this.$session.get('drillcore');
-      } else {
-        this.searchEntitiesAndPopulate(this.searchParameters);
-      }
-      this.getMapData();
-    },
-    beforeDestroy: function () {
-      this.$session.set('drillcore', this.searchParameters);
+      },
+      /*****************************
+       *****   MAP CODE END   ******
+       *****************************/
     }
   }
 </script>
@@ -454,28 +720,9 @@
     color: #004393!important;
   }
 
-  .autocomplete-results {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    z-index: 1000;
-    position: absolute;
-    max-height: 200px;
-    overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-top: 0;
-    color: #000;
-  }
-
-  .autocomplete-results-item {
-    padding: 0.25rem 1.5rem;
-    cursor: pointer;
-  }
-
-  .autocomplete-results-item:hover {
-    background-color: #004393;
-    color: #ffffff;
-    font-weight: 600;
+  .map {
+    height: 400px;
+    min-width: 300px;
+    width: 100%;
   }
 </style>

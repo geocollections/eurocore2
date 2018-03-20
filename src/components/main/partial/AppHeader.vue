@@ -27,7 +27,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="http://schema.eurocore.rocks/" class="nav-link" target="_blank">ABOUT DATABASE</a>
+            <a href="http://schema.eurocore.rocks/" class="nav-link">ABOUT DATABASE</a>
           </li>
 
           <li class="nav-item">

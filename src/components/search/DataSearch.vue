@@ -174,7 +174,7 @@
       name: "data-search",
       data() {
         return {
-          API_URL: 'http://api.eurocore.rocks/',
+          API_URL: 'https://api.eurocore.rocks/',
           searchParameters: {
             watched: {
               drillcoreNames: [],

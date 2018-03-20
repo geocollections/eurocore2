@@ -229,7 +229,7 @@
     },
     methods: {
       getAnalysisSummary(id, searchParams) {
-        this.$http.jsonp('http://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: searchParams.orderBy, format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: searchParams.orderBy, format: 'jsonp'}}).then(response => {
           console.log(response.body.results);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -243,7 +243,7 @@
       },
 
       getDrillcoreName(id) {
-        this.$http.jsonp('http://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name', format: 'jsonp'}}).then(response => {
           console.log(response.body.results);
           if (response.status === 200) {
             this.drillcoreName = response.body.results;
@@ -256,7 +256,7 @@
       },
 
       populateParameters(id) {
-        this.$http.jsonp('http://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method', distinct: 'true', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method', distinct: 'true', format: 'jsonp'}}).then(response => {
           console.log(response.body.results);
           if (response.status === 200) {
             const allParameters = response.body.results;

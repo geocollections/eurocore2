@@ -31,7 +31,7 @@
   import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
   export default {
-    props: ['results', 'currentResults'],
+    props: ['results', 'currentResults', 'value'],
     name: "drillcore-map",
     data() {
       return {
@@ -124,6 +124,12 @@
       // this.addPoints(this.results);
       this.addPointerMoveInteraction();
       this.addSelectInteraction()
+
+      console.log('drillcoreMap.vue')
+      console.log(this.results)
+      console.log(this.currentResults)
+      console.log(this.idsFromMap)
+      console.log('drillcoreMap.vue')
 
     },
     methods: {

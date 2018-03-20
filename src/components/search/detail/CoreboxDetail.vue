@@ -37,7 +37,7 @@
 
     <div class="row mt-2 mb-3">
       <div class="col">
-        <a :href="'http://eurocore.rocks/' + corebox[0].image__url" target="_blank">
+        <a :href="'https://eurocore.rocks/' + corebox[0].image__url" target="_blank">
           <img width="100%" :src="buildCoreboxUrl('2000', corebox[0].image__url)" />
         </a>
       </div>
@@ -92,7 +92,7 @@
     name: "corebox-detail",
     data() {
       return {
-        API_URL: 'http://api.eurocore.rocks/drillcore_box/',
+        API_URL: 'https://api.eurocore.rocks/drillcore_box/',
         corebox: null,
         parameters: [],
         isGraphOpen: false,
@@ -137,7 +137,7 @@
       },
 
       getCoreboxDataByDepth(table, drillcoreId, startDepth, endDepth) {
-        this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response[table].count = response.body.count;
@@ -151,7 +151,7 @@
       },
 
       getAnalysisSummary(drillcoreId, startDepth, endDepth) {
-        this.$http.jsonp('http://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.analysis_summary.count = response.body.count;
@@ -165,7 +165,7 @@
       },
 
       getAllParameters() {
-        this.$http.jsonp('http://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.parameters = response.body.results;
@@ -192,7 +192,7 @@
       },
 
       buildCoreboxUrl(size, url) {
-        return 'http://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
       },
 
       openGraph() {

@@ -46,7 +46,7 @@
     },
     methods: {
       getSpectrumResultsById(id) {
-        this.$http.jsonp('http://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.spectrumData.count = response.body.count;

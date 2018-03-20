@@ -253,7 +253,7 @@
     name: "deposit-detail",
     data() {
       return {
-        API_URL: 'http://api.eurocore.rocks/deposit/',
+        API_URL: 'https://api.eurocore.rocks/deposit/',
         deposit: null,
         response: {
           drillcore: { count: 0, results: [] },
@@ -286,7 +286,7 @@
 
       getResultsByDepositId(table, depositId, orderBy) {
         if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
-          this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {deposit__id: depositId, order_by: orderBy, format: 'jsonp'}}).then(response => {
+          this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {params: {deposit__id: depositId, order_by: orderBy, format: 'jsonp'}}).then(response => {
             console.log(response.body.results);
             if (response.status === 200) {
               this.response[table].count = response.body.count;

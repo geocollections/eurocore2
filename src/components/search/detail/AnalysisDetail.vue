@@ -132,7 +132,7 @@
       name: "analysis-detail",
       data() {
         return {
-          API_URL: 'http://api.eurocore.rocks/analysis/',
+          API_URL: 'https://api.eurocore.rocks/analysis/',
           analysis: null,
           analysisResults: null,
           spectraCount: 0
@@ -165,7 +165,7 @@
         },
 
         getAnalysisResultById(id) {
-          this.$http.jsonp('http://api.eurocore.rocks/analysis_result/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
+          this.$http.jsonp('https://api.eurocore.rocks/analysis_result/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.analysisResults = response.body.results;
@@ -178,7 +178,7 @@
         },
 
         getSpectraCount(id) {
-          this.$http.jsonp('http://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, fields: 'id', format: 'jsonp'}}).then(response => {
+          this.$http.jsonp('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, fields: 'id', format: 'jsonp'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.spectraCount = response.body.count;
