@@ -236,7 +236,7 @@
 
         getResultsByDrillcoreId(table, drillcoreId, orderBy) {
           if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
-            this.$http.jsonp('http://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, order_by: orderBy, format: 'jsonp'}}).then(response => {
+            this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, order_by: orderBy, format: 'jsonp'}}).then(response => {
               console.log(response.body.results);
               if (response.status === 200) {
                 this.response[table].count = response.body.count;

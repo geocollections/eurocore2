@@ -30,7 +30,7 @@ export default new Router({
       path: '/drillcore/:id',
       name: 'DrillcoreDetail',
       component: DrillcoreDetail,
-      props: true
+      props: true,
     },
     {
       path: '/deposit/:id',

@@ -34,6 +34,10 @@
             <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT HOME</a>
           </li>
 
+          <li class="nav-item">
+            <a class="nav-link">LOGIN</a>
+          </li>
+
           <!--TODO: Drillcore fast search-->
           <!--<li class="nav-item">-->
             <!--<input class="form-control"/>-->
