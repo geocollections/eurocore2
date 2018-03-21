@@ -72,20 +72,27 @@
 
   </div>
   <div v-else>
-    Sorry but we didn't find any results!
-    Check your id <b>{{id}}</b>
+    <div v-if="showLabel">
+      <spinner size="large" message="Loading data..."></spinner>
+    </div>
+    <div v-else>
+      Sorry but we didn't find any results!
+      Check your id <b>{{id}}</b>
+    </div>
   </div>
 </template>
 
 <script>
   import Sample from './tables/Sample';
   import Analysis from './tables/Analysis'
+  import Spinner from 'vue-simple-spinner'
   // import Reference from './tables/Reference'
 
   export default {
     components: {
       Sample,
       Analysis,
+      Spinner
       // Reference
     },
     props: ['id'],
@@ -93,6 +100,7 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore_box/',
+        showLabel: true,
         corebox: null,
         parameters: [],
         isGraphOpen: false,
@@ -110,22 +118,28 @@
         title: 'EUROCORE Data Portal: Corebox ' + this.id
       }
     },
+    created: function () {
+      this.resetData();
+      this.getCoreboxById(this.id);
+      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+    },
     watch: {
       'id': function () {
+        this.resetData();
         this.getCoreboxById(this.id);
+        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'corebox': function () {
-        this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
-        this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
-        this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
-        this.getAllParameters();
-        if (this.parameters.length > 0) {
-          this.drawGraph(this.response.analysis_summary.results, this.parameters);
+        if (this.corebox != null) {
+          this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+          this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+          this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
+          this.getAllParameters();
+          if (this.parameters.length > 0) {
+            this.drawGraph(this.response.analysis_summary.results, this.parameters);
+          }
         }
       }
-    },
-    created: function () {
-      this.getCoreboxById(this.id);
     },
     methods: {
       getCoreboxById(id) {
@@ -199,6 +213,20 @@
       buildCoreboxUrl(size, url) {
         if (url != null) {
           return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        }
+      },
+
+      resetData() {
+        this.showLabel = true;
+        this.corebox = null;
+        this.parameters = [];
+        this.isGraphOpen = false;
+        this.response = {
+          sample: { count: 0, results: [] },
+          analysis: { count: 0, results: [] },
+          analysis_summary: { count: 0, results: [] },
+          reference: { count: 0, results: [] },
+          attachment_link: { count: 0, results: [] },
         }
       },
 

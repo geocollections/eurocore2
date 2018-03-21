@@ -1,5 +1,5 @@
 <template>
-  <div v-if="drillcoreName[0].name != null">
+  <div v-if="drillcoreName != null && response.results != null">
     <div class="row">
       <div class="col">
         <router-link :to="{ path: '/drillcore/' + drillcoreId }" class="title-link">{{drillcoreName[0].name}} drillcore</router-link>
@@ -126,22 +126,30 @@
 
   </div>
   <div v-else>
-    Sorry but we didn't find any results!
-    Check your id <b>{{drillcoreId}}</b>
+    <div v-if="showLabel">
+      <spinner size="large" message="Loading data..."></spinner>
+    </div>
+    <div v-else>
+      Sorry but we didn't find any results!
+      Check your id <b>{{drillcoreId}}</b>
+    </div>
   </div>
 </template>
 
 <script>
   import ExportButton from 'vue-json-excel';
+  import Spinner from 'vue-simple-spinner'
 
   export default {
     components: {
-      ExportButton
+      ExportButton,
+      Spinner
     },
     props: ['drillcoreId'],
     name: "drillcore-data-detail",
     data() {
       return {
+        showLabel: true,
         searchParameters: {
           page: 1,
           paginateBy: 250,
@@ -196,6 +204,7 @@
         this.getDrillcoreName(this.drillcoreId);
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
         this.populateParameters(this.drillcoreId);
+        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'searchParameters': {
         handler: function () {
@@ -228,6 +237,8 @@
       } else {
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
       }
+
+      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
     beforeDestroy: function () {
       this.$session.set('drillcore_data/' + this.drillcoreId, this.searchParameters);
@@ -320,6 +331,7 @@
       },
 
       resetData() {
+        this.showLabel = true;
         this.searchParameters = {
           page: 1,
           paginateBy: 250,

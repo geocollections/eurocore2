@@ -96,18 +96,29 @@
 
   </div>
   <div v-else>
-    Sorry but we didn't find any results!
-    Check your id <b>{{id}}</b>
+    <div v-if="showLabel">
+      <spinner size="large" message="Loading data..."></spinner>
+    </div>
+    <div v-else>
+      Sorry but we didn't find any results!
+      Check your id <b>{{id}}</b>
+    </div>
   </div>
 </template>
 
 <script>
-    export default {
+  import Spinner from 'vue-simple-spinner'
+
+  export default {
+    components: {
+      Spinner
+    },
       props: ['id'],
       name: "sample-detail",
       data() {
         return {
           API_URL: 'https://api.eurocore.rocks/sample/',
+          showLabel: true,
           sample: null,
           analysis: null
         }
@@ -119,13 +130,17 @@
       },
       watch: {
         'id': function () {
+          this.resetData();
           this.getSampleById(this.id);
           this.getAnalysisBySampleId(this.id);
+          setTimeout(function() { this.showLabel = false }.bind(this), 2000);
         }
       },
       created: function () {
+        this.resetData();
         this.getSampleById(this.id);
         this.getAnalysisBySampleId(this.id);
+        setTimeout(function() { this.showLabel = false }.bind(this), 2000);
       },
       methods: {
         getSampleById(id) {
@@ -152,7 +167,13 @@
             console.log(errResponse);
             console.log(errResponse.status);
           })
-        }
+        },
+
+        resetData() {
+          this.showLabel = true;
+          this.sample = null;
+          this.analysis = null
+        },
       }
     }
 </script>

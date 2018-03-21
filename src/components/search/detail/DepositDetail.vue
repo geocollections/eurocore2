@@ -233,8 +233,13 @@
   </div>
 
   <div v-else>
-    Sorry but we didn't find any results!
-    Check your id <b>{{id}}</b>
+    <div v-if="showLabel">
+      <spinner size="large" message="Loading data..."></spinner>
+    </div>
+    <div v-else>
+      Sorry but we didn't find any results!
+      Check your id <b>{{id}}</b>
+    </div>
   </div>
 </template>
 
@@ -242,18 +247,21 @@
   import DetailMap from './partial/DetailMap';
   import Drillcore from './tables/Drillcore';
   import Reference from './tables/Reference';
+  import Spinner from 'vue-simple-spinner'
 
   export default {
     components: {
       DetailMap,
       Drillcore,
-      Reference
+      Reference,
+      Spinner
     },
     props: ['id'],
     name: "deposit-detail",
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/deposit/',
+        showLabel: true,
         deposit: null,
         response: {
           drillcore: { count: 0, results: [] },
@@ -266,12 +274,19 @@
         title: 'EUROCORE Data Portal: Deposit ' + this.id
       }
     },
+    created: function () {
+      this.getDepositById(this.id);
+      this.getResultsByDepositId('drillcore', this.id, 'id');
+      this.getResultsByDepositId('reference', this.id, 'id');
+      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+    },
     watch: {
       'id': function () {
         this.resetData();
         this.getDepositById(this.id);
         this.getResultsByDepositId('drillcore', this.id, 'id');
         this.getResultsByDepositId('reference', this.id, 'id');
+        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       }
     },
     methods: {
@@ -306,6 +321,7 @@
       },
 
       resetData() {
+        this.showLabel = true;
         this.deposit = null;
         this.response = {
           drillcore: { count: 0, results: [] },
@@ -314,11 +330,6 @@
       },
 
     },
-    created: function () {
-      this.getDepositById(this.id);
-      this.getResultsByDepositId('drillcore', this.id, 'id');
-      this.getResultsByDepositId('reference', this.id, 'id');
-    }
   }
 </script>
 

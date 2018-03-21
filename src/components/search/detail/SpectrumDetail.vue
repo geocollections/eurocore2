@@ -16,17 +16,28 @@
     </div>
   </div>
   <div v-else>
-    Sorry but we didn't find any results!
-    Check your id <b>{{analysisId}}</b>
+    <div v-if="showLabel">
+      <spinner size="large" message="Loading data..."></spinner>
+    </div>
+    <div v-else>
+      Sorry but we didn't find any results!
+      Check your id <b>{{analysisId}}</b>
+    </div>
   </div>
 </template>
 
 <script>
+  import Spinner from 'vue-simple-spinner'
+
   export default {
+    components: {
+      Spinner
+    },
     props: ['analysisId'],
     name: "spectrum-detail",
     data() {
       return {
+        showLabel: true,
         spectrumData: { count: 0, results: [] }
       }
     },
@@ -37,11 +48,13 @@
     },
     watch: {
       'analysisId': function () {
-        this.resetData();
         this.getSpectrumResultsById(this.analysisId);
+        this.resetData();
+        setTimeout(function() { this.showLabel = false }.bind(this), 2000);
       }
     },
     created: function () {
+      setTimeout(function() { this.showLabel = false }.bind(this), 2000);
       this.getSpectrumResultsById(this.analysisId);
     },
     updated: function () {
@@ -65,6 +78,7 @@
       },
 
       resetData() {
+        this.showLabel = true;
         this.spectrumData = { count: 0, results: [] }
       },
 

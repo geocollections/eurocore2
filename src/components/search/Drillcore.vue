@@ -293,7 +293,8 @@
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         console.log('New: ' + newVal + ' Old: ' + oldVal);
         if (newVal != null) {
-          if (newVal.length > 0 && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          // if (newVal.length > 0 && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          if (newVal.length > 0) {
             this.searchEntitiesUsingMap(this.drillcoreIdsFromMap);
           }
         }
