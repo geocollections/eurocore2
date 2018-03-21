@@ -69,7 +69,6 @@
 
 
       <div class="col-md-12 col-lg-6">
-        <!--<drillcore-map v-if="mapResponse.count > 0 && response.count > 0" :results="mapResponse.results" :currentResults="response.results"></drillcore-map>-->
         <div id="map" class="map"></div>
       </div>
     </div>
@@ -275,6 +274,21 @@
           this.searchEntitiesAndPopulate(this.searchParameters, this.drillcoreIdsFromMap)
         },
         deep: true
+      },
+      'searchParameters.drillcoreName.name': function () {
+        this.resetPointColor(this.allVectors);
+      },
+      'searchParameters.depositName.name': function () {
+        this.resetPointColor(this.allVectors);
+      },
+      'searchParameters.oreType.name': function () {
+        this.resetPointColor(this.allVectors);
+      },
+      'searchParameters.commodity.name': function () {
+        this.resetPointColor(this.allVectors);
+      },
+      'searchParameters.coreDepositor.name': function () {
+        this.resetPointColor(this.allVectors);
       },
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         console.log('New: ' + newVal + ' Old: ' + oldVal);
@@ -799,7 +813,7 @@
       resetPointColor(allVectors) {
         let allFeatures = allVectors.getFeatures();
         for (let feature in allFeatures) {
-          console.log(allFeatures[feature].setStyle(new Style({
+          allFeatures[feature].setStyle(new Style({
             image: new Circle({
               radius: 7,
               fill: new Fill({ color: '#6BB745' }),
@@ -821,9 +835,49 @@
                 width: 3.5
               })
             })
-          })))
+          }))
         }
-      }
+      },
+
+      // updatePointColor(results, allVectors) {
+      //   console.log(results)
+      //   console.log(allVectors.getFeatures())
+      //   const allFeatures = allVectors.getFeatures();
+      //
+      //   for (const result in results) {
+      //     console.log(results[result].id + ' ' + results[result].name)
+      //
+      //     for (const feature in allFeatures) {
+      //       if (results[result].id === allFeatures[feature].getId()) {
+      //         allFeatures[feature].setStyle(new Style({
+      //           image: new Circle({
+      //             radius: 7,
+      //             fill: new Fill({ color: '#CD154F' }),
+      //             stroke: new Stroke({
+      //               color: 'black',
+      //               width: 1
+      //             })
+      //           }),
+      //           zIndex: 100,
+      //           text: new Text({
+      //             scale: 0,
+      //             text: allFeatures[feature].get('name'),
+      //             offsetY: -25,
+      //             fill: new Fill({
+      //               color: 'black'
+      //             }),
+      //             stroke: new Stroke({
+      //               color: 'white',
+      //               width: 3.5
+      //             })
+      //           })
+      //         }))
+      //       }
+      //     }
+      //
+      //   }
+      //
+      // }
       /*****************************
        *****   MAP CODE END   ******
        *****************************/
