@@ -197,7 +197,9 @@
       },
 
       buildCoreboxUrl(size, url) {
-        return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        if (url != null) {
+          return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        }
       },
 
       openGraph() {

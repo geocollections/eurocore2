@@ -279,7 +279,7 @@
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         console.log('New: ' + newVal + ' Old: ' + oldVal);
         if (newVal != null) {
-          if (newVal.length > 0) {
+          if (newVal.length > 0 && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
             this.searchEntitiesUsingMap(this.drillcoreIdsFromMap);
           }
         }
@@ -477,6 +477,7 @@
 
       resetSearchParameters() {
         console.log("BEFORE");
+        this.resetPointColor(this.allVectors);
         console.log(this.searchParameters);
         this.searchParameters =
           {
@@ -794,6 +795,35 @@
           }
         }
       },
+
+      resetPointColor(allVectors) {
+        let allFeatures = allVectors.getFeatures();
+        for (let feature in allFeatures) {
+          console.log(allFeatures[feature].setStyle(new Style({
+            image: new Circle({
+              radius: 7,
+              fill: new Fill({ color: '#6BB745' }),
+              stroke: new Stroke({
+                color: 'black',
+                width: 1
+              })
+            }),
+            zIndex: 100,
+            text: new Text({
+              scale: 0,
+              text: allFeatures[feature].get('name'),
+              offsetY: -25,
+              fill: new Fill({
+                color: 'black'
+              }),
+              stroke: new Stroke({
+                color: 'white',
+                width: 3.5
+              })
+            })
+          })))
+        }
+      }
       /*****************************
        *****   MAP CODE END   ******
        *****************************/
