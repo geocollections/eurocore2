@@ -100,7 +100,7 @@
     opacity: 0.7;
   }
 
-  .router-link-active {
+  a.router-link-exact-active {
     color: #6bb745!important;
     font-size: 1.05rem;
   }
