@@ -20,6 +20,10 @@ Vue.use(Meta);
 export default new Router({
   routes: [
     {
+      path: '*',
+      redirect: '/'
+    },
+    {
       path: '/',
       name: 'FrontPage',
       component: FrontPage
