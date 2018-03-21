@@ -66,6 +66,9 @@
         $(".navbar-nav li a").click(function() {
           $(".navbar-collapse").collapse('hide');
         });
+        $(".navbar img").click(function() {
+          $(".navbar-collapse").collapse('hide');
+        });
       }
     }
 </script>

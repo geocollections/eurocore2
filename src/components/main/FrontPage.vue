@@ -7,60 +7,50 @@
     </div>
 
     <div class="row">
-      <div class="col">
+      <div class="col-md-12 col-lg-4">
         <h3>Data portal</h3>
         <p>
-          EUROCORE educational data portal provides access to the detailed geological datasets collected from ore exploration drill
-          cores. One can find traditional core logs as well as data collected with novel exploration techniques such as field
-          portable spectroscopic devices, automated analytical tools and X-ray computed tomography in the EUROCORE database.
-          The targeted drill cores represent different genetic types of ore deposits and show various modes of ore occurrences
-          and grades. The drill cores are deposited by several universities and research institution across Europe and will be
-          exploited for developing advanced practical workshops on mineral exploration for MSc training. The data portal allows
-          user to search over wide range of information including geological descriptions, raw analytical data, image files,
-          etc. Data tables and graphs could be exported to the external applications via common spreadsheet and vector graphic
-          formats.
+          EUROCORE data portal provides access to the detailed geological datasets collected from ore exploration drill cores.
+          One can find traditional core logs as well as data collected with novel exploration techniques.
+          The data portal allows user to search over wide range of information including geological descriptions, raw analytical data, image files, etc.
+          Data tables and graphs could be exported to the external applications via common spreadsheet and vector graphic formats.
         </p>
       </div>
-      <div class="col">
-        <h3>Data providers</h3>
-        <p>The Geological Survey of Finland acts as the primary data provider of the drill core logging data and geological information.
-          The drill core log and assay data are also provided by several mining companies includingAgnico Eagle Mines Limited,
-          Boliden Group and Yara International ASA. Data collected with In Situ field devices are provided by the University
-          of Lorraine and X-ray computed tomography data by Fraunhofer-Gesellschaft. Mineral deposits data, which could be accessed
-          through data portal are harvested from the Fennoscandian Mineral Database (<a target="_blank" href="http://gtkdata.gtk.fi/fmd/">http://gtkdata.gtk.fi/fmd/</a>).</p>
-      </div>
-      <div class="col">
-        <h3>EUROCORE project</h3>
+      <div class="col-md-12 col-lg-4">
+        <h3>Partners and data providers</h3>
+        <ul>
+          <li><a href="http://welcome.univ-lorraine.fr/en" target="_blank">Lorraine University</a></li>
+          <li><a href="http://georessources.univ-lorraine.fr/en" target="_blank">CREGU</a></li>
+          <li><a href="https://www.fraunhofer.de/en.html" target="_blank">Fraunhofer-Gesellschaft</a></li>
+          <li><a href="http://en.gtk.fi/" target="_blank">Geological Survey of Finland</a></li>
+          <li><a href="https://ttu.ee/en/" target="_blank">Tallinn University of Technology</a></li>
+          <li><a href="http://www.upm.es/internacional" target="_blank">Technical University of Madrid</a></li>
+        </ul>
         <p>
-          Project funded by EIT Raw Materials wants to assist the mining industry in the formation of students (Master, PhD) and mining
-          company personnel on the use of innovative In Situ technologies for exploring metals from core samples. Training people
-          at the continent scale requires a full kit: core samples from various ore types, detailed knowledge on cores, including
-          its inside structure, field devices for training on manual measurements, automated data acquisition for providing large
-          datasets management exercises, data management capabilities and ready-to-use workshops calling up teaching skills and
-          methods. EUROCORE portal aims to provide teaching aid for geological master courses by delivering exploration datasets,
-          which together with core collections, could be used for building up realistic workshops on ore exploration (on field
-          experience). For more information of EUROCORE project please visit project website <a target="_blank" href="https://eitrawmaterials.eu/course/eurocore/">https://eitrawmaterials.eu/course/eurocore/</a>
+          The Geological Survey of Finland and several mining companies act as the primary providers of drill core geological data.
+          Data collected with in situ field devices are provided by Lorraine University and CT data by Fraunhofer-Gesellschaft.
+        </p>
+      </div>
+      <div class="col-md-12 col-lg-4">
+        <h3>Project</h3>
+        <p>
+          EUROCORE project funded by EIT Raw Materials wants to assist the mining industry in the formation of students and mining
+          company personnel on the use of innovative in situ technologies for exploration. EUROCORE data portal aims to provide
+          teaching aid for geological master courses by delivering exploration datasets, which together with core collections,
+          could be used for building up realistic workshops on ore exploration. For more information about the project please visit
+          <a target="_blank" href="https://eitrawmaterials.eu/course/eurocore/">https://eitrawmaterials.eu/course/eurocore/</a>
         </p>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-12" id="partners">
-        <h3>Partnership</h3>
-        <ul>
-          <li>Université de Lorraine (UL), France (Lead Partner)</li>
-          <li>Centre de Recherches sur la Géologie des Matières minerales et energetiques (CREGU), France</li>
-          <li>Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V. (Fraunhofer), Germany</li>
-          <li>Geologian tutkimuskeskus, GTK (Geological Survey of Finland), Finland</li>
-          <li>Tallinna Tehnikaülikool, TTÜ – Tallinn University of Technology, Estonia</li>
-          <li>Universidad Politecnica de Madrid, UPM (Technical University of Madrid), Spain</li>
-        </ul>
+    <div class="row mt-3">
+      <div class="col" id="partners">
         <div id="partners-logos">
           <a target="_blank" href="http://welcome.univ-lorraine.fr/en">
             <img v-b-tooltip.hover.bottom title="Université de Lorraine" src="../../assets/logos/Nancy_logo.png" alt="UL">
           </a>
           <a target="_blank" href="https://ttu.ee/geoloogia-instituut">
-            <img v-b-tooltip.hover.bottom title="Tallinn University of Technology" src="../../assets/logos/TTU_logo.png" alt="TTÜ" >
+            <img v-b-tooltip.hover.bottom title="Tallinn University of Technology" src="../../assets/logos/TTU_logo.png" alt="TTÜ" id="ttu-logo">
           </a>
           <a target="_blank" href="http://www.upm.es/internacional">
             <img v-b-tooltip.hover.bottom title="Technical University of Madrid" src="../../assets/logos/Madrid_logo.png" alt="UPM">
@@ -69,7 +59,7 @@
             <img v-b-tooltip.hover.bottom title="Geological Survey of Finland" src="../../assets/logos/GTK_logo.png" alt="GTK">
           </a>
           <a target="_blank" href="https://www.fraunhofer.de/en.html">
-            <img v-b-tooltip.hover.bottom title="Fraunhofer" src="../../assets/logos/Fraunhofer_logo.png" alt="Fraunhofer">
+            <img v-b-tooltip.hover.bottom title="Fraunhofer" src="../../assets/logos/Fraunhofer_logo.png" alt="Fraunhofer" id="fraunhofer-logo">
           </a>
           <a target="_blank" href="http://georessources.univ-lorraine.fr/en">
             <img v-b-tooltip.hover.bottom title="CREGU" src="../../assets/logos/cregu_logo.png" alt="CREGU">
@@ -106,8 +96,12 @@
     font-weight: 600;
   }
 
+  ul {
+    margin-bottom: 0.5rem;
+  }
+
   #partners {
-    padding-bottom: 15px;
+    padding-bottom: 1.5rem;
   }
 
   #partners-logos > a > img {
@@ -115,6 +109,14 @@
     margin-right: 12.5px;
     margin-left: 12.5px;
     border: 0;
+  }
+
+  #fraunhofer-logo {
+    height: 40px!important;
+  }
+
+  #ttu-logo {
+    height: 40px!important;
   }
 
 </style>
