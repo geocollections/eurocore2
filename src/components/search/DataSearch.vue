@@ -12,11 +12,13 @@
         <div class="form-group">
           <label>Drillcore name(s)</label>
           <vue-multiselect
+            v-if="isAuthenticated"
             v-model="searchParameters.watched.drillcoreNames"
             :options="drillcoreNames"
             :multiple="true"
             track-by="name"
             label="name"></vue-multiselect>
+          <input v-if="!isAuthenticated" class="form-control" style="color: #dc3545" value="Drillcore name search needs authentication" disabled/>
         </div>
 
         <div class="form-group">
@@ -175,6 +177,9 @@
       data() {
         return {
           API_URL: 'https://api.eurocore.rocks/',
+          //TODO: FOR DEMO START
+          isAuthenticated: false,
+          //TODO: FOR DEMO END
           searchParameters: {
             watched: {
               drillcoreNames: [],
@@ -441,32 +446,61 @@
 
         resetSearchParameters() {
           console.log(this.searchParameters);
-          this.searchParameters =
-            {
-              watched: {
-                drillcoreNames: [],
-                analyticalMethods: [],
-                comparableParameter: [''],
-                comparableParameterOperator: ['gt'],
-                comparableParameterValue: [''],
-                page: 1,
-                paginateBy: 100,
-                orderBy: 'id',
-              },
-              currentlyShownParameters: [
-                { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
-                { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
-                { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
-                { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
-                { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-                { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
-                { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
-                { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-                { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
-                { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
-                { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-              ],
-            };
+          if (this.isAuthenticated) {
+            this.searchParameters =
+              {
+                watched: {
+                  drillcoreNames: [],
+                  analyticalMethods: [],
+                  comparableParameter: [''],
+                  comparableParameterOperator: ['gt'],
+                  comparableParameterValue: [''],
+                  page: 1,
+                  paginateBy: 100,
+                  orderBy: 'id',
+                },
+                currentlyShownParameters: [
+                  { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
+                  { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
+                  { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
+                  { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
+                  { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+                  { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
+                  { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
+                  { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+                  { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
+                  { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
+                  { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+                ],
+              };
+          } else { //TODO: DEMO ONLY
+            this.searchParameters =
+              {
+                watched: {
+                  drillcoreNames: [{id: 17, name: 'Kylylahti KU-223'}],
+                  analyticalMethods: [],
+                  comparableParameter: [''],
+                  comparableParameterOperator: ['gt'],
+                  comparableParameterValue: [''],
+                  page: 1,
+                  paginateBy: 100,
+                  orderBy: 'id',
+                },
+                currentlyShownParameters: [
+                  { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
+                  { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
+                  { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
+                  { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
+                  { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+                  { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
+                  { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
+                  { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+                  { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
+                  { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
+                  { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+                ],
+              };
+          }
           console.log(this.searchParameters);
         },
 
@@ -476,6 +510,17 @@
         }
       },
       created: function () {
+        //TODO: FOR DEMO START
+        if (this.$session.exists() && this.$session.get('userData') != null) {
+          console.log(this)
+          this.isAuthenticated = true;
+        } else {
+          console.log('wtf')
+          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'} ];
+        }
+        //TODO: FOR DEMO END
+
+
         this.populateDrillcoreNames();
         this.populateAnalyticalMethods();
         this.populateShowParameters();
@@ -483,13 +528,17 @@
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
-          this.searchParameters = this.$session.get('dataSearch');
+          if (this.isAuthenticated) { // TODO: DEMO ONLY
+            this.searchParameters = this.$session.get('dataSearch');
+          }
         } else {
           this.searchEntities(this.searchParameters.watched)
         }
       },
       beforeDestroy: function () {
-        this.$session.set('dataSearch', this.searchParameters);
+        if (this.isAuthenticated) { //TODO: DEMO ONLY
+          this.$session.set('dataSearch', this.searchParameters);
+        }
       }
     }
 </script>

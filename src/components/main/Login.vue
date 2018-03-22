@@ -22,12 +22,19 @@
                     </div>
 
                     <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Username" v-model="user.passwordCredentials.username" />
+                      <input type="text" class="form-control" placeholder="Username" v-model="user.passwordCredentials.username" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
                     </div>
 
                     <div class="form-group">
-                      <input type="password" class="form-control " placeholder="Password" v-model="user.passwordCredentials.password" />
+                      <input type="password" class="form-control" placeholder="Password" v-model="user.passwordCredentials.password" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
                     </div>
+
+                    <button class="btn btn-primary" @click="logIn()" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated">
+                      LOGIN &nbsp;<font-awesome-icon :icon="icon"></font-awesome-icon>
+                    </button>
+                    <button class="btn btn-danger" @click="logOut()" v-if="isAuthenticated" v-bind:disabled="!isAuthenticated">
+                      LOGOUT &nbsp;<font-awesome-icon :icon="icon"></font-awesome-icon>
+                    </button>
 
                   </div>
                 </div>
@@ -63,10 +70,6 @@
               </b-tab>
             </b-tabs>
 
-            <button class="btn btn-primary" @click="submit()">
-              LOGIN &nbsp;<font-awesome-icon :icon="icon"></font-awesome-icon>
-            </button>
-
           </div>
         </div>
 
@@ -76,7 +79,8 @@
 <script>
   import Spinner from 'vue-simple-spinner'
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-  import faArrowCircleRight from '@fortawesome/fontawesome-free-solid/faArrowCircleRight'
+  import faSignInAlt from '@fortawesome/fontawesome-free-solid/faSignInAlt'
+  import faSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt'
 
   export default {
     components: {
@@ -98,39 +102,50 @@
         loggingIn: false,
         error: false,
         success: false,
-        loginMessage: ''
+        loginMessage: '',
+        isAuthenticated: false,
       }
     },
     metaInfo: {
       title: 'EUROCORE Data Portal: Login'
     },
     computed: {
-      icon () {
-        return faArrowCircleRight;
+      icon() {
+        return (this.isAuthenticated ? faSignOutAlt : faSignInAlt);
+      }
+    },
+    created: function () {
+      if (this.$session.exists() && this.$session.get('userData') != null) {
+        this.user = this.$session.get('userData')
+        this.isAuthenticated = true;
+        this.success = true;
+        this.loginMessage = 'You are logged in as ' + this.user.passwordCredentials.username;
       }
     },
     methods: {
-      submit () {
+      logIn() {
         this.loggingIn = true;
 
         const accounts = this.availableAccounts;
 
         for (const acc in accounts) {
           if (this.user.passwordCredentials.username === accounts[acc].username && this.user.passwordCredentials.password === accounts[acc].password) {
-            console.log('success');
             this.loggingIn = false;
             this.success = true;
+            this.error = false;
             this.loginMessage = 'You are now logged in!';
+            this.isAuthenticated = true;
+
+            this.$session.set('userData', this.user)
             break
           } else {
             this.loggingIn = false;
             this.error = true;
+            this.success = false;
             this.loginMessage = 'Incorrect username or password';
+            this.isAuthenticated = false;
           }
         }
-
-
-
 
         this.$http.jsonp('https://api.eurocore.rocks/login/', {
           params: {
@@ -142,21 +157,35 @@
           console.log(response);
         }, errResponse => {
           console.log('ERROR: ');
-          // this.loginMessage = errResponse;
           console.log(errResponse);
           console.log(errResponse.status);
         })
-        // const credentials = {
-        //   username: this.credentials.username,
-        //   password: this.credentials.password
-        // }
-        // Auth.login() returns a promise. A redirect will happen on success.
-        // For errors, use .then() to capture the response to output
-        // error_description (if exists) as shown below:
-        // this.$auth.login(credentials, 'dashboard').then((response) => {
-        //   this.loggingIn = false
-        //   this.error = utils.getError(response)
-        // })
+      },
+      logOut() {
+        this.isAuthenticated = false;
+
+        if (this.$session.exists() && this.$session.get('userData') != null) {
+          this.$session.remove('userData');
+        }
+
+        this.user = {
+          passwordCredentials: { username: '', password: '' },
+          idCardCredentials: { username: '', password: '' },
+          mobileIdCredentials: { personalCode: '', phoneNumber: '' },
+        };
+
+        this.success = true;
+        this.loginMessage = 'You successfully logged out!'
+
+        this.$http.jsonp('https://api.eurocore.rocks/logout/').then(response => {
+          console.log(response);
+          console.log('successfully logged out!')
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log('successfully logged out! with an error :D')
+          console.log(errResponse);
+          console.log(errResponse.status);
+        })
       }
     }
   }
@@ -171,6 +200,6 @@
     right: 0;
     z-index: 1;
     background: rgba(255, 255, 255, 0.5);
-    height: 40%;
+    height: 50%;
   }
 </style>

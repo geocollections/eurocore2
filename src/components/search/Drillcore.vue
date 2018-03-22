@@ -141,8 +141,8 @@
                     <router-link :to="{ path: '/deposit/' + drillcore.deposit__id }">{{drillcore.deposit__name}}</router-link>
                   </td>
                   <td>{{drillcore.deposit__main_commodity}}</td>
-                  <td>{{drillcore.latitude}}</td>
-                  <td>{{drillcore.longitude}}</td>
+                  <td v-if="drillcore.latitude">{{drillcore.latitude.toFixed(5)}}</td>
+                  <td v-if="drillcore.longitude">{{drillcore.longitude.toFixed(5)}}</td>
                   <td>{{drillcore.hole_length}}</td>
                   <td>{{drillcore.hole_dip}}</td>
                   <td>{{drillcore.hole_azimuth}}</td>
@@ -214,6 +214,7 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/',
+        isAuthenticated: false,
         searchParameters: {
           drillcoreName: { name: '', field: 'name' },
           depositName: { name: '', field: 'deposit__name' },

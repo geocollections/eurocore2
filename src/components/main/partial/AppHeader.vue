@@ -7,12 +7,18 @@
         </router-link>
       </h1>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+              aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+
+          <!--TODO: Drillcore fast search and make it little bit smaller-->
+          <li class="nav-item">
+            <input class="form-control" placeholder="Drillcore search"/>
+          </li>
 
           <li class="nav-item">
             <router-link class="nav-link" to="/drillcore">DRILLCORES</router-link>
@@ -31,7 +37,8 @@
           </li>
 
           <li class="nav-item">
-            <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT HOME</a>
+            <a href="http://eurocore.eitrawmaterials.univ-lorraine.fr/" class="nav-link" target="_blank">PROJECT
+              HOME</a>
           </li>
 
           <li class="nav-item">
@@ -39,19 +46,15 @@
           </li>
 
           <!--<li class="nav-item dropdown">-->
-            <!--<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-              <!--USER-->
-            <!--</a>-->
-            <!--<div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
-              <!--<router-link class="dropdown-item" to="/login">Sign In</router-link>-->
-              <!--<a class="dropdown-item" href="#">Log out</a>-->
-            <!--</div>-->
+          <!--<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+          <!--USER-->
+          <!--</a>-->
+          <!--<div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+          <!--<router-link class="dropdown-item" to="/login">Sign In</router-link>-->
+          <!--<a class="dropdown-item" href="#">Log out</a>-->
+          <!--</div>-->
           <!--</li>-->
 
-          <!--TODO: Drillcore fast search-->
-          <!--<li class="nav-item">-->
-            <!--<input class="form-control"/>-->
-          <!--</li>-->
 
         </ul>
       </div>
@@ -60,23 +63,23 @@
 </template>
 
 <script>
-    export default {
-      name: "app-header",
-      mounted: function () {
-        $(".navbar-nav li a").click(function() {
-          $(".navbar-collapse").collapse('hide');
-        });
-        $(".navbar img").click(function() {
-          $(".navbar-collapse").collapse('hide');
-        });
-      }
+  export default {
+    name: "app-header",
+    mounted: function () {
+      $(".navbar-nav li a").click(function () {
+        $(".navbar-collapse").collapse('hide');
+      });
+      $(".navbar img").click(function () {
+        $(".navbar-collapse").collapse('hide');
+      });
     }
+  }
 </script>
 
 <style scoped>
   .navbar {
     background-color: #FFF;
-    border-bottom: 2px solid rgba(0,68,148,.1);
+    border-bottom: 2px solid rgba(0, 68, 148, .1);
   }
 
   h1 {
@@ -92,7 +95,7 @@
   }
 
   .nav-link {
-    color: #004393!important;
+    color: #004393 !important;
     font-weight: 700;
   }
 
@@ -101,7 +104,7 @@
   }
 
   a.router-link-exact-active {
-    color: #6bb745!important;
+    color: #6bb745 !important;
     font-size: 1.05rem;
   }
 </style>
