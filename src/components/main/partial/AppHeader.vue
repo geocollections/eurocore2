@@ -33,7 +33,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="http://schema.eurocore.rocks/" class="nav-link">ABOUT DATABASE</a>
+            <a href="https://schema.eurocore.rocks/" class="nav-link">ABOUT DATABASE</a>
           </li>
 
           <li class="nav-item">
@@ -54,7 +54,6 @@
           <!--<a class="dropdown-item" href="#">Log out</a>-->
           <!--</div>-->
           <!--</li>-->
-
 
         </ul>
       </div>

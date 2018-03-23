@@ -221,6 +221,7 @@
           oreType: { name: '', field: 'deposit__genetic_type__name', },
           commodity: { name: '', field: 'deposit__main_commodity' },
           coreDepositor: { name: '', field: 'core_depositor__acronym' },
+          fastSearch: '',
           page: 1,
           paginateBy: 25,
           orderBy: 'id'
@@ -313,24 +314,32 @@
     beforeRouteUpdate (to, from, next) {
       // TODO: add route params to searchParameters
       // this.searchParameters.drillcoreName.name = { name: 'Kevitsa M371493R680' }
+      if (Object.keys(to.query).length > 0 && to.query.constructor === Object) {
+        if (to.query.fastSearch) {
+          this.searchParameters.fastSearch = to.query.fastSearch
+          // this.fastSearch(to.query.fastSearch)
+        }
+        //  TODO: Params from url to searchParams
+      }
       console.log(to)
+      console.log(to.query.fastSearch)
       console.log(from)
-      console.log(next)
-      console.log('hi')
       next()
     },
     created: function () {
       console.log(this.$route.query.fastSearch)
-
-
-
-      // TODO: Params should come from URL if exists
-      // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
-      if (this.$session.exists() && this.$session.get('drillcore') != null) {
+      if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
+        if (this.$route.query.fastSearch) {
+          this.searchParameters.fastSearch = this.$route.query.fastSearch
+          // this.fastSearch(this.$route.query.fastSearch)
+        }
+      //  TODO: Params from url to searchParams
+      } else if (this.$session.exists() && this.$session.get('drillcore') != null) {
         this.searchParameters = this.$session.get('drillcore');
       } else {
         this.searchEntitiesAndPopulate(this.searchParameters);
       }
+
       this.getMapData();
     },
     mounted: function () {
@@ -342,7 +351,9 @@
     methods: {
 
       searchEntitiesAndPopulate(params, drillcoreIds) {
-        if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
+        if (params.fastSearch) {
+          this.fastSearch(params.fastSearch);
+        } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
           this.searchEntitiesUsingMap(drillcoreIds)
         } else {
           this.searchEntities(params);
@@ -391,6 +402,20 @@
           this.isError = true;
         })
 
+      },
+
+      fastSearch(drillcoreName) {
+        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', name__icontains: drillcoreName, page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.response.count = response.body.count;
+            this.response.results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ');
+          console.log(errResponse);
+          this.isError = true;
+        })
       },
 
       buildSearchUrl(params) {
@@ -530,6 +555,7 @@
             oreType: { name: '', field: 'deposit__genetic_type__name', },
             commodity: { name: '', field: 'deposit__main_commodity' },
             coreDepositor: { name: '', field: 'core_depositor__acronym' },
+            fastSearch: '',
             page: 1,
             paginateBy: 25,
             orderBy: 'id'
