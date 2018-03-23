@@ -115,7 +115,12 @@
     opacity: 0.7;
   }
 
-  a.router-link-exact-active {
+  /*a.router-link-exact-active {*/
+    /*color: #6bb745 !important;*/
+    /*font-size: 1.05rem;*/
+  /*}*/
+
+  a.router-link-active {
     color: #6bb745 !important;
     font-size: 1.05rem;
   }

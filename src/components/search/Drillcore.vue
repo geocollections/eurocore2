@@ -230,6 +230,7 @@
           count: 0,
           results: []
         },
+        responseForMap: [],
         drillcoreIdsFromMap: null,
         map: undefined,
         vectorSource: new SourceVector(),
@@ -310,11 +311,12 @@
         // this.initMap();
         this.addAllPoints(this.mapResponse.results);
       },
-      // '$route' (to, from) {
-      //   console.log(to)
-      //   console.log(from)
-      //   console.log('works')
-      // }
+      'responseForMap': function () {
+        if (this.responseForMap.length !== this.allVectors.getFeatures().length) {
+          this.resetPointColor(this.allVectors)
+          this.updatePointColor(this.responseForMap, this.allVectors)
+        }
+      },
     },
     beforeRouteUpdate (to, from, next) {
       // TODO: add route params to searchParameters
@@ -358,6 +360,7 @@
       searchEntitiesAndPopulate(params, drillcoreIds) {
         if (params.fastSearch) {
           this.fastSearch(params.fastSearch);
+          this.fastSearchForMap(params.fastSearch);
           this.populateDrillcoreNames(params);
           this.populateDepositNames(params);
           this.populateOreTypes(params);
@@ -367,6 +370,7 @@
           this.searchEntitiesUsingMap(drillcoreIds)
         } else {
           this.searchEntities(params);
+          this.searchEntitiesForMap(params)
           this.populateDrillcoreNames(params);
           this.populateDepositNames(params);
           this.populateOreTypes(params);
@@ -414,6 +418,19 @@
 
       },
 
+      //TEST ONLY
+      searchEntitiesForMap(searchParameters) {
+        let url = this.buildSearchUrl(searchParameters);
+
+        this.$http.jsonp(url, {params: {format: 'jsonp', paginate_by: 100}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.responseForMap = response.body.results;
+          }
+        })
+
+      },
+
       fastSearch(drillcoreName) {
         this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', name__icontains: drillcoreName, page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
@@ -425,6 +442,16 @@
           console.log('ERROR: ');
           console.log(errResponse);
           this.isError = true;
+        })
+      },
+
+      //TEST ONLY
+      fastSearchForMap(drillcoreName) {
+        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', name__icontains: drillcoreName, paginate_by: 100}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.responseForMap = response.body.results;
+          }
         })
       },
 
@@ -905,45 +932,45 @@
         }
       },
 
-      // updatePointColor(results, allVectors) {
-      //   console.log(results)
-      //   console.log(allVectors.getFeatures())
-      //   const allFeatures = allVectors.getFeatures();
-      //
-      //   for (const result in results) {
-      //     console.log(results[result].id + ' ' + results[result].name)
-      //
-      //     for (const feature in allFeatures) {
-      //       if (results[result].id === allFeatures[feature].getId()) {
-      //         allFeatures[feature].setStyle(new Style({
-      //           image: new Circle({
-      //             radius: 7,
-      //             fill: new Fill({ color: '#CD154F' }),
-      //             stroke: new Stroke({
-      //               color: 'black',
-      //               width: 1
-      //             })
-      //           }),
-      //           zIndex: 100,
-      //           text: new Text({
-      //             scale: 0,
-      //             text: allFeatures[feature].get('name'),
-      //             offsetY: -25,
-      //             fill: new Fill({
-      //               color: 'black'
-      //             }),
-      //             stroke: new Stroke({
-      //               color: 'white',
-      //               width: 3.5
-      //             })
-      //           })
-      //         }))
-      //       }
-      //     }
-      //
-      //   }
-      //
-      // }
+      updatePointColor(results, allVectors) {
+        console.log(results)
+        console.log(allVectors.getFeatures())
+        const allFeatures = allVectors.getFeatures();
+
+        for (const result in results) {
+          console.log(results[result].id + ' ' + results[result].name)
+
+          for (const feature in allFeatures) {
+            if (results[result].id === allFeatures[feature].getId()) {
+              allFeatures[feature].setStyle(new Style({
+                image: new Circle({
+                  radius: 7,
+                  fill: new Fill({ color: '#CD154F' }),
+                  stroke: new Stroke({
+                    color: 'black',
+                    width: 1
+                  })
+                }),
+                zIndex: 101,
+                text: new Text({
+                  scale: 0,
+                  text: allFeatures[feature].get('name'),
+                  offsetY: -25,
+                  fill: new Fill({
+                    color: 'black'
+                  }),
+                  stroke: new Stroke({
+                    color: 'white',
+                    width: 3.5
+                  })
+                })
+              }))
+            }
+          }
+
+        }
+
+      }
       /*****************************
        *****   MAP CODE END   ******
        *****************************/

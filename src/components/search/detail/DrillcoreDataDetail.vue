@@ -279,6 +279,9 @@
             for (const i in allParameters) {
               if (this.areParametersEligible(allParameters[i])) {
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
+                if (i < 10) { // Populates 10 first params
+                  this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
+                }
               }
             }
             console.log(this.parameters);
