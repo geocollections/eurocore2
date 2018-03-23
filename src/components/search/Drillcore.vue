@@ -303,9 +303,27 @@
       'mapResponse.results': function () {
         // this.initMap();
         this.addAllPoints(this.mapResponse.results);
-      }
+      },
+      // '$route' (to, from) {
+      //   console.log(to)
+      //   console.log(from)
+      //   console.log('works')
+      // }
+    },
+    beforeRouteUpdate (to, from, next) {
+      // TODO: add route params to searchParameters
+      // this.searchParameters.drillcoreName.name = { name: 'Kevitsa M371493R680' }
+      console.log(to)
+      console.log(from)
+      console.log(next)
+      console.log('hi')
+      next()
     },
     created: function () {
+      console.log(this.$route.query.fastSearch)
+
+
+
       // TODO: Params should come from URL if exists
       // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
       if (this.$session.exists() && this.$session.get('drillcore') != null) {
@@ -407,7 +425,9 @@
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.drillcoreNames = response.body.results;
+            if (response.body.count > 0) {
+              this.drillcoreNames = response.body.results;
+            }
           }
         }, errResponse => {
           console.log('*** ERROR ***');
@@ -421,7 +441,9 @@
         this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.depositNames = response.body.results;
+            if (response.body.count > 0) {
+              this.depositNames = response.body.results;
+            }
           }
         }, errResponse => {
           console.log('*** ERROR ***');
@@ -435,7 +457,9 @@
         this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.oreTypes = response.body.results;
+            if (response.body.count > 0) {
+              this.oreTypes = response.body.results;
+            }
           }
         }, errResponse => {
           console.log('*** ERROR ***');
@@ -449,7 +473,9 @@
         this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.commodities = response.body.results;
+            if (response.body.count > 0) {
+              this.commodities = response.body.results;
+            }
           }
         }, errResponse => {
           console.log('*** ERROR ***');
@@ -463,7 +489,9 @@
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.coreDepositors = response.body.results;
+            if (response.body.count > 0) {
+              this.coreDepositors = response.body.results;
+            }
           }
         }, errResponse => {
           console.log('*** ERROR ***');

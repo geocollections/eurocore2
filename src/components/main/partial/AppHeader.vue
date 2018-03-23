@@ -16,8 +16,8 @@
         <ul class="navbar-nav ml-auto">
 
           <!--TODO: Drillcore fast search and make it little bit smaller-->
-          <li class="nav-item">
-            <input class="form-control" placeholder="Drillcore search"/>
+          <li class="nav-item" id="fast-search">
+            <input class="form-control" placeholder="Drillcore search" v-model="fastSearch" @keyup.enter="doFastSearch()"/>
           </li>
 
           <li class="nav-item">
@@ -65,6 +65,11 @@
 <script>
   export default {
     name: "app-header",
+    data() {
+      return {
+        fastSearch: ''
+      }
+    },
     mounted: function () {
       $(".navbar-nav li a").click(function () {
         $(".navbar-collapse").collapse('hide');
@@ -72,6 +77,14 @@
       $(".navbar img").click(function () {
         $(".navbar-collapse").collapse('hide');
       });
+    },
+    methods: {
+      doFastSearch() {
+        this.fastSearch = this.fastSearch.trim()
+        if (this.fastSearch.length > 0) {
+          this.$router.push({ path: '/drillcore', query: { fastSearch: this.fastSearch } })
+        }
+      }
     }
   }
 </script>
@@ -106,5 +119,11 @@
   a.router-link-exact-active {
     color: #6bb745 !important;
     font-size: 1.05rem;
+  }
+
+  @media (min-width: 992px) {
+    #fast-search {
+      width: 20%;
+    }
   }
 </style>

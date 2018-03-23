@@ -388,7 +388,7 @@
             data.push({
               x,
               y,
-              type: 'scattergl',
+              type: 'scatter',
               //mode: 'markers',
               mode: 'lines+markers',
               //mode: 'lines',
@@ -400,7 +400,7 @@
             data.push({
               x,
               y,
-              type: 'scattergl',
+              type: 'scatter',
               //mode: 'markers',
               mode: 'lines+markers',
               //mode: 'lines',

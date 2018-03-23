@@ -12,13 +12,11 @@
         <div class="form-group">
           <label>Drillcore name(s)</label>
           <vue-multiselect
-            v-if="isAuthenticated"
             v-model="searchParameters.watched.drillcoreNames"
             :options="drillcoreNames"
             :multiple="true"
             track-by="name"
             label="name"></vue-multiselect>
-          <input v-if="!isAuthenticated" class="form-control" style="color: #dc3545" value="Drillcore name search needs authentication" disabled/>
         </div>
 
         <div class="form-group">
@@ -278,20 +276,59 @@
       },
       methods: {
         searchEntities(params) {
-          console.log(params);
-          let url = this.buildSearchUrl(params);
+          //TODO: DEMO
+          if (this.searchParameters.watched.drillcoreNames.length > 0) {
+            console.log(params);
+            let url = this.buildSearchUrl(params);
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
-            console.log(response);
-            if (response.status === 200) {
-              this.response.count = response.body.count;
-              this.response.results = response.body.results;
+            this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+              console.log(response);
+              if (response.status === 200) {
+                this.response.count = response.body.count;
+                this.response.results = response.body.results;
+              }
+            }, errResponse => {
+              console.log('*** ERROR ***');
+              console.log(errResponse);
+              // this.$router.push('/404/')
+            })
+          } else if (this.searchParameters.watched.drillcoreNames.length === 0 ) {
+            if (this.isAuthenticated) {
+              console.log(params);
+              let url = this.buildSearchUrl(params);
+
+              this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+                console.log(response);
+                if (response.status === 200) {
+                  this.response.count = response.body.count;
+                  this.response.results = response.body.results;
+                }
+              }, errResponse => {
+                console.log('*** ERROR ***');
+                console.log(errResponse);
+                // this.$router.push('/404/')
+              })
+            } else {
+              this.response.count = 0;
+              this.response.results = [];
             }
-          }, errResponse => {
-            console.log('*** ERROR ***');
-            console.log(errResponse);
-            this.$router.push('/404/')
-          })
+          }
+          //TODO: DEMO
+
+          // console.log(params);
+          // let url = this.buildSearchUrl(params);
+          //
+          // this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+          //   console.log(response);
+          //   if (response.status === 200) {
+          //     this.response.count = response.body.count;
+          //     this.response.results = response.body.results;
+          //   }
+          // }, errResponse => {
+          //   console.log('*** ERROR ***');
+          //   console.log(errResponse);
+          //   // this.$router.push('/404/')
+          // })
         },
 
         buildSearchUrl(params) {
@@ -356,22 +393,40 @@
 
         // TODO: Make these 3 run after each change to be dependent on each other + that needs url builder methods.
         populateDrillcoreNames() {
-          this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
-            console.log(response);
-            if (response.status === 200) {
-              this.drillcoreNames = response.body.results;
-            }
-          }, errResponse => {
-            console.log('*** ERROR ***');
-            console.log(errResponse);
-          })
+          if (this.isAuthenticated) { // TODO: DEMO
+            this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
+              console.log(response);
+              if (response.status === 200) {
+                if (response.body.count > 0) {
+                  this.drillcoreNames = response.body.results;
+                }
+              }
+            }, errResponse => {
+              console.log('*** ERROR ***');
+              console.log(errResponse);
+            })
+          } else {
+            this.$http.jsonp(this.API_URL + 'drillcore' , {params: {id__in: '17,18', format: 'jsonp', fields: 'id,name'}}).then(response => {
+              console.log(response);
+              if (response.status === 200) {
+                if (response.body.count > 0) {
+                  this.drillcoreNames = response.body.results;
+                }
+              }
+            }, errResponse => {
+              console.log('*** ERROR ***');
+              console.log(errResponse);
+            })
+          }
         },
 
         populateAnalyticalMethods() {
           this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
-              this.analyticalMethods = response.body.results;
+              if (response.body.count > 0) {
+                this.analyticalMethods = response.body.results;
+              }
             }
           }, errResponse => {
             console.log('*** ERROR ***');
@@ -383,9 +438,11 @@
           this.$http.jsonp(this.API_URL + 'analysis_result' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
-              this.showParameters = response.body.results;
-              for (const i in this.showParameters) {
-                this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
+              if (response.body.count > 0) {
+                this.showParameters = response.body.results;
+                for (const i in this.showParameters) {
+                  this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
+                }
               }
             }
             console.log(this.showParameters)
@@ -446,61 +503,32 @@
 
         resetSearchParameters() {
           console.log(this.searchParameters);
-          if (this.isAuthenticated) {
-            this.searchParameters =
-              {
-                watched: {
-                  drillcoreNames: [],
-                  analyticalMethods: [],
-                  comparableParameter: [''],
-                  comparableParameterOperator: ['gt'],
-                  comparableParameterValue: [''],
-                  page: 1,
-                  paginateBy: 100,
-                  orderBy: 'id',
-                },
-                currentlyShownParameters: [
-                  { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
-                  { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
-                  { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
-                  { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
-                  { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-                  { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
-                  { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
-                  { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-                  { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
-                  { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
-                  { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-                ],
-              };
-          } else { //TODO: DEMO ONLY
-            this.searchParameters =
-              {
-                watched: {
-                  drillcoreNames: [{id: 17, name: 'Kylylahti KU-223'}],
-                  analyticalMethods: [],
-                  comparableParameter: [''],
-                  comparableParameterOperator: ['gt'],
-                  comparableParameterValue: [''],
-                  page: 1,
-                  paginateBy: 100,
-                  orderBy: 'id',
-                },
-                currentlyShownParameters: [
-                  { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
-                  { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
-                  { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
-                  { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
-                  { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-                  { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
-                  { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
-                  { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-                  { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
-                  { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
-                  { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-                ],
-              };
-          }
+          this.searchParameters =
+            {
+              watched: {
+                drillcoreNames: [],
+                analyticalMethods: [],
+                comparableParameter: [''],
+                comparableParameterOperator: ['gt'],
+                comparableParameterValue: [''],
+                page: 1,
+                paginateBy: 100,
+                orderBy: 'id',
+              },
+              currentlyShownParameters: [
+                { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
+                { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
+                { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
+                { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
+                { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+                { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
+                { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
+                { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+                { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
+                { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
+                { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+              ],
+            };
           console.log(this.searchParameters);
         },
 
@@ -515,8 +543,7 @@
           console.log(this)
           this.isAuthenticated = true;
         } else {
-          console.log('wtf')
-          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'} ];
+          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'},{id: 18, name: 'Kylylahti KU-262'} ];
         }
         //TODO: FOR DEMO END
 
@@ -528,7 +555,7 @@
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
-          if (this.isAuthenticated) { // TODO: DEMO ONLY
+          if (this.isAuthenticated) { // TODO: DEMO ONLYlo
             this.searchParameters = this.$session.get('dataSearch');
           }
         } else {
