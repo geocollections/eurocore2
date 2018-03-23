@@ -279,18 +279,23 @@
       },
       'searchParameters.drillcoreName.name': function () {
         this.resetPointColor(this.allVectors);
+        this.searchParameters.fastSearch = '';
       },
       'searchParameters.depositName.name': function () {
         this.resetPointColor(this.allVectors);
+        this.searchParameters.fastSearch = '';
       },
       'searchParameters.oreType.name': function () {
         this.resetPointColor(this.allVectors);
+        this.searchParameters.fastSearch = '';
       },
       'searchParameters.commodity.name': function () {
         this.resetPointColor(this.allVectors);
+        this.searchParameters.fastSearch = '';
       },
       'searchParameters.coreDepositor.name': function () {
         this.resetPointColor(this.allVectors);
+        this.searchParameters.fastSearch = '';
       },
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         console.log('New: ' + newVal + ' Old: ' + oldVal);
@@ -353,6 +358,11 @@
       searchEntitiesAndPopulate(params, drillcoreIds) {
         if (params.fastSearch) {
           this.fastSearch(params.fastSearch);
+          this.populateDrillcoreNames(params);
+          this.populateDepositNames(params);
+          this.populateOreTypes(params);
+          this.populateCommodities(params);
+          this.populateCoreDepositors(params);
         } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
           this.searchEntitiesUsingMap(drillcoreIds)
         } else {
