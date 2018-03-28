@@ -162,7 +162,8 @@
           count: 0,
           results: []
         },
-        drillcoreName: [ { name: '' } ],
+        drillcoreName: [ { name: '', deposit__main_commodity: '' } ],
+        dcName: '',
         currentlyShownParameters: [],
         parameters: [],
         allSelected: false,
@@ -206,7 +207,7 @@
         this.resetData();
         this.getDrillcoreName(this.drillcoreId);
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
-        this.populateParameters(this.drillcoreId);
+        console.log(this.dcName)
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'searchParameters': {
@@ -226,10 +227,12 @@
           this.indeterminate = true;
           this.allSelected = false;
         }
-      }
+      },
+      'dcName': function () {
+        this.populateParameters(this.drillcoreId);
+      },
     },
     created: function () {
-      this.populateParameters(this.drillcoreId);
       this.getDrillcoreName(this.drillcoreId);
 
       if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
@@ -257,10 +260,13 @@
       },
 
       getDrillcoreName(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name', format: 'jsonp'}}).then(response => {
-          console.log(response.body.results);
+        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,deposit__main_commodity', format: 'jsonp'}}).then(response => {
+          console.log(response);
           if (response.status === 200) {
-            this.drillcoreName = response.body.results;
+            if (response.body.results.length > 0) {
+              this.drillcoreName = response.body.results;
+              this.dcName = response.body.results[0].name;
+            }
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
@@ -269,18 +275,30 @@
 
       populateParameters(id) {
         this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method', distinct: 'true', format: 'jsonp'}}).then(response => {
-          console.log(response.body.results);
+          console.log(response);
           if (response.status === 200) {
             const allParameters = response.body.results;
             for (const i in allParameters) {
               if (this.areParametersEligible(allParameters[i])) {
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
-                if (i < 10) { // Populates 10 first params
+
+
+                if (this.drillcoreName[0].deposit__main_commodity !== null || this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
+                  const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
+                  if (defaultCommodities.length > 0) {
+                    for (const commodity in defaultCommodities) {
+                      if (allParameters[i].analysis__analysisresult__parameter__parameter === defaultCommodities[commodity]) {
+                        this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
+                      }
+                    }
+                  }
+                } else if (i < 10) { // Populates 10 first params
                   this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
                 }
+
+
               }
             }
-            console.log(this.parameters);
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
@@ -298,6 +316,22 @@
 
       areParametersEligible(param) {
         return param.analysis__analysisresult__parameter__parameter != null && param.analysis__analysisresult__unit__unit != null;
+      },
+
+      showMainCommoditiesByDefault(commodities) {
+        if (commodities && commodities != null) {
+          let defaultCommodities = [];
+          if (commodities.includes(',')) {
+            commodities = commodities.replace(/,/g , '');
+            commodities = commodities.split(' ');
+            for (const i in commodities) {
+              defaultCommodities.push(commodities[i]);
+            }
+          } else {
+            defaultCommodities.push(commodities)
+          }
+          return defaultCommodities;
+        }
       },
 
       toggleAllParameters(checked) {
@@ -338,7 +372,7 @@
           count: 0,
           results: []
         };
-        this.drillcoreName = [ { name: '' } ];
+        this.drillcoreName = [ { name: '', deposit__main_commodity: '' } ];
         this.currentlyShownParameters = [];
         this.parameters = [];
         this.allSelected = false;

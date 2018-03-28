@@ -85,6 +85,14 @@
             <td>{{analysis[0].date}}</td>
           </tr>
         </table>
+
+        <div class="row" v-if="spectraCount > 0">
+          <div class="col">
+            <router-link :to="{ path: '/spectrum/' + id }" class="btn btn-primary mb-3">Show spectra ({{spectraCount}})
+            </router-link>
+          </div>
+        </div>
+
       </div>
 
       <div class="col" v-if="analysisResults != null">
@@ -110,14 +118,6 @@
           </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-
-    <div class="row" v-if="spectraCount > 0">
-      <div class="col">
-        <router-link :to="{ path: '/spectrum/' + id }" class="btn btn-primary mb-3">Show spectra ({{spectraCount}})
-        </router-link>
       </div>
     </div>
 

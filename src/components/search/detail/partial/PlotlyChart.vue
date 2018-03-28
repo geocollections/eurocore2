@@ -54,7 +54,8 @@
           let name = parameters[parameter]
 
           for (const result in results) {
-            if (results[result].analysis_method) {
+
+            if (results[result].analysis_method !== null) {
               if (parameters[parameter].includes(results[result].analysis_method)) {
                 const name = this.formatParameterForTableData(parameters[parameter]);
 
@@ -70,9 +71,9 @@
 
               }
             } else {
-              const name = this.formatParameterForTableData(parameter[parameter]);
+              const name = this.formatParameterForTableData(parameters[parameter]);
 
-              if (results[result][name]) {
+              if (results[result][name] !== null) {
                 if (results[result].depth != null && results[result].end_depth != null) {
                   const medianDepth = (results[result].depth + results[result].end_depth) / 2;
                   x.push(medianDepth);
