@@ -56,10 +56,8 @@
             <analysis :results="response.analysis.results"></analysis>
           </b-tab>
 
-          <b-tab v-if="response.analysis_summary.count > 0" title="Graph" @click="openGraph()">
-            <div ref="coreboxGraph" class="mt-3">
-              <!-- Graph is drawn here -->
-            </div>
+          <b-tab v-if="response.analysis_summary.count > 0" title="Chart" @click="openChart()">
+            <plotly-chart :results="response.analysis_summary.results" :parameters="parameters" :name="corebox[0].number" v-if="isChartOpen"></plotly-chart>
           </b-tab>
 
           <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
@@ -85,6 +83,7 @@
 <script>
   import Sample from './tables/Sample';
   import Analysis from './tables/Analysis'
+  import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
   // import Reference from './tables/Reference'
 
@@ -92,6 +91,7 @@
     components: {
       Sample,
       Analysis,
+      PlotlyChart,
       Spinner
       // Reference
     },
@@ -103,7 +103,7 @@
         showLabel: true,
         corebox: null,
         parameters: [],
-        isGraphOpen: false,
+        isChartOpen: false,
         response: {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -135,9 +135,6 @@
           this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getAllParameters();
-          if (this.parameters.length > 0) {
-            this.drawGraph(this.response.analysis_summary.results, this.parameters);
-          }
         }
       }
     },
@@ -149,9 +146,7 @@
             this.corebox = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         });
       },
 
@@ -163,9 +158,7 @@
             this.response[table].results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -177,36 +170,36 @@
             this.response.analysis_summary.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getAllParameters() {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
-            this.parameters = response.body.results;
-            for (const i in this.parameters) {
-              this.parameters[i].formattedValue = this.getCorrectParameterFormat(this.parameters[i]);
+            const allParameters = response.body.results;
+            for (const i in allParameters) {
+              if (this.areParametersEligible(allParameters[i])) {
+                this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
+              }
             }
           }
-          console.log(this.parameters)
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
+      },
+
+      areParametersEligible(param) {
+        return param.parameter__parameter != null && param.unit__unit != null;
       },
 
       getCorrectParameterFormat(param) {
         if (param !== 'undefined') {
-          let firstHalf = param.parameter__parameter.toLowerCase();
-          let secondHalf = param.unit__unit.toLowerCase();
-          if (secondHalf === '%') {
-            secondHalf = 'pct';
+          if (param.analysis__analysis_method__method != null) {
+            return param.parameter__parameter + ' ' + param.unit__unit + ' (' + param.analysis__analysis_method__method + ')';
           }
-          return firstHalf + '_' + secondHalf;
+          return param.parameter__parameter + ' ' + param.unit__unit;
         }
       },
 
@@ -220,7 +213,7 @@
         this.showLabel = true;
         this.corebox = null;
         this.parameters = [];
-        this.isGraphOpen = false;
+        this.isChartOpen = false;
         this.response = {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -230,162 +223,8 @@
         }
       },
 
-      openGraph() {
-        this.isGraphOpen = true;
-        this.drawGraph(this.response.analysis_summary.results, this.parameters);
-      },
-
-      drawGraph(results, parameters) {
-        let data = [];
-        const graphName = this.corebox[0].number;
-
-        for (const parameter in parameters) {
-          let x = [];
-          let y = [];
-          const name = parameters[parameter].parameter__parameter + ' ' + parameters[parameter].unit__unit
-          const fieldName = parameters[parameter].formattedValue;
-
-          for (const result in results) {
-            // if (results[result].analysis_method) {
-            //
-            //   if (parameters[parameter].includes(results[result].analysis_method)) {
-            //
-            //     if (results[result][name]) {
-            //       x.push(results[result].depth);
-            //       y.push(results[result][name]);
-            //     }
-            //   }
-            // } else {
-
-              if (results[result][fieldName]) {
-                x.push(results[result].depth);
-                y.push(results[result][fieldName]);
-              }
-            // }
-          }
-
-          if (parameters[parameter].formattedValue.includes('ppm')) {
-            data.push({
-              x,
-              y,
-              type: 'scattergl',
-              mode: 'lines+markers',
-              name: name,
-              yaxis: 'y2',
-            })
-          }
-          else {
-            data.push({
-              x,
-              y,
-              type: 'scattergl',
-              mode: 'lines+markers',
-              name: name
-            })
-          }
-        }
-
-        let layout = {
-          autosize: true,
-          showlegend: true,
-          margin: {
-            l: 10,
-            r: 10,
-            b: 40,
-            t: 120,
-            pad: 4
-          },
-          title: graphName,
-          legend: {
-            x: 0,
-            y: 1.1,
-            "orientation": "h",
-          },
-          xaxis: {
-            title: 'Depth',
-            domain: [0.05, 0.95],
-            linecolor: 'black',
-            linewidth: 1,
-            // mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black'
-          },
-          yaxis: {
-            side: 'left',
-            title: '%',
-            linecolor: 'black',
-            linewidth: 1,
-            mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black'
-          },
-          yaxis2: {
-            title: 'ppm',
-            titlefont: { color: 'rgb(148, 103, 189)' },
-            tickfont: { color: 'rgb(148, 103, 189)' },
-            overlaying: 'y',
-            side: 'right',
-            linecolor: 'black',
-            linewidth: 1,
-            mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black',
-            showgrid: false,
-          }
-        };
-
-
-        let d3 = Plotly.d3;
-
-        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
-
-        let gd3 = d3.select(this.$refs.coreboxGraph)
-        //.append('div')
-          .style({
-            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
-            height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            //height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            //'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
-          });
-
-        let gd = gd3.node();
-
-        //var start = window.performance.now();
-        Plotly.newPlot(gd, data, layout,
-          {
-            modeBarButtonsToRemove: ['toImage'],
-            modeBarButtonsToAdd: [{
-              name: 'Download plot as a SVG',
-              icon: Plotly.Icons.camera,
-              click: function (gd) {
-
-                Plotly.downloadImage(gd, { filename: graphName, format: 'svg', height: 600, width: 900 })
-              }
-            }],
-            displaylogo: false
-          }
-        );
-        //var end = window.performance.now();
-        //console.log(end - start + 'ms');
-        // let x=this.route.routeConfig.path;
-        // window.onresize = function () {
-        //   Plotly.Plots.resize(gd);
-        // };
-        Plotly.Plots.resize(gd);
-
-        // document.getElementById("chartTabLink").addEventListener("click", function () {
-        //   Plotly.Plots.resize(gd);
-        // })
+      openChart() {
+        this.isChartOpen = true;
       },
 
     }
@@ -398,14 +237,5 @@
     background-color: #e9ecef;
     border-color: #dee2e6;
     font-weight: bold;
-  }
-
-  #overlay{
-    margin-top: 20px;
-    border:1px solid black;
-    width:100%;
-    height:250px;
-    display:inline-block;
-    background-repeat:no-repeat;
   }
 </style>

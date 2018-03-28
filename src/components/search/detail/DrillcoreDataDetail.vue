@@ -13,7 +13,7 @@
             <b>Parameters:</b><br>
             <b-form-checkbox v-model="allSelected"
                              :indeterminate="indeterminate"
-                             @change="toggleAllParameters">{{ allSelected ? 'Un-select All' : 'Select All' }}
+                             @change="toggleAllParameters">{{ allSelected ? 'Deselect All' : 'Select All' }}
             </b-form-checkbox>
             <b-form-checkbox-group v-model="currentlyShownParameters"
                                    :options="parameters"
@@ -116,9 +116,7 @@
             </div>
           </b-tab>
           <b-tab title="Chart" @click="openChart()">
-            <div ref="plotlyChart" class="mt-3 mb-3">
-              <!-- Graph is drawn here -->
-            </div>
+            <plotly-chart :results="response.results" :parameters="currentlyShownParameters" :name="drillcoreName[0].name" v-if="isChartOpen" ></plotly-chart>
           </b-tab>
         </b-tabs>
       </div>
@@ -130,19 +128,24 @@
       <spinner size="large" message="Loading data..."></spinner>
     </div>
     <div v-else>
-      Sorry but we didn't find any results!
-      Check your id <b>{{drillcoreId}}</b>
+      <p class="text-center error-text">
+        Sorry, the query returned no results. Try another drillcore.
+        <br>
+        Note that some datasets are accessible to registered users only.
+      </p>
     </div>
   </div>
 </template>
 
 <script>
   import ExportButton from 'vue-json-excel';
+  import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
 
   export default {
     components: {
       ExportButton,
+      PlotlyChart,
       Spinner
     },
     props: ['drillcoreId'],
@@ -213,9 +216,6 @@
         deep: true
       },
       'currentlyShownParameters': function (newVal, oldVal) {
-        if (this.isChartOpen) {
-          this.filterChartData();
-        }
         if (newVal.length === 0) {
           this.indeterminate = false;
           this.allSelected = false;
@@ -252,9 +252,7 @@
             this.response.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -265,9 +263,7 @@
             this.drillcoreName = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -287,9 +283,7 @@
             console.log(this.parameters);
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -352,167 +346,7 @@
       },
 
       openChart() {
-        this.isChartOpen = !this.isChartOpen;
-        this.filterChartData();
-      },
-
-      filterChartData() {
-        const results = this.response.results;
-        let data = [];
-        const graphName = this.drillcoreName[0].name;
-
-        for (const parameter in this.currentlyShownParameters) {
-          let x = [];
-          let y = [];
-          const name = this.currentlyShownParameters[parameter];
-
-          for (const result in results) {
-            if (results[result].analysis_method) {
-
-              if (this.currentlyShownParameters[parameter].includes(results[result].analysis_method)) {
-                const name = this.formatParameterForTableData(this.currentlyShownParameters[parameter]);
-
-                if (results[result][name]) {
-                  x.push(results[result].depth);
-                  y.push(results[result][name]);
-                }
-              }
-            } else {
-              const name = this.formatParameterForTableData(this.currentlyShownParameters[parameter]);
-
-              if (results[result][name]) {
-                x.push(results[result].depth);
-                y.push(results[result][name]);
-              }
-            }
-          }
-
-          if (this.currentlyShownParameters[parameter].includes('ppm')) {
-            data.push({
-              x,
-              y,
-              type: 'scatter',
-              //mode: 'markers',
-              mode: 'lines+markers',
-              //mode: 'lines',
-              name: name,
-              yaxis: 'y2',
-            })
-          }
-          else {
-            data.push({
-              x,
-              y,
-              type: 'scatter',
-              //mode: 'markers',
-              mode: 'lines+markers',
-              //mode: 'lines',
-              name: name
-            })
-          }
-        }
-
-        let layout = {
-          autosize: true,
-          showlegend: true,
-          margin: {
-            l: 10,
-            r: 10,
-            b: 40,
-            t: 120,
-            pad: 4
-          },
-          title: graphName,
-          legend: {
-            x: 0,
-            y: 1.1,
-            "orientation": "h",
-          },
-          xaxis: {
-            title: 'Depth',
-            domain: [0.05, 0.95],
-            linecolor: 'black',
-            linewidth: 1,
-            // mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black'
-          },
-          yaxis: {
-            side: 'left',
-            title: '%',
-            linecolor: 'black',
-            linewidth: 1,
-            mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black'
-          },
-          yaxis2: {
-            title: 'ppm',
-            titlefont: { color: 'rgb(148, 103, 189)' },
-            tickfont: { color: 'rgb(148, 103, 189)' },
-            overlaying: 'y',
-            side: 'right',
-            linecolor: 'black',
-            linewidth: 1,
-            mirror: true,
-            autotick: true,
-            ticks: "outside",
-            ticklen: 5,
-            tickwidth: 1,
-            tickcolor: 'black',
-            showgrid: false,
-          }
-        };
-
-
-        let d3 = Plotly.d3;
-
-        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
-
-        let gd3 = d3.select(this.$refs.plotlyChart)
-        //.append('div')
-          .style({
-            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
-            height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            //height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            //'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
-          });
-
-        let gd = gd3.node();
-
-        //var start = window.performance.now();
-        Plotly.newPlot(gd, data, layout,
-          {
-            modeBarButtonsToRemove: ['toImage'],
-            modeBarButtonsToAdd: [{
-              name: 'Download plot as a SVG',
-              icon: Plotly.Icons.camera,
-              click: function (gd) {
-
-                Plotly.downloadImage(gd, { filename: graphName, format: 'svg', height: 600, width: 900 })
-              }
-            }],
-            displaylogo: false
-          }
-        );
-        //var end = window.performance.now();
-        //console.log(end - start + 'ms');
-        // let x=this.route.routeConfig.path;
-        // window.onresize = function () {
-        //   Plotly.Plots.resize(gd);
-        // };
-        Plotly.Plots.resize(gd);
-
-        // document.getElementById("chartTabLink").addEventListener("click", function () {
-        //   Plotly.Plots.resize(gd);
-        // })
+        this.isChartOpen = true;
       },
 
     }
@@ -537,6 +371,11 @@
   .th-sort > th > span:hover {
     color: #000;
     /*opacity: 0.6;*/
+  }
+
+  .error-text {
+    font-size: 1.5rem;
+    padding: 10% 0;
   }
 
 </style>

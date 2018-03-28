@@ -23,7 +23,11 @@
   <div v-else>
     <div class="row">
       <div class="col">
-        <p class="text-center error-text">TEACHING MATERIALS ARE AVAILABLE ONLY FOR AUTHENTICATED USERS</p>
+        <p class="text-center error-text">
+          <b>Teaching materials are available for registered users.</b>
+          <br>
+          For getting an account please contact project manager: <a href="mailto:info@eurocore.rocks" target="_top">info@eurocore.rocks</a>
+        </p>
       </div>
     </div>
   </div>
@@ -50,9 +54,7 @@
 
 <style scoped>
   .error-text {
-    color: #dc3545;
-    font-size: 1.75rem;
-    font-weight: 600;
+    font-size: 1.5rem;
     margin: 10% auto;
   }
 

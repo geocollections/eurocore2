@@ -102,6 +102,7 @@
 
   #partners {
     padding-bottom: 1.5rem;
+    text-align: center;
   }
 
   #partners-logos > a > img {

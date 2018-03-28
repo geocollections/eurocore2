@@ -44,34 +44,35 @@
                 </div>
               </b-tab>
 
-              <b-tab title="ID-Card">
+              <b-tab title="Smartcard">
                 <div class="row mt-3 mb-3">
                   <div class="col">
+                    <p>Currently works with Estonian national ID-card. If you haven't one, check the <a href="https://e-resident.gov.ee/" target="_blank" style="font-size: 1rem">E-Residency</a> website. Other smartcards may work in future.</p>
 
-                    <a href="https://e-resident.gov.ee/" target="_blank" style="font-size: 2rem">E-Residency</a>
+
 
                   </div>
                 </div>
               </b-tab>
 
-              <b-tab title="Mobile-ID">
-                <div class="row mt-3 mb-3">
-                  <div class="col">
+              <!--<b-tab title="Mobile-ID">-->
+                <!--<div class="row mt-3 mb-3">-->
+                  <!--<div class="col">-->
 
-                    <p>Personal code: <strong>{{user.mobileIdCredentials.personalCode}}</strong> <br> Phone number: <strong>{{user.mobileIdCredentials.phoneNumber}}</strong></p>
+                    <!--<p>Personal code: <strong>{{user.mobileIdCredentials.personalCode}}</strong> <br> Phone number: <strong>{{user.mobileIdCredentials.phoneNumber}}</strong></p>-->
 
-                    <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Personal code" v-model="user.mobileIdCredentials.personalCode" />
-                    </div>
+                    <!--<div class="form-group">-->
+                      <!--<input type="text" class="form-control" placeholder="Personal code" v-model="user.mobileIdCredentials.personalCode" />-->
+                    <!--</div>-->
 
-                    <div class="form-group">
-                      <input type="text" class="form-control " placeholder="Phone number" v-model="user.mobileIdCredentials.phoneNumber" />
-                    </div>
+                    <!--<div class="form-group">-->
+                      <!--<input type="text" class="form-control " placeholder="Phone number" v-model="user.mobileIdCredentials.phoneNumber" />-->
+                    <!--</div>-->
 
-                  </div>
-                </div>
+                  <!--</div>-->
+                <!--</div>-->
 
-              </b-tab>
+              <!--</b-tab>-->
             </b-tabs>
 
           </div>

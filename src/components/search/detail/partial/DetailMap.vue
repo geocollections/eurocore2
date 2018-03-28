@@ -23,7 +23,8 @@
   import LayerTile from 'ol/layer/tile';
   import SourceOSM from 'ol/source/osm';
   import SourceStamen from 'ol/source/stamen';
-  import TileWMS from "ol/source/tilewms";
+  import TileWMS from 'ol/source/tilewms';
+  import ScaleLine from 'ol/control/scaleline';
   import 'ol/ol.css'
   import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
@@ -83,20 +84,29 @@
       const overlays = new LayerGroup({
         title: 'Overlays',
         layers: [
+          // Bedrock age map for Europe and little bit more
           new LayerTile({
-            /* extent: [-13884991, 2870341, -7455066, 6338219],*/
             title: 'Bedrock age <br /><img src="http://gis.geokogud.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
             visible: true,
             source: new TileWMS({
               url: 'http://gis.geokogud.info/geoserver/wms',
               params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
               serverType: 'geoserver',
-              // Countries have transparency, so do not fade tiles:
-              // transition: 0,
               projection: ''
             }),
             opacity: 0.5,
-          })
+          }),
+          // Rocks of Finland
+          new LayerTile({
+            title: 'Rocks of Finland <br /><img src="http://gtkdata.gtk.fi/onegeology/wms/1ge/legend_bedrock_lithology.png?">',
+            visible: false,
+            source: new TileWMS({
+              url: 'http://gtkdata.gtk.fi/arcgis/services/Inspire/GTK_Bedrock_and_Superficial_Geology/MapServer/WMSServer?',
+              params: { 'LAYERS': 'FI_GTK_1M_Bedrock_Lithology', 'TILED': true },
+              projection: ''
+            }),
+            opacity: 0.5,
+          }),
         ]
       });
 
@@ -111,6 +121,7 @@
 
       this.map.addLayer(vectorLayer);
       this.map.addControl(new LayerSwitcher());
+      this.map.addControl(new ScaleLine());
       this.addPointWithName(this.name, this.lon, this.lat);
     },
     methods: {

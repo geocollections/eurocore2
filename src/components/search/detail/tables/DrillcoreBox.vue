@@ -23,18 +23,25 @@
     </div>
     <div class="row align-items-center mb-3 pb-3 pt-3 hi" v-if="results.length > 0" v-for="entity in results">
       <div class="col-4">
-        <router-link class="corebox-header" :to="{ path: '/corebox/' + entity.id }">{{entity.number}}</router-link>
-        <table class="table table-hover table-bordered th-styles">
-          <tr>
-            <td>Depth</td>
-            <td>{{entity.start_depth.toFixed(2)}} - {{entity.end_depth.toFixed(2)}} m</td>
-          </tr>
+        <router-link class="corebox-header" :to="{ path: '/corebox/' + entity.id }">Box: {{entity.number}}</router-link>
+        <table class="table table-hover table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Depth</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>{{entity.start_depth.toFixed(2)}} - {{entity.end_depth.toFixed(2)}} m</td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       <div class="col-8">
         <router-link :to="{ path: '/corebox/' + entity.id }">
-          <img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" />
+          <img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" alt="Drillcore box" />
         </router-link>
       </div>
     </div>

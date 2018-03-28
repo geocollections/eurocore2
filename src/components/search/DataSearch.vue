@@ -596,5 +596,4 @@
   .hide-column {
     display: none;
   }
-
 </style>

@@ -8,7 +8,7 @@
     </div>
 
     <div class="row">
-      <div class="col">
+      <div class="col mb-3">
         <div ref="spectrumGraph" id="graph">
           <!--Graph is drawn here-->
         </div>

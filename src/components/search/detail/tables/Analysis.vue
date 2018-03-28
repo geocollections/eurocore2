@@ -26,7 +26,7 @@
         <thead class="thead-light">
         <tr>
           <th>ID</th>
-          <th>Number</th>
+          <th>Sample number</th>
           <th>Depth from (m)</th>
           <th>Depth (m, interval)</th>
           <th>Method</th>
