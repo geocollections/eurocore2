@@ -245,7 +245,6 @@
         oreTypes: [],
         commodities: [],
         coreDepositors: [],
-        isError: false,
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -280,30 +279,33 @@
         },
         deep: true
       },
-      'searchParameters.drillcoreName.name': function () {
+      'searchParameters.drillcoreName.name': function (newVal, oldVal) {
         this.resetPointColor(this.allVectors);
+        this.drillcoreIdsFromMap = null
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.depositName.name': function () {
         this.resetPointColor(this.allVectors);
+        this.drillcoreIdsFromMap = null
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.oreType.name': function () {
         this.resetPointColor(this.allVectors);
+        this.drillcoreIdsFromMap = null
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.commodity.name': function () {
         this.resetPointColor(this.allVectors);
+        this.drillcoreIdsFromMap = null
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.coreDepositor.name': function () {
         this.resetPointColor(this.allVectors);
+        this.drillcoreIdsFromMap = null
         this.searchParameters.fastSearch = '';
       },
       'drillcoreIdsFromMap': function (newVal, oldVal) {
-        console.log('New: ' + newVal + ' Old: ' + oldVal);
         if (newVal != null) {
-          // if (newVal.length > 0 && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
           if (newVal.length > 0) {
             this.searchEntitiesUsingMap(this.drillcoreIdsFromMap);
           }
@@ -313,16 +315,16 @@
         // this.initMap();
         this.addAllPoints(this.mapResponse.results);
       },
-      'responseForMap': function () {
-        if (this.responseForMap.length !== this.allVectors.getFeatures().length) {
-          this.resetPointColor(this.allVectors)
-          this.updatePointColor(this.responseForMap, this.allVectors)
+      'responseForMap': function (newVal, oldVal) {
+        if (typeof (newVal) !== 'undefined') {
+          if (this.responseForMap.length !== this.allVectors.getFeatures().length) {
+            this.resetPointColor(this.allVectors)
+            this.updatePointColor(this.responseForMap, this.allVectors)
+          }
         }
       },
     },
     beforeRouteUpdate (to, from, next) {
-      // TODO: add route params to searchParameters
-      // this.searchParameters.drillcoreName.name = { name: 'Kevitsa M371493R680' }
       if (Object.keys(to.query).length > 0 && to.query.constructor === Object) {
         if (to.query.fastSearch) {
           this.searchParameters.fastSearch = to.query.fastSearch
@@ -330,13 +332,9 @@
         }
         //  TODO: Params from url to searchParams
       }
-      console.log(to)
-      console.log(to.query.fastSearch)
-      console.log(from)
       next()
     },
     created: function () {
-      console.log(this.$route.query.fastSearch)
       if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
         if (this.$route.query.fastSearch) {
           this.searchParameters.fastSearch = this.$route.query.fastSearch
@@ -360,7 +358,7 @@
     methods: {
 
       searchEntitiesAndPopulate(params, drillcoreIds) {
-        if (params.fastSearch) {
+        if (params.fastSearch !== '') {
           this.fastSearch(params.fastSearch);
           this.fastSearchForMap(params.fastSearch);
           this.populateDrillcoreNames(params);
@@ -368,11 +366,12 @@
           this.populateOreTypes(params);
           this.populateCommodities(params);
           this.populateCoreDepositors(params);
-        } else if (drillcoreIds != null && (params.drillcoreName.name === '' || params.drillcoreName.name === null) && (params.depositName.name === '' || params.depositName.name === null) && (params.oreType.name === '' || params.oreType.name === null) && (params.commodity.name === '' || params.commodity.name === null) && (params.coreDepositor.name === '' || params.coreDepositor.name === null)) {
+        } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
           this.searchEntitiesUsingMap(drillcoreIds)
+        //  params.drillcoreName.name === null || params.depositName.name === null || params.oreType.name === null || params.commodity.name === null || params.coreDepositor.name === null
         } else {
           this.searchEntities(params);
-          this.searchEntitiesForMap(params)
+          this.searchEntitiesForMap(params);
           this.populateDrillcoreNames(params);
           this.populateDepositNames(params);
           this.populateOreTypes(params);
@@ -387,7 +386,6 @@
         if (drillcoreIds.includes(',')) {
           ids = 'id__in=';
         }
-        console.log(drillcoreIds);
         this.$http.jsonp(this.API_URL + 'drillcore/?' + ids + drillcoreIds, {params: {format: 'jsonp', page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -395,16 +393,12 @@
             this.response.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          this.isError = true;
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       searchEntities(searchParameters) {
-        console.log(searchParameters);
         let url = this.buildSearchUrl(searchParameters);
-        console.log(url);
 
         this.$http.jsonp(url, {params: {format: 'jsonp', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
           console.log(response);
@@ -413,9 +407,7 @@
             this.response.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          this.isError = true;
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
 
       },
@@ -441,9 +433,7 @@
             this.response.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          this.isError = true;
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -494,14 +484,12 @@
             }
           }
         }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       populateDepositNames(params) {
         let url = this.buildSearchUrl(params);
-        console.log(url);
         this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -510,14 +498,12 @@
             }
           }
         }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       populateOreTypes(params) {
         let url = this.buildSearchUrl(params);
-        console.log(url);
         this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -526,14 +512,12 @@
             }
           }
         }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       populateCommodities(params) {
         let url = this.buildSearchUrl(params);
-        console.log(url);
         this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -542,14 +526,12 @@
             }
           }
         }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       populateCoreDepositors(params) {
         let url = this.buildSearchUrl(params);
-        console.log(url);
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -558,8 +540,7 @@
             }
           }
         }, errResponse => {
-          console.log('*** ERROR ***');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
       /***************************************
@@ -617,8 +598,7 @@
             this.mapResponse.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -699,7 +679,6 @@
         this.map.addLayer(vectorLayer);
         this.map.addControl(new LayerSwitcher());
         this.map.addControl(new ScaleLine());
-        console.log(this.mapResponse.results);
         // this.addAllPoints(this.mapResponse.results);
         this.addPointerMoveInteraction();
         this.addSelectInteraction(this);
@@ -865,7 +844,6 @@
       },
 
       addAllPoints(results) {
-        console.log(results);
         for (const entity in results) {
           if (results[entity].longitude !== undefined) {
             let point = new Feature({
@@ -933,14 +911,12 @@
       },
 
       updatePointColor(results, allVectors) {
-        console.log(results)
-        console.log(allVectors.getFeatures())
         const allFeatures = allVectors.getFeatures();
 
         for (const result in results) {
-          console.log(results[result].id + ' ' + results[result].name)
 
           for (const feature in allFeatures) {
+
             if (results[result].id === allFeatures[feature].getId()) {
               allFeatures[feature].setStyle(new Style({
                 image: new Circle({

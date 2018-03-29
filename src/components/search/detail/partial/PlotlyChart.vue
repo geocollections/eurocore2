@@ -178,6 +178,7 @@
 
         Plotly.newPlot(gd, data, layout,
           {
+            scrollZoom: true,
             modeBarButtonsToRemove: ['toImage'],
             modeBarButtonsToAdd: [{
               name: 'Download plot as a SVG',
