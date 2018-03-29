@@ -275,6 +275,7 @@
       // TODO: Got to test it performance wise, maybe dependent search isnt necessary here
       'searchParameters': {
         handler: function () {
+          console.log(this.searchParameters)
           this.searchEntitiesAndPopulate(this.searchParameters, this.drillcoreIdsFromMap)
         },
         deep: true
@@ -367,7 +368,7 @@
           this.populateOreTypes(params);
           this.populateCommodities(params);
           this.populateCoreDepositors(params);
-        } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
+        } else if (drillcoreIds != null && (params.drillcoreName.name === '' || params.drillcoreName.name === null) && (params.depositName.name === '' || params.depositName.name === null) && (params.oreType.name === '' || params.oreType.name === null) && (params.commodity.name === '' || params.commodity.name === null) && (params.coreDepositor.name === '' || params.coreDepositor.name === null)) {
           this.searchEntitiesUsingMap(drillcoreIds)
         } else {
           this.searchEntities(params);
