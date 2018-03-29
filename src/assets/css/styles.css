@@ -8,8 +8,14 @@ html {
 body {
   font-family: Titillium Web, sans-serif!important;
   /* Margin bottom by footer height */
-  margin-bottom: 155px;
+  margin-bottom: 135px;
   background-color: rgba(0,68,148,.03)!important;
+}
+
+@media (max-width: 768px) {
+  body {
+    margin-bottom: 155px;
+  }
 }
 
 h2 {

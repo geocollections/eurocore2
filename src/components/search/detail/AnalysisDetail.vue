@@ -19,7 +19,9 @@
 
           <tr v-if="analysis[0].sample__drillcore__name">
             <td>Drillcore</td>
-            <td>{{analysis[0].sample__drillcore__name}}</td>
+            <td>
+              <router-link :to="{ path: '/drillcore/' + analysis[0].sample__drillcore__id }">{{analysis[0].sample__drillcore__name}}</router-link>
+            </td>
           </tr>
 
           <tr v-if="analysis[0].sample__sample_number">
@@ -99,10 +101,16 @@
         <h3>Analysis results</h3>
         <table class="table table-bordered table-hover">
           <thead class="thead-light">
-          <tr>
-            <th>Parameter</th>
+          <tr class="th-sort">
+            <th>
+              <span v-if="analysisResults.length > 1" v-b-tooltip.hover.bottom title="Order by Parameter" @click="changeOrder('parameter__parameter')">Parameter</span>
+              <div v-else>Parameter</div>
+            </th>
             <th>Unit</th>
-            <th>Value</th>
+            <th>
+              <span  v-if="analysisResults.length > 1"  v-b-tooltip.hover.bottom title="Order by Value" @click="changeOrder('value')">Value</span>
+              <div v-else>Value</div>
+            </th>
             <th>Error</th>
             <th>LOD</th>
           </tr>
@@ -148,6 +156,7 @@
         showLabel: true,
         analysis: null,
         analysisResults: null,
+        analysisResultsOrder: 'parameter__parameter',
         spectraCount: 0
       }
     },
@@ -170,6 +179,9 @@
         this.getAnalysisResultById(this.id);
         this.getSpectraCount(this.id);
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+      },
+      'analysisResultsOrder': function () {
+        this.getAnalysisResultById(this.id);
       }
     },
     methods: {
@@ -190,6 +202,7 @@
         this.$http.jsonp('https://api.eurocore.rocks/analysis_result/', {
           params: {
             analysis__id: id,
+            order_by: this.analysisResultsOrder,
             format: 'jsonp'
           }
         }).then(response => {
@@ -223,10 +236,22 @@
         })
       },
 
+      changeOrder(orderValue) {
+        if (this.analysisResultsOrder === orderValue) {
+          if (orderValue.charAt(0) !== '-') {
+            orderValue = '-' + orderValue;
+          } else {
+            orderValue = orderValue.substring(1);
+          }
+        }
+        this.analysisResultsOrder = orderValue;
+      },
+
       resetData() {
         this.showLabel = true;
         this.analysis = null;
         this.analysisResults = null;
+        this.analysisResultsOrder = 'parameter__parameter';
         this.spectraCount = 0;
       }
     }
@@ -236,5 +261,13 @@
 <style scoped>
   h3 {
     color: #6bb745;
+  }
+
+  .th-sort > th > span {
+    cursor: pointer;
+  }
+
+  .th-sort > th > span:hover {
+    color: #000;
   }
 </style>

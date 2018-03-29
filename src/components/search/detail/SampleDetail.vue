@@ -21,7 +21,9 @@
           </tr>
           <tr v-if="sample[0].drillcore__name">
             <td>Locality</td>
-            <td>{{sample[0].drillcore__name}}</td>
+            <td>
+              <router-link :to="{ path: '/drillcore/' + sample[0].drillcore__id }">{{sample[0].drillcore__name}}</router-link>
+            </td>
           </tr>
           <tr v-if="sample[0].latitude">
             <td>Latitude</td>
@@ -83,9 +85,7 @@
             <td>
               <router-link :to="{ path:  '/analysis/' + entity.id}">{{entity.id}}</router-link>
             </td>
-            <td>
-              {{entity.analysis_method__method}}
-            </td>
+            <td>{{entity.analysis_method__method}}</td>
             <td>{{entity.agent__name}}</td>
             <td>{{entity.date}}</td>
           </tr>

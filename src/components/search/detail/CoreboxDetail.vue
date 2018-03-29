@@ -18,7 +18,9 @@
 
           <tr>
             <td>Drillcore</td>
-            <td>{{corebox[0].drillcore__name}}</td>
+            <td>
+              <router-link :to="{ path: '/drillcore/' + corebox[0].drillcore__id }" >{{corebox[0].drillcore__name}}</router-link>
+            </td>
           </tr>
 
           <tr>
