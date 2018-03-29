@@ -110,7 +110,7 @@
             <th>
               <span  v-if="analysisResults.length > 1"  v-b-tooltip.hover.bottom title="Order by Value" @click="changeOrder('value')">Value</span>
               <div v-else>Value</div>
-            </th>
+            </th> 
             <th>Error</th>
             <th>LOD</th>
           </tr>
