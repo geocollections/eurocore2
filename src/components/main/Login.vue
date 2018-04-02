@@ -116,12 +116,17 @@
       }
     },
     created: function () {
+      window.addEventListener('keyup', this.handleKeyup);
+
       if (this.$session.exists() && this.$session.get('userData') != null) {
         this.user.passwordCredentials.username = this.$session.get('userData')
         this.isAuthenticated = true;
         this.success = true;
         this.loginMessage = 'You are logged in as ' + this.user.passwordCredentials.username;
       }
+    },
+    beforeDestroy: function() {
+      window.removeEventListener('keyup', this.handleKeyup);
     },
     methods: {
       logIn() {
@@ -183,6 +188,14 @@
           console.log(errResponse);
           console.log(errResponse.status);
         })
+      },
+
+      handleKeyup(event) {
+        if (event.keyCode === 13) {
+          if (this.isAuthenticated) {
+            this.logOut();
+          }
+        }
       }
     }
   }
