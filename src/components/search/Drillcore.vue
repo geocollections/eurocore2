@@ -281,27 +281,27 @@
       },
       'searchParameters.drillcoreName.name': function (newVal, oldVal) {
         this.resetPointColor(this.allVectors);
-        this.drillcoreIdsFromMap = null
+        this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.depositName.name': function () {
         this.resetPointColor(this.allVectors);
-        this.drillcoreIdsFromMap = null
+        this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.oreType.name': function () {
         this.resetPointColor(this.allVectors);
-        this.drillcoreIdsFromMap = null
+        this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.commodity.name': function () {
         this.resetPointColor(this.allVectors);
-        this.drillcoreIdsFromMap = null
+        this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
       'searchParameters.coreDepositor.name': function () {
         this.resetPointColor(this.allVectors);
-        this.drillcoreIdsFromMap = null
+        this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
       'drillcoreIdsFromMap': function (newVal, oldVal) {
@@ -314,8 +314,8 @@
         }
       },
       'mapResponse.results': function () {
-        // this.initMap();
         this.addAllPoints(this.mapResponse.results);
+        this.colorMapPointsUsingIds(this.drillcoreIdsFromMap, this.allVectors)
       },
       'responseForMap': function (newVal, oldVal) {
         if (typeof (newVal) !== 'undefined') {
@@ -344,6 +344,8 @@
         } else {
           this.getParamsFromUrl(this.$route.query);
         }
+      } else if(this.$session.exists() && this.$session.get('drillcoreIdsFromMap') != null) {
+        this.editDataUsingDrillcoreIds();
       } else if (this.$session.exists() && this.$session.get('drillcore') != null) {
         this.searchParameters = this.$session.get('drillcore');
       } else {
@@ -356,8 +358,7 @@
       this.initMap();
     },
     beforeDestroy: function () {
-      this.$session.set('drillcore', this.searchParameters);
-    //  TODO: add drillcoreIds from map also to session
+      this.addSessionStorage();
     },
     methods: {
 
@@ -372,8 +373,13 @@
           this.populateCoreDepositors(params);
         } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
           this.addParamsToUrl(params, drillcoreIds);
-          this.searchEntitiesUsingMap(drillcoreIds)
-        //  params.drillcoreName.name === null || params.depositName.name === null || params.oreType.name === null || params.commodity.name === null || params.coreDepositor.name === null
+
+          this.searchEntitiesUsingMap(drillcoreIds);
+          this.populateDrillcoreNames(params);
+          this.populateDepositNames(params);
+          this.populateOreTypes(params);
+          this.populateCommodities(params);
+          this.populateCoreDepositors(params);
         } else {
           this.addParamsToUrl(params, drillcoreIds);
 
@@ -601,6 +607,35 @@
         }
       },
 
+      editDataUsingDrillcoreIds() {
+        let page = 1;
+        let paginateBy = 25;
+        let orderBy = 'id';
+
+        if (this.$session.get('drillcorePage') != null) {
+          page = this.$session.get('drillcorePage');
+        }
+        if (this.$session.get('drillcorePaginateBy') != null) {
+          paginateBy = this.$session.get('drillcorePaginateBy');
+        }
+        if (this.$session.get('drillcoreOrderBy') != null) {
+          orderBy = this.$session.get('drillcoreOrderBy');
+        }
+
+        this.drillcoreIdsFromMap = this.$session.get('drillcoreIdsFromMap');
+        this.searchParameters = {
+          drillcoreName: { name: '', field: 'name' },
+          depositName: { name: '', field: 'deposit__name' },
+          oreType: { name: '', field: 'deposit__genetic_type__name', },
+          commodity: { name: '', field: 'deposit__main_commodity' },
+          coreDepositor: { name: '', field: 'core_depositor__acronym' },
+          fastSearch: '',
+          page: page,
+          paginateBy: paginateBy,
+          orderBy: orderBy
+        };
+      },
+
       /***************************************
        ***** MULTISELECT POPULATE START ******
        ***************************************/
@@ -696,7 +731,6 @@
 
       resetSearchParameters() {
         console.log("BEFORE");
-        //TODO: Maybe need to replace url also
         this.resetPointColor(this.allVectors);
         console.log(this.searchParameters);
         this.searchParameters =
@@ -712,9 +746,31 @@
             orderBy: 'id'
           };
         this.drillcoreIdsFromMap = null;
-        this.$session.remove('drillcore');
+        this.removeSessionStorage();
         console.log("AFTER");
         console.log(this.searchParameters);
+      },
+
+      removeSessionStorage() {
+        this.$session.remove('drillcore');
+        this.$session.remove('drillcoreIdsFromMap');
+        this.$session.remove('drillcorePage');
+        this.$session.remove('drillcorePaginateBy');
+        this.$session.remove('drillcoreOrderBy');
+      },
+
+      addSessionStorage() {
+        this.$session.set('drillcore', this.searchParameters);
+        this.$session.set('drillcoreIdsFromMap', this.drillcoreIdsFromMap);
+        if (this.drillcoreIdsFromMap != null) {
+          this.$session.set('drillcorePage', this.searchParameters.page);
+          this.$session.set('drillcorePaginateBy', this.searchParameters.paginateBy);
+          this.$session.set('drillcoreOrderBy', this.searchParameters.orderBy);
+        } else {
+          this.$session.remove('drillcorePage');
+          this.$session.remove('drillcorePaginateBy');
+          this.$session.remove('drillcoreOrderBy');
+        }
       },
 
 
@@ -1073,6 +1129,49 @@
                 })
               }))
             }
+          }
+
+        }
+
+      },
+
+      colorMapPointsUsingIds(drillcoreIds, allVectors) {
+        console.log('y u no colr?')
+        const allFeatures = allVectors.getFeatures();
+        console.log(allFeatures)
+
+        for (const id in drillcoreIds) {
+
+          for (const feature in allFeatures) {
+
+            console.log(parseInt(drillcoreIds[id]) === allFeatures[feature].getId())
+
+            if (parseInt(drillcoreIds[id]) === allFeatures[feature].getId()) {
+              allFeatures[feature].setStyle(new Style({
+                image: new Circle({
+                  radius: 7,
+                  fill: new Fill({ color: '#CD154F' }),
+                  stroke: new Stroke({
+                    color: 'black',
+                    width: 1
+                  })
+                }),
+                zIndex: 101,
+                text: new Text({
+                  scale: 0,
+                  text: allFeatures[feature].get('name'),
+                  offsetY: -25,
+                  fill: new Fill({
+                    color: 'black'
+                  }),
+                  stroke: new Stroke({
+                    color: 'white',
+                    width: 3.5
+                  })
+                })
+              }))
+            }
+
           }
 
         }
