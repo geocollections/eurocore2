@@ -27,7 +27,7 @@
           <tr v-if="analysis[0].sample__sample_number">
             <td>Sample</td>
             <td>
-              <router-link :to="{ path: '/sample/' + analysis[0].sample__id }">{{analysis[0].sample__sample_number}}
+              <router-link target="_" :to="{ path: '/sample/' + analysis[0].sample__id }">{{analysis[0].sample__sample_number}}
               </router-link>
             </td>
           </tr>

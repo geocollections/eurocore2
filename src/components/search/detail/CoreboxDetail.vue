@@ -7,6 +7,12 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-6">
+        <router-link class="pull-left" :to="{ path: '/corebox/' + (parseInt(id) - 1)  }">Previous</router-link>
+        <router-link class="pull-right" :to="{ path: '/corebox/' + (parseInt(id) + 1)  }">Next</router-link>
+      </div>
+    </div>
 
     <div class="row">
       <div class="col-6">
@@ -124,6 +130,10 @@
       this.resetData();
       this.getCoreboxById(this.id);
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+      window.addEventListener('keyup', this.handleKeyup)
+    },
+    beforeDestroy: function () {
+      window.removeEventListener('keyup', this.handleKeyup)
     },
     watch: {
       'id': function () {
@@ -211,6 +221,25 @@
         }
       },
 
+      handleKeyup(event) {
+        if (event.keyCode === 37) {
+          //  LEFT KEY
+          this.goLeft(this.id)
+        }
+        if (event.keyCode === 39) {
+          //  RIGHT KEY
+          this.goRight(this.id)
+        }
+      },
+
+      goLeft(id) {
+        this.$router.push({ path: '/corebox/' + (parseInt(id) - 1) })
+      },
+
+      goRight(id) {
+        this.$router.push({ path: '/corebox/' + (parseInt(id) + 1) })
+      },
+
       resetData() {
         this.showLabel = true;
         this.corebox = null;
@@ -239,5 +268,13 @@
     background-color: #e9ecef;
     border-color: #dee2e6;
     font-weight: bold;
+  }
+
+  .pull-left {
+    float: left;
+  }
+
+  .pull-right {
+    float: right;
   }
 </style>

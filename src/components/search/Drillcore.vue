@@ -336,6 +336,7 @@
     },
     created: function () {
       if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
+        console.log(this.$route.query)
         if (this.$route.query.fastSearch) {
           this.searchParameters.fastSearch = this.$route.query.fastSearch
           // this.fastSearch(this.$route.query.fastSearch)
@@ -370,6 +371,10 @@
           this.searchEntitiesUsingMap(drillcoreIds)
         //  params.drillcoreName.name === null || params.depositName.name === null || params.oreType.name === null || params.commodity.name === null || params.coreDepositor.name === null
         } else {
+          console.log(params)
+          this.$router.replace({ name: 'Drillcore', query: {drillcore_name: params.drillcoreName.name} })
+
+          console.log(this.$route.query)
           this.searchEntities(params);
           this.searchEntitiesForMap(params);
           this.populateDrillcoreNames(params);
@@ -451,7 +456,7 @@
         let url = this.API_URL + 'drillcore/?';
 
         Object.keys(params).forEach(function (key) {
-          // console.log(key + ' ' + params[key]);
+          console.log(key + ' ' + params[key]);
 
           if (typeof(params[key]) === 'object') {
 
