@@ -307,7 +307,9 @@
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         if (newVal != null) {
           if (newVal.length > 0) {
+            this.addParamsToUrl(this.searchParameters, this.drillcoreIdsFromMap);
             this.searchEntitiesUsingMap(this.drillcoreIdsFromMap);
+            this.searchParameters.fastSearch = '';
           }
         }
       },
@@ -339,9 +341,9 @@
         console.log(this.$route.query)
         if (this.$route.query.fastSearch) {
           this.searchParameters.fastSearch = this.$route.query.fastSearch
-          // this.fastSearch(this.$route.query.fastSearch)
+        } else {
+          this.getParamsFromUrl(this.$route.query);
         }
-      //  TODO: Params from url to searchParams
       } else if (this.$session.exists() && this.$session.get('drillcore') != null) {
         this.searchParameters = this.$session.get('drillcore');
       } else {
@@ -355,6 +357,7 @@
     },
     beforeDestroy: function () {
       this.$session.set('drillcore', this.searchParameters);
+    //  TODO: add drillcoreIds from map also to session
     },
     methods: {
 
@@ -368,13 +371,12 @@
           this.populateCommodities(params);
           this.populateCoreDepositors(params);
         } else if (drillcoreIds != null && params.drillcoreName.name === '' && params.depositName.name === '' && params.oreType.name === '' && params.commodity.name === '' && params.coreDepositor.name === '') {
+          this.addParamsToUrl(params, drillcoreIds);
           this.searchEntitiesUsingMap(drillcoreIds)
         //  params.drillcoreName.name === null || params.depositName.name === null || params.oreType.name === null || params.commodity.name === null || params.coreDepositor.name === null
         } else {
-          console.log(params)
-          this.$router.replace({ name: 'Drillcore', query: {drillcore_name: params.drillcoreName.name} })
+          this.addParamsToUrl(params, drillcoreIds);
 
-          console.log(this.$route.query)
           this.searchEntities(params);
           this.searchEntitiesForMap(params);
           this.populateDrillcoreNames(params);
@@ -456,7 +458,7 @@
         let url = this.API_URL + 'drillcore/?';
 
         Object.keys(params).forEach(function (key) {
-          console.log(key + ' ' + params[key]);
+          // console.log(key + ' ' + params[key]);
 
           if (typeof(params[key]) === 'object') {
 
@@ -474,6 +476,130 @@
         return url;
       },
 
+      addParamsToUrl(params, drillcoreIds) {
+        console.log('IDS: ')
+        console.log(drillcoreIds)
+        console.log('PARAMS: ')
+        console.log(params)
+        if (drillcoreIds !== null && typeof (drillcoreIds) !== 'undefined') {
+          const drillcoreIdsString = drillcoreIds + '';
+          const orderBy = params.orderBy;
+          const page = params.page;
+          const paginateBy = params.paginateBy;
+          this.$router.replace(
+            {
+              name: 'Drillcore',
+              query:
+                {
+                  drillcoreIds: drillcoreIdsString,
+                  orderBy: orderBy,
+                  page: page,
+                  paginateBy: paginateBy
+                }
+            });
+        } else if (params !== null) {
+          let drillcoreName = '';
+          let depositName = '';
+          let oreType = '';
+          let commodity = '';
+          let coreDepositor = '';
+          if (params.drillcoreName.name !== '' && params.drillcoreName.name !== null) {
+            drillcoreName = params.drillcoreName.name.name;
+          }
+          if (params.depositName.name !== '' && params.depositName.name !== null) {
+            depositName = params.depositName.name.deposit__name;
+          }
+          if (params.oreType.name !== '' && params.oreType.name !== null) {
+            oreType = params.oreType.name.deposit__genetic_type__name;
+          }
+          if (params.commodity.name !== '' && params.commodity.name !== null) {
+            commodity = params.commodity.name.deposit__main_commodity;
+          }
+          if (params.coreDepositor.name !== '' && params.coreDepositor.name !== null) {
+            coreDepositor = params.coreDepositor.name.core_depositor__acronym;
+          }
+          const orderBy = params.orderBy;
+          const page = params.page;
+          const paginateBy = params.paginateBy;
+
+          this.$router.replace(
+            {
+              name: 'Drillcore',
+              query:
+                {
+                  drillcoreName: drillcoreName,
+                  depositName: depositName,
+                  oreType: oreType,
+                  commodity: commodity,
+                  coreDepositor: coreDepositor,
+                  orderBy: orderBy,
+                  page: page,
+                  paginateBy: paginateBy
+                }
+            });
+        }
+      },
+
+      getParamsFromUrl(params) {
+        if (params.drillcoreIds !== null && typeof (params.drillcoreIds) !== 'undefined') {
+          const drillcoreIds = params.drillcoreIds.split(',');
+          const orderBy = params.orderBy;
+          const page = parseInt(params.page);
+          const paginateBy = parseInt(params.paginateBy);
+
+          this.drillcoreIdsFromMap = drillcoreIds;
+
+          this.searchParameters = {
+            drillcoreName: { name: '', field: 'name' },
+            depositName: { name: '', field: 'deposit__name' },
+            oreType: { name: '', field: 'deposit__genetic_type__name', },
+            commodity: { name: '', field: 'deposit__main_commodity' },
+            coreDepositor: { name: '', field: 'core_depositor__acronym' },
+            fastSearch: '',
+            page: page,
+            paginateBy: paginateBy,
+            orderBy: orderBy
+          };
+
+        } else {
+          let drillcoreName = '';
+          let depositName = '';
+          let oreType = '';
+          let commodity = '';
+          let coreDepositor = '';
+
+          if (params.drillcoreName !== '' && params.drillcoreName !== null) {
+            drillcoreName = { name: params.drillcoreName };
+          }
+          if (params.depositName !== '' && params.depositName !== null) {
+            depositName = { deposit__name: params.depositName };
+          }
+          if (params.oreType !== '' && params.oreType !== null) {
+            oreType = { deposit__genetic_type__name: params.oreType };
+          }
+          if (params.commodity !== '' && params.commodity !== null) {
+            commodity = { deposit__main_commodity: params.commodity };
+          }
+          if (params.coreDepositor !== '' && params.coreDepositor !== null) {
+            coreDepositor = { core_depositor__acronym: params.coreDepositor };
+          }
+          const orderBy = params.orderBy;
+          const page = parseInt(params.page);
+          const paginateBy = parseInt(params.paginateBy);
+
+          this.searchParameters = {
+            drillcoreName: { name: drillcoreName, field: 'name' },
+            depositName: { name: depositName, field: 'deposit__name' },
+            oreType: { name: oreType, field: 'deposit__genetic_type__name', },
+            commodity: { name: commodity, field: 'deposit__main_commodity' },
+            coreDepositor: { name: coreDepositor, field: 'core_depositor__acronym' },
+            fastSearch: '',
+            page: page,
+            paginateBy: paginateBy,
+            orderBy: orderBy
+          };
+        }
+      },
 
       /***************************************
        ***** MULTISELECT POPULATE START ******
@@ -554,10 +680,9 @@
 
 
       customLabelForCoreDepositors(option) {
-        return `${option.core_depositor__acronym} - ${option.core_depositor__name}`
+        return typeof (option.core_depositor__name) !== 'undefined' ? `${option.core_depositor__acronym} - ${option.core_depositor__name}` : `${option.core_depositor__acronym}`
       },
 
-      // TODO: Maybe order should be object like sortField: { order: 'fields', direction: 'ASC' }
       changeOrder(orderValue) {
         if (this.searchParameters.orderBy === orderValue) {
           if (orderValue.charAt(0) !== '-') {
@@ -571,6 +696,7 @@
 
       resetSearchParameters() {
         console.log("BEFORE");
+        //TODO: Maybe need to replace url also
         this.resetPointColor(this.allVectors);
         console.log(this.searchParameters);
         this.searchParameters =
