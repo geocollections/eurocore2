@@ -761,6 +761,13 @@
 
       addSessionStorage() {
         this.$session.set('drillcore', this.searchParameters);
+        // let drillcoreIdsFromMap = this.drillcoreIdsFromMap;
+        // if (this.drillcoreIdsFromMap != null) {
+        //   if (this.drillcoreIdsFromMap.length === 0) {
+        //     drillcoreIdsFromMap = null;
+        //   }
+        // }
+        // this.$session.set('drillcoreIdsFromMap', drillcoreIdsFromMap);
         this.$session.set('drillcoreIdsFromMap', this.drillcoreIdsFromMap);
         if (this.drillcoreIdsFromMap != null) {
           this.$session.set('drillcorePage', this.searchParameters.page);
@@ -958,7 +965,9 @@
             }))
           });
 
-          myComponent.drillcoreIdsFromMap = drillcoreIds
+          if (drillcoreIds.length > 0) {
+            myComponent.drillcoreIdsFromMap = drillcoreIds
+          }
         });
 
         let dragBox = new DragBoxInteraction();
@@ -1026,7 +1035,9 @@
             }))
           });
 
-          myComponent.drillcoreIdsFromMap = drillcoreIds
+          if (drillcoreIds.length > 0) {
+            myComponent.drillcoreIdsFromMap = drillcoreIds
+          }
         });
       },
 
@@ -1136,15 +1147,11 @@
       },
 
       colorMapPointsUsingIds(drillcoreIds, allVectors) {
-        console.log('y u no colr?')
         const allFeatures = allVectors.getFeatures();
-        console.log(allFeatures)
 
         for (const id in drillcoreIds) {
 
           for (const feature in allFeatures) {
-
-            console.log(parseInt(drillcoreIds[id]) === allFeatures[feature].getId())
 
             if (parseInt(drillcoreIds[id]) === allFeatures[feature].getId()) {
               allFeatures[feature].setStyle(new Style({
