@@ -126,6 +126,14 @@
         title: 'EUROCORE Data Portal: Corebox ' + this.id
       }
     },
+    // beforeRouteUpdate (to, from , next) {
+    //   const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+    //   if (answer) {
+    //     next()
+    //   } else {
+    //     next(false)
+    //   }
+    // },
     created: function () {
       this.resetData();
       this.getCoreboxById(this.id);
@@ -152,7 +160,18 @@
     },
     methods: {
       getCoreboxById(id) {
-        this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
+        this.$http.jsonp(this.API_URL + id, {
+          before(request) {
+
+            // abort previous request, if exists
+            if (this.previousRequest) {
+              this.previousRequest.abort();
+            }
+
+            // set previous request on Vue instance
+            this.previousRequest = request;
+          },
+          params: {format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.corebox = response.body.results;
@@ -175,7 +194,7 @@
       },
 
       getAnalysisSummary(drillcoreId, startDepth, endDepth) {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', { params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.analysis_summary.count = response.body.count;
@@ -187,9 +206,10 @@
       },
 
       getAllParameters() {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/', {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
+            this.parameters = []; // BUG FIX FOR DUPLICATES
             const allParameters = response.body.results;
             for (const i in allParameters) {
               if (this.areParametersEligible(allParameters[i])) {

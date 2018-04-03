@@ -27,7 +27,7 @@
     <div class="row">
       <div class="col">
         <b-tabs>
-          <b-tab :title="'Data (' + (response.count) + ')'" @click="isChartOpen = false">
+          <b-tab :title="'Data (' + (response.count) + ')'" @click="openData()">
             <div class="row mt-3">
               <div class="col-xs-1 pl-3 pr-3">
                 <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
@@ -361,6 +361,32 @@
         }
       },
 
+      openData() {
+        //TODO: Add url parameter ?table=data
+        this.$router.replace(
+          {
+            path: '/drillcore_data/' + this.drillcoreId,
+            query:
+              {
+                table: 'data'
+              }
+          });
+        this.isChartOpen = false;
+      },
+
+      openChart() {
+        //TODO: Add url parameter ?table=chart
+        this.$router.replace(
+          {
+            path: '/drillcore_data/' + this.drillcoreId,
+            query:
+              {
+                table: 'chart'
+              }
+          });
+        this.isChartOpen = true;
+      },
+
       resetData() {
         this.showLabel = true;
         this.searchParameters = {
@@ -377,10 +403,6 @@
         this.parameters = [];
         this.allSelected = false;
         this.indeterminate = false;
-      },
-
-      openChart() {
-        this.isChartOpen = true;
       },
 
     }
