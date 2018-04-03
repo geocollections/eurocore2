@@ -3,26 +3,12 @@
     <div class="row">
       <div class="col">
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="lithology.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="lithology.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="lithology" table-id="lithology-table"></export-buttons>
         </div>
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="lithology-table" class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
           <th>Depth from (m)</th>
@@ -38,6 +24,8 @@
           <th>Date</th>
         </tr>
         </thead>
+
+        <tbody>
         <tr v-for="entity in results">
           <td>{{entity.start_depth}}</td>
           <td>{{entity.end_depth}}</td>
@@ -51,8 +39,6 @@
           <td></td>
           <td></td>
         </tr>
-        <tbody>
-
         </tbody>
       </table>
     </div>
@@ -60,31 +46,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "lithology",
-    data() {
-      return {
-        exportFields: {
-          'Depth from (m)': 'start_depth',
-          'Depth to (m)': 'end_depth',
-          'Rock class': 'rock_class__name',
-          'Rock name': 'rock_name__name',
-          'Field name': 'field_name',
-          'Color': 'color__color',
-          'Description': 'description',
-          'Minerals': 'mineralogical_rock_name',
-          'Remarks': 'remarks',
-          'Person/Institution': '',
-          'Date': '',
-        }
-      }
-    },
   }
 </script>
 

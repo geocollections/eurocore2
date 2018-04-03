@@ -80,21 +80,7 @@
       </div>
 
       <div class="col mb-3">
-        <b-dropdown text="EXPORT" variant="primary">
-          <b-dropdown-item>
-            <export-button
-              :data="response.results"
-              :fields="exportFields"
-              name="dataSearch.xls">Export to XLS</export-button>
-          </b-dropdown-item>
-          <b-dropdown-item>
-            <export-button
-              :data="response.results"
-              :fields="exportFields"
-              type="csv"
-              name="dataSearch.csv">Export to CSV</export-button>
-          </b-dropdown-item>
-        </b-dropdown>
+        <export-buttons filename="dataSearch"></export-buttons>
       </div>
 
       <div class="col">
@@ -108,7 +94,7 @@
     <div class="row">
       <div class="col">
         <div class="table-responsive">
-          <table class="table table-hover table-bordered ">
+          <table id="table-search" class="table table-hover table-bordered ">
             <thead class="thead-light">
               <tr class="th-sort">
                 <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_name')">Drillcore</span></th>
@@ -164,12 +150,12 @@
 
 <script>
     import VueMultiselect from "vue-multiselect/src/Multiselect";
-    import ExportButton from 'vue-json-excel'
+    import ExportButtons from './detail/partial/ExportButtons'
 
     export default {
       components: {
         VueMultiselect,
-        ExportButton
+        ExportButtons
       },
       name: "data-search",
       data() {
@@ -440,6 +426,7 @@
             if (response.status === 200) {
               if (response.body.count > 0) {
                 this.showParameters = response.body.results;
+                console.log(this.showParameters)
                 for (const i in this.showParameters) {
                   this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
                 }

@@ -1,28 +1,16 @@
 <template>
   <div>
+
     <div class="row">
       <div class="col">
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="sample.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="sample.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="sample" table-id="sample-table"></export-buttons>
         </div>
       </div>
     </div>
+
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="sample-table" class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
           <th>ID</th>
@@ -34,6 +22,8 @@
           <th>Date</th>
         </tr>
         </thead>
+
+        <tbody>
         <tr v-for="entity in results">
           <td>
             <router-link :to="{ path: '/sample/' + entity.id }">{{entity.id}}</router-link>
@@ -45,8 +35,6 @@
           <td></td>
           <td></td>
         </tr>
-        <tbody>
-
         </tbody>
       </table>
     </div>
@@ -54,27 +42,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "sample",
-    data() {
-      return {
-        exportFields: {
-          'ID': 'id',
-          'Number': 'sample_number',
-          'Depth from (m)': 'depth',
-          'Depth (m, interval)': 'end_depth',
-          'Purpose': '',
-          'Person/Institution': '',
-          'Date': '',
-        }
-      }
-    }
   }
 </script>
 

@@ -88,21 +88,7 @@
       </div>
 
       <div class="col mb-3">
-        <b-dropdown text="EXPORT" variant="primary">
-          <b-dropdown-item>
-            <export-button
-              :data="response.results"
-              :fields="exportFields"
-              name="drillcoreSearch.xls">Export to XLS</export-button>
-          </b-dropdown-item>
-          <b-dropdown-item>
-            <export-button
-              :data="response.results"
-              :fields="exportFields"
-              type="csv"
-              name="drillcoreSearch.csv">Export to CSV</export-button>
-          </b-dropdown-item>
-        </b-dropdown>
+        <export-buttons filename="drillcoreSearch"></export-buttons>
       </div>
 
       <div class="col">
@@ -116,7 +102,7 @@
     <div v-if="response.count > 0" class="row">
       <div class="col">
           <div class="table-responsive">
-            <table class="table table-hover table-bordered ">
+            <table id="table-search" class="table table-hover table-bordered ">
               <thead class="thead-light">
                 <tr class="th-sort">
                   <th><span v-b-tooltip.hover.bottom title="Order by ID" @click="changeOrder('id')">ID</span></th>
@@ -173,7 +159,7 @@
 
 <script>
   import VueMultiselect from "vue-multiselect/src/Multiselect";
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from './detail/partial/ExportButtons'
   // import DrillcoreMap from "../main/partial/DrillcoreMap";
 
   /* MAP IMPORTS START */
@@ -209,7 +195,7 @@
     components: {
       // DrillcoreMap,
       VueMultiselect,
-      ExportButton
+      ExportButtons
     },
     name: "drillcore",
     data() {
@@ -254,17 +240,6 @@
           { value: 500, text: 'Show 500 results per page' },
           { value: 1000, text: 'Show 1000 results per page' }
         ],
-        exportFields: {
-          'ID': 'id',
-          'Name': 'name',
-          'Deposit': 'deposit__name',
-          'Commodity': 'deposit__main_commodity',
-          'Latitude': 'latitude',
-          'Longitude': 'longitude',
-          'length': 'hole_length',
-          'Dip': 'hole_dip',
-          'Azimuth': 'hole_azimuth',
-        },
       }
     },
     metaInfo: {

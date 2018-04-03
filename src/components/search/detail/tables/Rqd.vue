@@ -2,27 +2,15 @@
   <div>
     <div class="row">
       <div class="col">
+
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="rqd.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="rqd.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="rqd" table-id="rqd-table"></export-buttons>
         </div>
+
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="rqd-table" class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
           <th>Depth from (m)</th>
@@ -33,6 +21,8 @@
           <th>Date</th>
         </tr>
         </thead>
+
+        <tbody>
         <tr v-for="entity in results">
           <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
@@ -41,8 +31,6 @@
           <td></td>
           <td></td>
         </tr>
-        <tbody>
-
         </tbody>
       </table>
     </div>
@@ -50,26 +38,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "rqd",
-    data() {
-      return {
-        exportFields: {
-          'Depth from (m)': 'depth',
-          'Dip to (m)': 'end_depth',
-          'RQD %': 'rqd',
-          'Fractures': 'fractures',
-          'Person/Institution': '',
-          'Date': '',
-        }
-      }
-    }
   }
 </script>
 

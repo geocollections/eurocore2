@@ -3,26 +3,12 @@
     <div class="row">
       <div class="col">
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="drillcore.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="drillcore.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="drillcore" table-id="drillcore-table"></export-buttons>
         </div>
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="drillcore-table" class="table table-hover table-bordered">
         <thead class="thead-light">
           <tr>
             <th>ID</th>
@@ -57,27 +43,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "drillcore",
-    data() {
-      return {
-        exportFields: {
-          'ID': 'id',
-          'Name': 'name',
-          'Latitude': 'latitude',
-          'Longitude': 'longitude',
-          'Length': 'hole_length',
-          'Dip': 'hole_dip',
-          'Azimuth': 'hole_azimuth',
-        }
-      }
-    }
   }
 </script>
 

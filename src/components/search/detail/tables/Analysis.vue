@@ -3,26 +3,12 @@
     <div class="row">
       <div class="col">
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="analysis.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="analysis.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="analysis" table-id="analysis-table"></export-buttons>
         </div>
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="analysis-table" class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
           <th>ID</th>
@@ -34,6 +20,8 @@
           <th>Date</th>
         </tr>
         </thead>
+
+        <tbody>
         <tr v-for="entity in results">
           <td>
             <router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>
@@ -47,8 +35,6 @@
           <td>{{entity.agent__name}}</td>
           <td>{{entity.date}}</td>
         </tr>
-        <tbody>
-
         </tbody>
       </table>
     </div>
@@ -56,27 +42,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "analysis",
-    data() {
-      return {
-        exportFields: {
-          'ID': 'id',
-          'Number': 'sample__sample_number',
-          'Depth from (m)': 'depth',
-          'Depth (m, interval)': 'end_depth',
-          'Method': 'analysis_method__method',
-          'Person/Institution': 'agent__name',
-          'Date': 'date',
-        }
-      }
-    }
   }
 </script>
 

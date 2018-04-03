@@ -33,22 +33,8 @@
                 <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
               </div>
 
-              <div class="col mb-3" v-if="response.count > 0">
-                <b-dropdown text="EXPORT" variant="primary">
-                  <b-dropdown-item>
-                    <export-button
-                      :data="response.results"
-                      :fields="exportFields"
-                      name="drillcoreData.xls">Export to XLS</export-button>
-                  </b-dropdown-item>
-                  <b-dropdown-item>
-                    <export-button
-                      :data="response.results"
-                      :fields="exportFields"
-                      type="csv"
-                      name="drillcoreData.csv">Export to CSV</export-button>
-                  </b-dropdown-item>
-                </b-dropdown>
+              <div class="col mb-3">
+                <export-buttons filename="drillcoreData"></export-buttons>
               </div>
 
               <div class="col">
@@ -62,7 +48,7 @@
             <div class="row">
               <div class="col">
                 <div class="table-responsive">
-                  <table class="table table-hover table-bordered">
+                  <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
                         <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)" @click="changeOrder('depth')">Depth from (m)</span></th>
@@ -138,13 +124,13 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from './partial/ExportButtons';
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
 
   export default {
     components: {
-      ExportButton,
+      ExportButtons,
       PlotlyChart,
       Spinner
     },

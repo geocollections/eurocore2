@@ -3,28 +3,14 @@
     <div class="row">
       <div class="col">
         <div class="col pl-0 mt-3 mb-3">
-          <b-dropdown text="EXPORT" variant="primary">
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                name="drillcore-box.xls">Export to XLS</export-button>
-            </b-dropdown-item>
-            <b-dropdown-item>
-              <export-button
-                :data="results"
-                :fields="exportFields"
-                type="csv"
-                name="drillcore-box.csv">Export to CSV</export-button>
-            </b-dropdown-item>
-          </b-dropdown>
+          <export-buttons filename="drillcore-box" table-id="drillcore-box-table"></export-buttons>
         </div>
       </div>
     </div>
     <div class="row align-items-center mb-3 pb-3 pt-3 hi" v-if="results.length > 0" v-for="entity in results">
       <div class="col-4">
         <router-link class="corebox-header" :to="{ path: '/corebox/' + entity.id }">Box: {{entity.number}}</router-link>
-        <table class="table table-hover table-bordered">
+        <table id="drillcore-box-table" class="table table-hover table-bordered">
           <thead class="thead-light">
             <tr>
               <th>Depth</th>
@@ -50,24 +36,14 @@
 </template>
 
 <script>
-  import ExportButton from 'vue-json-excel';
+  import ExportButtons from '../partial/ExportButtons';
 
   export default {
     components: {
-      ExportButton
+      ExportButtons
     },
     props: ['results'],
     name: "drillcore-box",
-    data() {
-      return {
-        exportFields: {
-          'Corebox number': 'number',
-          'Depth from (m)': 'start_depth',
-          'Depth to (m)': 'end_depth',
-          'corebox url': 'image__url'
-        }
-      }
-    },
     methods: {
       buildDrillcoreBoxUrl(size, url) {
         if (url != null) {

@@ -43,10 +43,10 @@
     </div>
 
 
-    <div class="row mt-2 mb-3">
+    <div class="row mt-2 mb-3" v-for="image in corebox">
       <div class="col">
-        <a :href="'https://eurocore.rocks/' + corebox[0].image__url" target="_blank">
-          <img width="100%" :src="buildCoreboxUrl('2000', corebox[0].image__url)" />
+        <a :href="'https://eurocore.rocks/' + image.image__url" target="_blank">
+          <img width="100%" :src="buildCoreboxUrl('2000', image.image__url)" />
         </a>
       </div>
     </div>
@@ -126,14 +126,6 @@
         title: 'EUROCORE Data Portal: Corebox ' + this.id
       }
     },
-    // beforeRouteUpdate (to, from , next) {
-    //   const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
-    //   if (answer) {
-    //     next()
-    //   } else {
-    //     next(false)
-    //   }
-    // },
     created: function () {
       this.resetData();
       this.getCoreboxById(this.id);
