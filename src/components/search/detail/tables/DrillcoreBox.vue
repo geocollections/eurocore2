@@ -7,10 +7,29 @@
         </div>
       </div>
     </div>
+
+    <!--TABLE made for export-->
+    <table id="drillcore-box-table" style="display: none">
+      <thead>
+        <tr>
+          <td>Corebox number</td>
+          <td>Depth from (m)</td>
+          <td>Depth to (m)</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="entity in results">
+          <td>{{entity.number}}</td>
+          <td>{{entity.start_depth}}</td>
+          <td>{{entity.end_depth}}</td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="row align-items-center mb-3 pb-3 pt-3 hi" v-if="results.length > 0" v-for="entity in results">
       <div class="col-4">
         <router-link class="corebox-header" :to="{ path: '/corebox/' + entity.id }">Box: {{entity.number}}</router-link>
-        <table id="drillcore-box-table" class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered">
           <thead class="thead-light">
             <tr>
               <th>Depth</th>
