@@ -110,6 +110,7 @@
         let layout = {
           autosize: true,
           showlegend: true,
+          dragmode: 'pan',
           margin: {
             l: 10,
             r: 10,
