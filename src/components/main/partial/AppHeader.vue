@@ -3,7 +3,7 @@
     <div class="container">
       <h1>
         <router-link class="navbar-brand" to="/">
-          <img id="eurocoreLogo" src="../../../assets/eurocoreLogo.png" alt="Eurocore logo">
+          <img id="eurocoreLogo" src="https://eurocore.rocks/images/logo_Eurocore_small_no_text_preview.png" alt="Eurocore logo">
         </router-link>
       </h1>
 
