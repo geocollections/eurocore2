@@ -109,6 +109,7 @@
 
   ul {
     margin-bottom: 0.5rem;
+    list-style-type: circle;
   }
 
   #partners {
