@@ -105,15 +105,15 @@
             <table id="table-search" class="table table-hover table-bordered ">
               <thead class="thead-light">
                 <tr class="th-sort">
-                  <th><span v-b-tooltip.hover.bottom title="Order by ID" @click="changeOrder('id')">ID</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Name" @click="changeOrder('name')">Name</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Deposit" @click="changeOrder('deposit__name')">Deposit</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Commodity" @click="changeOrder('deposit__main_commodity')">Commodity</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Latitude" @click="changeOrder('latitude')">Latitude</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Longitude" @click="changeOrder('longitude')">Longitude</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Length" @click="changeOrder('hole_length')">Length</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Dip" @click="changeOrder('hole_dip')">Dip</span></th>
-                  <th><span v-b-tooltip.hover.bottom title="Order by Azimuth" @click="changeOrder('hole_azimuth')">Azimuth</span></th>
+                  <th><span @click="changeOrder('id')"><font-awesome-icon :icon="icon"/> ID</span></th>
+                  <th><span @click="changeOrder('name')"><font-awesome-icon :icon="icon"/> Name</span></th>
+                  <th><span @click="changeOrder('deposit__name')"><font-awesome-icon :icon="icon"/> Deposit</span></th>
+                  <th><span @click="changeOrder('deposit__main_commodity')"><font-awesome-icon :icon="icon"/> Commodity</span></th>
+                  <th><span @click="changeOrder('latitude')"><font-awesome-icon :icon="icon"/> Latitude</span></th>
+                  <th><span @click="changeOrder('longitude')"><font-awesome-icon :icon="icon"/> Longitude</span></th>
+                  <th><span @click="changeOrder('hole_length')"><font-awesome-icon :icon="icon"/> Length</span></th>
+                  <th><span @click="changeOrder('hole_dip')"><font-awesome-icon :icon="icon"/> Dip</span></th>
+                  <th><span @click="changeOrder('hole_azimuth')"><font-awesome-icon :icon="icon"/> Azimuth</span></th>
                   <th></th>
                 </tr>
               </thead>
@@ -160,6 +160,8 @@
 <script>
   import VueMultiselect from "vue-multiselect/src/Multiselect";
   import ExportButtons from './detail/partial/ExportButtons'
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faSort from '@fortawesome/fontawesome-free-solid/faSort'
   // import DrillcoreMap from "../main/partial/DrillcoreMap";
 
   /* MAP IMPORTS START */
@@ -195,7 +197,8 @@
     components: {
       // DrillcoreMap,
       VueMultiselect,
-      ExportButtons
+      ExportButtons,
+      FontAwesomeIcon
     },
     name: "drillcore",
     data() {
@@ -244,6 +247,11 @@
     },
     metaInfo: {
       title: 'EUROCORE Data Portal: Drillcores'
+    },
+    computed: {
+      icon() {
+        return faSort;
+      }
     },
     watch: {
       // TODO: Got to test it performance wise, maybe dependent search isnt necessary here

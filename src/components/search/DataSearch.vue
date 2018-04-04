@@ -97,13 +97,13 @@
           <table id="table-search" class="table table-hover table-bordered ">
             <thead class="thead-light">
               <tr class="th-sort">
-                <th><span v-b-tooltip.hover.bottom title="Order by Drillcore" @click="changeOrder('drillcore_name')">Drillcore</span></th>
-                <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)"  @click="changeOrder('depth')">Depth from (m)</span></th>
-                <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)"  @click="changeOrder('end_depth')">Depth to (m)</span></th>
-                <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
-                <th><span v-b-tooltip.hover.bottom title="Order by Analysis ID" @click="changeOrder('analysis_id')">Analysis ID</span></th>
-                <th><span v-b-tooltip.hover.bottom title="Order by Method" @click="changeOrder('analysis_method')">Method</span></th>
-                <th v-for="parameter in searchParameters.currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter.parameter__parameter + ' ' + parameter.unit__unit" @click="changeOrder(parameter.formattedValue)">{{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
+                <th><span @click="changeOrder('drillcore_name')"><font-awesome-icon :icon="icon"/> Drillcore</span></th>
+                <th><span @click="changeOrder('depth')"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
+                <th><span @click="changeOrder('end_depth')"><font-awesome-icon :icon="icon"/> Depth to (m)</span></th>
+                <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
+                <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis ID</span></th>
+                <th><span @click="changeOrder('analysis_method')"><font-awesome-icon :icon="icon"/> Method</span></th>
+                <th v-for="parameter in searchParameters.currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)"><font-awesome-icon :icon="icon"/> {{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
               </tr>
             </thead>
             <tbody>
@@ -119,7 +119,7 @@
                   <!--<router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>-->
                 </td>
                 <td>
-                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})">{{entity.analysis_id}}</a>
+                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id, width: 600})">{{entity.analysis_id}}</a>
                   <!--<router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>-->
                 </td>
                 <td>{{entity.analysis_method}}</td>
@@ -147,13 +147,16 @@
 </template>
 
 <script>
-    import VueMultiselect from "vue-multiselect/src/Multiselect";
+    import VueMultiselect from "vue-multiselect/src/Multiselect"
     import ExportButtons from './detail/partial/ExportButtons'
+    import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+    import faSort from '@fortawesome/fontawesome-free-solid/faSort'
 
     export default {
       components: {
         VueMultiselect,
-        ExportButtons
+        ExportButtons,
+        FontAwesomeIcon
       },
       name: "data-search",
       data() {
@@ -213,6 +216,11 @@
       },
       metaInfo: {
         title: 'EUROCORE Data Portal: Data Search'
+      },
+      computed: {
+        icon() {
+          return faSort;
+        }
       },
       watch: {
         'searchParameters.watched': {

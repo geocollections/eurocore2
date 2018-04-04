@@ -103,12 +103,12 @@
           <thead class="thead-light">
           <tr class="th-sort">
             <th>
-              <span v-if="analysisResults.length > 1" v-b-tooltip.hover.bottom title="Order by Parameter" @click="changeOrder('parameter__parameter')">Parameter</span>
+              <span v-if="analysisResults.length > 1" @click="changeOrder('parameter__parameter')"><font-awesome-icon :icon="icon"/> Parameter</span>
               <div v-else>Parameter</div>
             </th>
             <th>Unit</th>
             <th>
-              <span  v-if="analysisResults.length > 1"  v-b-tooltip.hover.bottom title="Order by Value" @click="changeOrder('value')">Value</span>
+              <span  v-if="analysisResults.length > 1" @click="changeOrder('value')"><font-awesome-icon :icon="icon"/> Value</span>
               <div v-else>Value</div>
             </th>
             <th>Error</th>
@@ -143,10 +143,13 @@
 
 <script>
   import Spinner from 'vue-simple-spinner'
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faSort from '@fortawesome/fontawesome-free-solid/faSort'
 
   export default {
     components: {
-      Spinner
+      Spinner,
+      FontAwesomeIcon
     },
     props: ['id'],
     name: "analysis-detail",
@@ -163,6 +166,11 @@
     metaInfo() {
       return {
         title: 'EUROCORE Data Portal: Analysis ' + this.id
+      }
+    },
+    computed: {
+      icon() {
+        return faSort;
       }
     },
     created: function () {

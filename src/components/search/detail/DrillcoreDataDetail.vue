@@ -70,7 +70,7 @@
                           <!--<router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>-->
                         </td>
                         <td>
-                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})">{{entity.analysis_id}}</a>
+                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id, width: 600})">{{entity.analysis_id}}</a>
                           <!--<router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>-->
                         </td>
                         <td v-for="parameter in currentlyShownParameters">

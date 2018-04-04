@@ -34,10 +34,10 @@
                     </div>
 
                     <button class="btn btn-primary" @click="logIn()" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated">
-                      LOGIN &nbsp;<font-awesome-icon :icon="icon"></font-awesome-icon>
+                      LOGIN &nbsp;<font-awesome-icon :icon="icon"/>
                     </button>
                     <button class="btn btn-danger" @click="logOut()" v-if="isAuthenticated" v-bind:disabled="!isAuthenticated">
-                      LOGOUT &nbsp;<font-awesome-icon :icon="icon"></font-awesome-icon>
+                      LOGOUT &nbsp;<font-awesome-icon :icon="icon"/>
                     </button>
 
                   </div>

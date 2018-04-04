@@ -24,7 +24,7 @@
         <tbody>
         <tr v-for="entity in results">
           <td>
-            <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.id})">{{entity.id}}</a>
+            <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.id, width: 600})">{{entity.id}}</a>
             <!--<router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>-->
           </td>
           <td>
