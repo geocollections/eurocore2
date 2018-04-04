@@ -91,6 +91,7 @@
     </div>
 
 
+    <spinner v-show="isSearching" class="loading-overlay" size="huge" message="Searching..."></spinner>
     <div class="row">
       <div class="col">
         <div class="table-responsive">
@@ -151,12 +152,14 @@
     import ExportButtons from './detail/partial/ExportButtons'
     import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
     import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+    import Spinner from 'vue-simple-spinner'
 
     export default {
       components: {
         VueMultiselect,
         ExportButtons,
-        FontAwesomeIcon
+        FontAwesomeIcon,
+        Spinner
       },
       name: "data-search",
       data() {
@@ -165,6 +168,7 @@
           //TODO: FOR DEMO START
           isAuthenticated: false,
           //TODO: FOR DEMO END
+          isSearching: false,
           searchParameters: {
             watched: {
               drillcoreNames: [],
@@ -225,6 +229,7 @@
       watch: {
         'searchParameters.watched': {
           handler: function () {
+            this.isSearching = true;
             this.searchEntities(this.searchParameters.watched);
             },
           deep: true
@@ -234,20 +239,12 @@
           console.log(this.showParameters)
           console.log('higgrgrgr')
         },
-        // 'searchParameters.comparableParameter': function (n,o) {
-        //   console.log(this.searchParameters.comparableParameter);
-        //   console.log(n + ' ' + o)
-        // },
-        // 'searchParameters.comparableParameterOperator': function (n,o) {
-        //   console.log(this.searchParameters.comparableParameterOperator);
-        //   console.log(n + ' ' + o)
-        // },
-        // 'searchParameters.comparableParameterValue': function (n,o) {
-        //   console.log(this.searchParameters.comparableParameterValue);
-        //   console.log(n + ' ' + o)
-        // },
+        'response.results': function () {
+          this.isSearching = false;
+        }
       },
       created: function () {
+        this.isSearching = true;
         //TODO: FOR DEMO START
         if (this.$session.exists() && this.$session.get('userData') != null) {
           console.log(this)
@@ -584,5 +581,15 @@
 
   .hide-column {
     display: none;
+  }
+
+  .loading-overlay {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.5);
   }
 </style>
