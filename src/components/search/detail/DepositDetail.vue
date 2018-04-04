@@ -287,6 +287,13 @@
         this.getResultsByDepositId('drillcore', this.id, 'id');
         this.getResultsByDepositId('reference', this.id, 'id');
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+      },
+      'deposit': function (newVal, oldVal) {
+        if (newVal == null) {
+          $('body')[0].setAttribute('class', 'background-color-white')
+        } else {
+          $('body')[0].removeAttribute('class')
+        }
       }
     },
     methods: {

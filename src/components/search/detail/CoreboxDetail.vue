@@ -155,6 +155,9 @@
           this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getAllParameters();
+          $('body')[0].removeAttribute('class')
+        } else {
+          $('body')[0].setAttribute('class', 'background-color-white')
         }
       }
     },

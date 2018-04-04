@@ -221,6 +221,13 @@
         this.getDrillcoreById(this.id);
         this.getDrillcoreSummary(this.id);
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+      },
+      'drillcore': function (newVal, oldVal) {
+        if (newVal == null) {
+          $('body')[0].setAttribute('class', 'background-color-white')
+        } else {
+          $('body')[0].removeAttribute('class')
+        }
       }
     },
     methods: {

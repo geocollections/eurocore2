@@ -38,3 +38,7 @@ a:hover {
 .layer-switcher {
   top: 0.5rem;
 }
+
+.background-color-white {
+  background-color: #fff !important;
+}

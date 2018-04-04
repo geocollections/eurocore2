@@ -135,6 +135,13 @@
           this.getSampleById(this.id);
           this.getAnalysisBySampleId(this.id);
           setTimeout(function() { this.showLabel = false }.bind(this), 2000);
+        },
+        'sample': function (newVal, oldVal) {
+          if (newVal == null) {
+            $('body')[0].setAttribute('class', 'background-color-white')
+          } else {
+            $('body')[0].removeAttribute('class')
+          }
         }
       },
       created: function () {

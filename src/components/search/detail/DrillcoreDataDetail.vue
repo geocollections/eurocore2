@@ -219,6 +219,13 @@
       'dcName': function () {
         this.populateParameters(this.drillcoreId);
       },
+      'response.results': function (newVal, oldVal) {
+        if (newVal == null && oldVal.length === 0) {
+          $('body')[0].setAttribute('class', 'background-color-white')
+        } else {
+          $('body')[0].removeAttribute('class')
+        }
+      }
     },
     created: function () {
       this.getDrillcoreName(this.drillcoreId);

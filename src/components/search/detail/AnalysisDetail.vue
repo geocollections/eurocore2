@@ -190,6 +190,13 @@
       },
       'analysisResultsOrder': function () {
         this.getAnalysisResultById(this.id);
+      },
+      'analysis': function (newVal, oldVal) {
+        if (newVal == null) {
+          $('body')[0].setAttribute('class', 'background-color-white')
+        } else {
+          $('body')[0].removeAttribute('class')
+        }
       }
     },
     methods: {
