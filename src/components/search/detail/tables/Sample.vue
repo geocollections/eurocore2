@@ -54,6 +54,10 @@
     mounted: function () {
       console.log(this.$parent)
     },
+    updated: function () {
+      $('#sample-table').floatThead('reflow');
+      this.addFloatingTableHeaders();
+    },
     methods: {
 
       openInNewWindow(params) {
@@ -61,7 +65,15 @@
           params.width = 800;
         }
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
-      }
+      },
+
+      addFloatingTableHeaders() {
+        $('#sample-table').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
+      },
     }
   }
 </script>

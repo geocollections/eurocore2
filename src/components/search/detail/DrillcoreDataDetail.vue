@@ -51,10 +51,10 @@
                   <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
-                        <th><span v-b-tooltip.hover.bottom title="Order by Depth from (m)" @click="changeOrder('depth')">Depth from (m)</span></th>
-                        <th><span v-b-tooltip.hover.bottom title="Order by Depth to (m)" @click="changeOrder('end_depth')">Depth to (m)</span></th>
-                        <th><span v-b-tooltip.hover.bottom title="Order by Sample" @click="changeOrder('sample_number')">Sample</span></th>
-                        <th><span v-b-tooltip.hover.bottom title="Order by Analysis" @click="changeOrder('analysis_id')">Analysis</span></th>
+                        <th><span @click="changeOrder('depth')"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
+                        <th><span @click="changeOrder('end_depth')"><font-awesome-icon :icon="icon"/> Depth to (m)</span></th>
+                        <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
+                        <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis</span></th>
                         <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
                         <th v-for="parameter in currentlyShownParameters">{{parameter}}</th>
                       </tr>
@@ -129,12 +129,15 @@
   import ExportButtons from './partial/ExportButtons';
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faSort from '@fortawesome/fontawesome-free-solid/faSort'
 
   export default {
     components: {
       ExportButtons,
       PlotlyChart,
-      Spinner
+      Spinner,
+      FontAwesomeIcon
     },
     props: ['drillcoreId'],
     name: "drillcore-data-detail",
@@ -190,6 +193,11 @@
         title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId
       }
     },
+    computed: {
+      icon() {
+        return faSort;
+      }
+    },
     watch: {
       'drillcoreId': function () {
         this.resetData();
@@ -237,6 +245,10 @@
       }
 
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+    },
+    updated: function () {
+      $('#table-search').floatThead('reflow');
+      this.addFloatingTableHeaders();
     },
     beforeDestroy: function () {
       this.$session.set('drillcore_data/' + this.drillcoreId, this.searchParameters);
@@ -369,6 +381,14 @@
           params.width = 800;
         }
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+      },
+
+      addFloatingTableHeaders() {
+        $('#table-search').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
       },
 
       resetData() {

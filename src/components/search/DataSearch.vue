@@ -226,7 +226,7 @@
         'searchParameters.watched': {
           handler: function () {
             this.searchEntities(this.searchParameters.watched);
-          },
+            },
           deep: true
         },
         'searchParameters.currentlyShownParameters': function () {
@@ -271,6 +271,10 @@
         } else {
           this.searchEntities(this.searchParameters.watched)
         }
+      },
+      updated: function () {
+        $('#table-search').floatThead('reflow');
+        this.addFloatingTableHeaders();
       },
       beforeDestroy: function () {
         if (this.isAuthenticated) { //TODO: DEMO ONLY
@@ -510,6 +514,14 @@
             params.width = 800;
           }
           window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+        },
+
+        addFloatingTableHeaders() {
+          $('#table-search').floatThead({
+            position: 'absolute',
+            zIndex: 1090,
+            top: 98 // headers height
+          });
         },
 
         resetSearchParameters() {

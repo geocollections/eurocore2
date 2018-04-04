@@ -38,6 +38,19 @@
     },
     props: ['results'],
     name: "dip",
+    updated: function () {
+      $('#dip-table').floatThead('reflow');
+      this.addFloatingTableHeaders();
+    },
+    methods: {
+      addFloatingTableHeaders() {
+        $('#dip-table').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
+      },
+    }
   }
 </script>
 

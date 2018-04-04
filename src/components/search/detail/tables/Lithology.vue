@@ -54,6 +54,19 @@
     },
     props: ['results'],
     name: "lithology",
+    updated: function () {
+      $('#lithology-table').floatThead('reflow');
+      this.addFloatingTableHeaders();
+    },
+    methods: {
+      addFloatingTableHeaders() {
+        $('#lithology-table').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
+      },
+    }
   }
 </script>
 

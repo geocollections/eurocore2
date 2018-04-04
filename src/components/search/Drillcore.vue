@@ -99,10 +99,10 @@
     </div>
 
 
-    <div v-if="response.count > 0" class="row">
+    <div v-show="response.count > 0" class="row">
       <div class="col">
           <div class="table-responsive">
-            <table id="table-search" class="table table-hover table-bordered ">
+            <table ref="table" id="table-search" class="table table-hover table-bordered ">
               <thead class="thead-light">
                 <tr class="th-sort">
                   <th><span @click="changeOrder('id')"><font-awesome-icon :icon="icon"/> ID</span></th>
@@ -117,6 +117,7 @@
                   <th></th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr v-for="drillcore in response.results">
                   <td>{{drillcore.id}}</td>
@@ -198,7 +199,7 @@
       // DrillcoreMap,
       VueMultiselect,
       ExportButtons,
-      FontAwesomeIcon
+      FontAwesomeIcon,
     },
     name: "drillcore",
     data() {
@@ -339,6 +340,10 @@
     },
     mounted: function () {
       this.initMap();
+    },
+    updated: function () {
+      $('#table-search').floatThead('reflow');
+      this.addFloatingTableHeaders();
     },
     beforeDestroy: function () {
       this.addSessionStorage();
@@ -744,13 +749,6 @@
 
       addSessionStorage() {
         this.$session.set('drillcore', this.searchParameters);
-        // let drillcoreIdsFromMap = this.drillcoreIdsFromMap;
-        // if (this.drillcoreIdsFromMap != null) {
-        //   if (this.drillcoreIdsFromMap.length === 0) {
-        //     drillcoreIdsFromMap = null;
-        //   }
-        // }
-        // this.$session.set('drillcoreIdsFromMap', drillcoreIdsFromMap);
         this.$session.set('drillcoreIdsFromMap', this.drillcoreIdsFromMap);
         if (this.drillcoreIdsFromMap != null) {
           this.$session.set('drillcorePage', this.searchParameters.page);
@@ -761,6 +759,14 @@
           this.$session.remove('drillcorePaginateBy');
           this.$session.remove('drillcoreOrderBy');
         }
+      },
+
+      addFloatingTableHeaders() {
+        $('#table-search').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
       },
 
 

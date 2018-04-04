@@ -46,6 +46,19 @@
     },
     props: ['results'],
     name: "rqd",
+    updated: function () {
+      $('#rqd-table').floatThead('reflow');
+      this.addFloatingTableHeaders();
+    },
+    methods: {
+      addFloatingTableHeaders() {
+        $('#rqd-table').floatThead({
+          position: 'absolute',
+          zIndex: 1090,
+          top: 98 // headers height
+        });
+      },
+    }
   }
 </script>
 
