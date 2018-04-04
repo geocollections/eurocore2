@@ -7,6 +7,7 @@ import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import './assets/css/styles.css'
 import VueSession from 'vue-session'
+import moment from 'moment'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
@@ -20,4 +21,10 @@ new Vue({
   router,
   components: { App },
   template: '<App/>'
+});
+
+Vue.filter('formatDate', function (value) {
+  if (value) {
+    return moment(String(value)).format('ddd, MMMM Do YYYY, HH:mm')
+  }
 });

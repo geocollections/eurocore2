@@ -27,8 +27,8 @@
           <tr v-if="analysis[0].sample__sample_number">
             <td>Sample</td>
             <td>
-              <router-link target="_" :to="{ path: '/sample/' + analysis[0].sample__id }">{{analysis[0].sample__sample_number}}
-              </router-link>
+              <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: analysis[0].sample__id})">{{analysis[0].sample__sample_number}}</a>
+              <!--<router-link target="_" :to="{ path: '/sample/' + analysis[0].sample__id }">{{analysis[0].sample__sample_number}}</router-link>-->
             </td>
           </tr>
 
@@ -84,14 +84,14 @@
 
           <tr v-if="analysis[0].date">
             <td>Date</td>
-            <td>{{analysis[0].date}}</td>
+            <td>{{analysis[0].date | formatDate}}</td>
           </tr>
         </table>
 
         <div class="row" v-if="spectraCount > 0">
           <div class="col">
-            <router-link :to="{ path: '/spectrum/' + id }" class="btn btn-primary mb-3">Show spectra ({{spectraCount}})
-            </router-link>
+            <a class="btn btn-primary mb-3" href="javascript:void(0)" @click="openInNewWindow({object: 'spectrum', id: id})">Show spectra ({{spectraCount}})</a>
+            <!--<router-link :to="{ path: '/spectrum/' + id }" class="btn btn-primary mb-3">Show spectra ({{spectraCount}})</router-link>-->
           </div>
         </div>
 
@@ -245,6 +245,13 @@
           }
         }
         this.analysisResultsOrder = orderValue;
+      },
+
+      openInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
       },
 
       resetData() {

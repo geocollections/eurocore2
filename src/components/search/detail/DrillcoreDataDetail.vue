@@ -66,10 +66,12 @@
                         <td>{{entity.depth}}</td>
                         <td>{{entity.end_depth}}</td>
                         <td>
-                          <router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>
+                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: entity.sample_id})">{{entity.sample_number}}</a>
+                          <!--<router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>-->
                         </td>
                         <td>
-                          <router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>
+                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})">{{entity.analysis_id}}</a>
+                          <!--<router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>-->
                         </td>
                         <td v-for="parameter in currentlyShownParameters">
                           <div v-if="entity.analysis_method">
@@ -221,7 +223,7 @@
     created: function () {
       this.getDrillcoreName(this.drillcoreId);
 
-      if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
+        if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
         this.searchParameters = this.$session.get('drillcore_data/' + this.drillcoreId);
       } else {
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
@@ -348,29 +350,18 @@
       },
 
       openData() {
-        //TODO: Add url parameter ?table=data
-        this.$router.replace(
-          {
-            path: '/drillcore_data/' + this.drillcoreId,
-            query:
-              {
-                table: 'data'
-              }
-          });
         this.isChartOpen = false;
       },
 
       openChart() {
-        //TODO: Add url parameter ?table=chart
-        this.$router.replace(
-          {
-            path: '/drillcore_data/' + this.drillcoreId,
-            query:
-              {
-                table: 'chart'
-              }
-          });
         this.isChartOpen = true;
+      },
+
+      openInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
       },
 
       resetData() {

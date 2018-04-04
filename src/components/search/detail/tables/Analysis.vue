@@ -24,16 +24,18 @@
         <tbody>
         <tr v-for="entity in results">
           <td>
-            <router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>
+            <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.id})">{{entity.id}}</a>
+            <!--<router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>-->
           </td>
           <td>
-            <router-link :to="{ path: '/sample/' + entity.sample__id }">{{entity.sample__sample_number}}</router-link>
+            <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: entity.sample__id})">{{entity.sample__sample_number}}</a>
+            <!--<router-link :to="{ path: '/sample/' + entity.sample__id }">{{entity.sample__sample_number}}</router-link>-->
           </td>
           <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
           <td>{{entity.analysis_method__method}}</td>
           <td>{{entity.agent__name}}</td>
-          <td>{{entity.date}}</td>
+          <td>{{entity.date | formatDate}}</td>
         </tr>
         </tbody>
       </table>
@@ -50,6 +52,15 @@
     },
     props: ['results'],
     name: "analysis",
+    methods: {
+
+      openInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+      }
+    }
   }
 </script>
 

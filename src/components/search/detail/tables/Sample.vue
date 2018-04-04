@@ -26,7 +26,8 @@
         <tbody>
         <tr v-for="entity in results">
           <td>
-            <router-link :to="{ path: '/sample/' + entity.id }">{{entity.id}}</router-link>
+            <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: entity.id})">{{entity.id}}</a>
+            <!--<router-link :to="{ path: '/sample/' + entity.id }">{{entity.id}}</router-link>-->
           </td>
           <td>{{entity.sample_number}}</td>
           <td>{{entity.depth}}</td>
@@ -50,6 +51,18 @@
     },
     props: ['results'],
     name: "sample",
+    mounted: function () {
+      console.log(this.$parent)
+    },
+    methods: {
+
+      openInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+      }
+    }
   }
 </script>
 

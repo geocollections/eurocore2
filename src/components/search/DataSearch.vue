@@ -110,19 +110,17 @@
               <tr v-if="response.count === 0 || response.count === undefined"><br></tr> <!-- Adds empty line so title can fit -->
               <tr v-for="entity in response.results">
                 <td>
-                  <!--TODO: fix opening in new window maybe by creating new Vue-->
                   <router-link :to="{ path: '/drillcore/' + entity.drillcore_id }">{{entity.drillcore_name}}</router-link>
                 </td>
                 <td>{{entity.depth}}</td>
                 <td>{{entity.end_depth}}</td>
                 <td>
-                  <!--TODO: fix opening in new window maybe by creating new Vue-->
-                  <router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>
-                  <!--<a href @click="openInNewWindow({object: 'sample', id: entity.sample_id})" >{{entity.sample_number}}</a>-->
+                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: entity.sample_id})">{{entity.sample_number}}</a>
+                  <!--<router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>-->
                 </td>
                 <td>
-                  <router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>
-                  <!--<a href @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})" >{{entity.analysis_id}}</a>-->
+                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id})">{{entity.analysis_id}}</a>
+                  <!--<router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>-->
                 </td>
                 <td>{{entity.analysis_method}}</td>
                 <td v-for="parameterResult in searchParameters.currentlyShownParameters">{{entity[parameterResult.formattedValue]}}</td>
@@ -211,25 +209,6 @@
             { value: 1000, text: 'Show 1000 results per page' }
           ],
           numOfComparableParameters: 1,
-          exportFields: {
-            'Drillcore': 'drillcore_name',
-            'Depth from (m)': 'depth',
-            'Depth to (m)': 'end_depth',
-            'Sample': 'sample_number',
-            'Analysis ID': 'analysis_id',
-            'Method': 'analysis_method',
-            'Au ppm': 'au_ppm',
-            'Co %': 'co_pct',
-            'Co ppm': 'co_ppm',
-            'Cu %': 'cu_pct',
-            'Cu ppm': 'cu_ppm',
-            'Fe %': 'fe_pct',
-            'Ni %': 'ni_pct',
-            'Ni ppm': 'ni_ppm',
-            'S %': 's_pct',
-            'Zn %': 'zn_pct',
-            'Zn ppm': 'zn_ppm',
-          },
         }
       },
       metaInfo: {
@@ -259,6 +238,36 @@
         //   console.log(this.searchParameters.comparableParameterValue);
         //   console.log(n + ' ' + o)
         // },
+      },
+      created: function () {
+        //TODO: FOR DEMO START
+        if (this.$session.exists() && this.$session.get('userData') != null) {
+          console.log(this)
+          this.isAuthenticated = true;
+        } else {
+          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'},{id: 18, name: 'Kylylahti KU-262'} ];
+        }
+        //TODO: FOR DEMO END
+
+
+        this.populateDrillcoreNames();
+        this.populateAnalyticalMethods();
+        this.populateShowParameters();
+
+        // TODO: Params should come from URL if exists
+        // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
+        if (this.$session.exists() && this.$session.get('dataSearch') != null) {
+          if (this.isAuthenticated) { // TODO: DEMO ONLYlo
+            this.searchParameters = this.$session.get('dataSearch');
+          }
+        } else {
+          this.searchEntities(this.searchParameters.watched)
+        }
+      },
+      beforeDestroy: function () {
+        if (this.isAuthenticated) { //TODO: DEMO ONLY
+          this.$session.set('dataSearch', this.searchParameters);
+        }
       },
       methods: {
         searchEntities(params) {
@@ -488,6 +497,13 @@
           }
         },
 
+        openInNewWindow(params) {
+          if (typeof (params.width) === 'undefined') {
+            params.width = 800;
+          }
+          window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+        },
+
         resetSearchParameters() {
           console.log(this.searchParameters);
           this.searchParameters =
@@ -519,41 +535,7 @@
           console.log(this.searchParameters);
         },
 
-        openInNewWindow(params) {
-          let width = 600;
-          window.open('#/' + params.object + '/' + params.id, '', 'width=' + width + ',height=750,scrollbars,resizable');
-        }
       },
-      created: function () {
-        //TODO: FOR DEMO START
-        if (this.$session.exists() && this.$session.get('userData') != null) {
-          console.log(this)
-          this.isAuthenticated = true;
-        } else {
-          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'},{id: 18, name: 'Kylylahti KU-262'} ];
-        }
-        //TODO: FOR DEMO END
-
-
-        this.populateDrillcoreNames();
-        this.populateAnalyticalMethods();
-        this.populateShowParameters();
-
-        // TODO: Params should come from URL if exists
-        // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
-        if (this.$session.exists() && this.$session.get('dataSearch') != null) {
-          if (this.isAuthenticated) { // TODO: DEMO ONLYlo
-            this.searchParameters = this.$session.get('dataSearch');
-          }
-        } else {
-          this.searchEntities(this.searchParameters.watched)
-        }
-      },
-      beforeDestroy: function () {
-        if (this.isAuthenticated) { //TODO: DEMO ONLY
-          this.$session.set('dataSearch', this.searchParameters);
-        }
-      }
     }
 </script>
 

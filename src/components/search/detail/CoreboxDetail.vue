@@ -40,12 +40,20 @@
           </tr>
         </table>
       </div>
+
+      <div class="col-6">
+        <!--TODO: Wet and dry box clickable previews here-->
+      </div>
+
     </div>
 
 
     <div class="row mt-2 mb-3" v-for="image in corebox">
       <div class="col">
-        <a :href="'https://eurocore.rocks/' + image.image__url" target="_blank">
+        <!--TODO: Show only 1 which is choosed in preview-->
+
+        <!--<a :href="'https://eurocore.rocks/' + image.image__url" :title="'https://eurocore.rocks/' + image.image__url" target="_blank">-->
+        <a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks' + image.image__url })" :title="'https://eurocore.rocks' + image.image__url">
           <img width="100%" :src="buildCoreboxUrl('2000', image.image__url)" />
         </a>
       </div>
@@ -151,6 +159,7 @@
       }
     },
     methods: {
+
       getCoreboxById(id) {
         this.$http.jsonp(this.API_URL + id, {
           before(request) {
@@ -252,6 +261,17 @@
         this.$router.push({ path: '/corebox/' + (parseInt(id) + 1) })
       },
 
+      openChart() {
+        this.isChartOpen = true;
+      },
+
+      openUrlInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(params.url,'', 'width=' + params.width + ', height=750');
+      },
+
       resetData() {
         this.showLabel = true;
         this.corebox = null;
@@ -264,10 +284,6 @@
           reference: { count: 0, results: [] },
           attachment_link: { count: 0, results: [] },
         }
-      },
-
-      openChart() {
-        this.isChartOpen = true;
       },
 
     }

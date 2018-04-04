@@ -83,7 +83,8 @@
           <tbody>
           <tr v-for="entity in analysis">
             <td>
-              <router-link :to="{ path:  '/analysis/' + entity.id}">{{entity.id}}</router-link>
+              <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.id})">{{entity.id}}</a>
+              <!--<router-link :to="{ path:  '/analysis/' + entity.id}">{{entity.id}}</router-link>-->
             </td>
             <td>{{entity.analysis_method__method}}</td>
             <td>{{entity.agent__name}}</td>
@@ -167,6 +168,13 @@
             console.log(errResponse);
             console.log(errResponse.status);
           })
+        },
+
+        openInNewWindow(params) {
+          if (typeof (params.width) === 'undefined') {
+            params.width = 800;
+          }
+          window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
         },
 
         resetData() {

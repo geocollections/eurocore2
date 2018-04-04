@@ -24,16 +24,20 @@
         <tbody>
         <tr v-for="entity in results">
           <td>
-            <router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>
+            <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.id})">{{entity.id}}</a>
+            <!--<router-link :to="{ path: '/analysis/' + entity.id }">{{entity.id}}</router-link>-->
           </td>
           <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
           <td>{{entity.instrument__instrument}}</td>
           <td>{{entity.agent__name}}</td>
           <td>{{entity.date}}</td>
-          <th>
-            <a href="http://eurocore.rocks/3D" target="_blank">Show 3D data</a>
-          </th>
+          <td>
+            <b>
+              <a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks/3D'})">Show 3D data</a>
+              <!--<a href="http://eurocore.rocks/3D" target="_blank">Show 3D data</a>-->
+            </b>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -50,6 +54,22 @@
     },
     props: ['results'],
     name: "ct-scans",
+    methods: {
+
+      openInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+      },
+
+      openUrlInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(params.url,'', 'width=' + params.width + ', height=750');
+      }
+    }
   }
 </script>
 

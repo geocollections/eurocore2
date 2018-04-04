@@ -55,6 +55,7 @@
     },
     created: function () {
       setTimeout(function() { this.showLabel = false }.bind(this), 2000);
+      window.addEventListener('resize', this.onResize);
       this.getSpectrumResultsById(this.analysisId);
     },
     updated: function () {
@@ -62,7 +63,16 @@
         this.filterSpectrumData(this.spectrumData.results);
       }
     },
+    beforeDestroy: function () {
+      window.removeEventListener('resize', this.onResize);
+    },
     methods: {
+
+      onResize(event) {
+        event.preventDefault();
+        Plotly.Plots.resize(this.$refs.spectrumGraph);
+      },
+
       getSpectrumResultsById(id) {
         this.$http.jsonp('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
           console.log(response);
@@ -165,6 +175,7 @@
 
         Plotly.newPlot(gd, data, layout,
           {
+            scrollZoom: true,
             modeBarButtonsToRemove: ['toImage'],
             modeBarButtonsToAdd: [{
               name: 'Download plot as a SVG',
@@ -176,9 +187,6 @@
             displaylogo: false
           });
 
-        window.onresize = function() {
-          Plotly.Plots.resize(gd);
-        };
       }
     }
   }
