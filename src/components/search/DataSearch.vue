@@ -455,15 +455,19 @@
             url = url.slice(0, -1);
             url += '&';
 
-            if (currentlyShownParams.length > 1) {
-              url += 'analysis__analysisresult__unit__unit__in='
-            } else if (currentlyShownParams.length > 0) {
-              url += 'analysis__analysisresult__unit__unit='
-            }
-            Object.keys(currentlyShownParams).forEach(function (key) {
-              console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
-              url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
-            });
+            // if (currentlyShownParams.length > 1) {
+            //   url += 'analysis__analysisresult__unit__unit__in='
+            // } else if (currentlyShownParams.length > 0) {
+            //   url += 'analysis__analysisresult__unit__unit='
+            // }
+            // Object.keys(currentlyShownParams).forEach(function (key) {
+            //   console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
+            //   if (currentlyShownParams[key].analysis__analysisresult__unit__unit === '%' && !url.includes('%')) {
+            //     url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
+            //   } else if (currentlyShownParams[key].analysis__analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
+            //     url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
+            //   }
+            // });
           }
 
           url = url.slice(0, -1);
