@@ -185,19 +185,20 @@
               paginateBy: 100,
               orderBy: 'id',
             },
-            currentlyShownParameters: [
-              { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
-              { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
-              { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-              { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-              { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
-              { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-            ],
+            // currentlyShownParameters: [
+            //   { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
+            //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
+            //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+            //   { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+            //   { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
+            //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+            // ],
+            currentlyShownParameters: [],
           },
           response: {
             count: 0,
@@ -404,7 +405,7 @@
           return url;
         },
 
-        buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods) {
+        buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods, parameters) {
           let url = this.API_URL + 'drillcore/?';
           Object.keys(params).forEach(function (key) {
             // console.log(key + ' ' + params[key]);
@@ -439,12 +440,39 @@
             }
           });
 
+          //TODO: currently shown parameters url building
+          if (parameters === true) {
+            if (currentlyShownParams.length > 1) {
+              url += 'analysis__analysisresult__parameter__parameter__in='
+            } else if (currentlyShownParams.length > 0) {
+              url += 'analysis__analysisresult__parameter__parameter='
+            }
+            Object.keys(currentlyShownParams).forEach(function (key) {
+              console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
+              url += currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ','
+            });
+
+            url = url.slice(0, -1);
+            url += '&';
+
+            if (currentlyShownParams.length > 1) {
+              url += 'analysis__analysisresult__unit__unit__in='
+            } else if (currentlyShownParams.length > 0) {
+              url += 'analysis__analysisresult__unit__unit='
+            }
+            Object.keys(currentlyShownParams).forEach(function (key) {
+              console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
+              url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
+            });
+          }
+
+          url = url.slice(0, -1);
+          url += '&';
+
           if (url.slice(-1) === '?' || url.slice(-1) === '&') {
             url = url.slice(0, -1);
           }
 
-          //TODO: currently shown parameters url building
-          console.log(currentlyShownParams)
           return url
 
         },
@@ -456,7 +484,7 @@
         // TODO: Make these 3 run after each change to be dependent on each other + that needs url builder methods.
         populateDrillcoreNames(params, currentlyShownParams) {
           if (this.isAuthenticated) { // TODO: DEMO
-            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true);
+            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
             console.log(url)
 
             // this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
@@ -474,7 +502,7 @@
               console.log(errResponse);
             })
           } else {
-            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true);
+            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
             console.log(url)
             this.$http.jsonp(this.API_URL + 'drillcore' , {params: {id__in: '17,18', format: 'jsonp', fields: 'id,name'}}).then(response => {
               console.log(response);
@@ -493,15 +521,22 @@
         },
 
         populateAnalyticalMethods(params, currentlyShownParams) {
-          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false);
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true);
           console.log(url);
 
-          this.$http.jsonp(url , {params: {analysis__analysis_method__method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
+          this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
           // this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
-                this.analyticalMethods = response.body.results;
+                const allMethods = response.body.results;
+                this.analyticalMethods = [];
+                for (const method in allMethods) {
+                  if (allMethods[method].analysis__analysis_method__method !== null) {
+                    this.analyticalMethods.push(allMethods[method]);
+                  }
+                }
+                // this.analyticalMethods = response.body.results;
               } else {
                 this.analyticalMethods = [];
               }
@@ -513,7 +548,7 @@
         },
 
         populateShowParameters(params, currentlyShownParams) {
-          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true);
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false);
           console.log(url)
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysis__analysisresult__parameter__parameter', fields: 'analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit'}}).then(response => {
             console.log(response);
@@ -531,6 +566,8 @@
                 for (const i in this.showParameters) {
                   this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
                 }
+              } else {
+                this.showParameters = [];
               }
             }
             // console.log(this.showParameters)
@@ -628,19 +665,20 @@
                 paginateBy: 100,
                 orderBy: 'id',
               },
-              currentlyShownParameters: [
-                { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
-                { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
-                { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-                { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-                { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
-                { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-              ],
+              // currentlyShownParameters: [
+              //   { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
+              //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
+              //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+              //   { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+              //   { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
+              //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+              // ],
+              currentlyShownParameters: [],
             };
           console.log(this.searchParameters);
         },
