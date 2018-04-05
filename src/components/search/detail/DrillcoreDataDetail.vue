@@ -353,6 +353,7 @@
             orderValue = orderValue.substring(1);
           }
         }
+        this.searchParameters.page = 1;
         this.searchParameters.orderBy = orderValue;
       },
 

@@ -487,6 +487,7 @@
               orderValue = orderValue.substring(1);
             }
           }
+          this.searchParameters.watched.page = 1;
           this.searchParameters.watched.orderBy = orderValue;
         },
 
