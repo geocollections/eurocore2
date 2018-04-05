@@ -16,6 +16,7 @@
             :options="drillcoreNames"
             :multiple="true"
             track-by="name"
+            :close-on-select="false"
             label="name"></vue-multiselect>
         </div>
 
@@ -26,6 +27,7 @@
             :options="analyticalMethods"
             :multiple="true"
             track-by="analysis_method"
+            :close-on-select="false"
             label="analysis_method"></vue-multiselect>
         </div>
 
@@ -36,6 +38,7 @@
             :options="showParameters"
             :multiple="true"
             track-by="formattedValue"
+            :close-on-select="false"
             :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
 
@@ -231,7 +234,7 @@
           handler: function () {
             this.isSearching = true;
             this.searchEntities(this.searchParameters.watched);
-            },
+          },
           deep: true
         },
         'searchParameters.currentlyShownParameters': function () {
@@ -239,9 +242,6 @@
           console.log(this.showParameters)
           console.log('higgrgrgr')
         },
-        'response.results': function () {
-          this.isSearching = false;
-        }
       },
       created: function () {
         this.isSearching = true;
@@ -290,6 +290,7 @@
               if (response.status === 200) {
                 this.response.count = response.body.count;
                 this.response.results = response.body.results;
+                this.isSearching = false;
               }
             }, errResponse => {
               console.log('*** ERROR ***');
@@ -306,6 +307,7 @@
                 if (response.status === 200) {
                   this.response.count = response.body.count;
                   this.response.results = response.body.results;
+                  this.isSearching = false;
                 }
               }, errResponse => {
                 console.log('*** ERROR ***');
