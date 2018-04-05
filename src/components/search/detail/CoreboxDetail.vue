@@ -30,7 +30,7 @@
           </tr>
 
           <tr>
-            <td>Depth form (m)</td>
+            <td>Depth from (m)</td>
             <td>{{corebox[0].start_depth}}</td>
           </tr>
 

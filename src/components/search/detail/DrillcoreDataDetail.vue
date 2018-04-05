@@ -56,7 +56,7 @@
                         <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
                         <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis</span></th>
                         <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
-                        <th v-for="parameter in currentlyShownParameters">{{parameter}}</th>
+                        <th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>
                       </tr>
                     </thead>
 
@@ -436,6 +436,10 @@
   .error-text {
     font-size: 1.5rem;
     padding: 10% 0;
+  }
+
+  span {
+    white-space: nowrap;
   }
 
 </style>

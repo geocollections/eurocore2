@@ -102,7 +102,7 @@
             <thead class="thead-light">
               <tr class="th-sort">
                 <th><span @click="changeOrder('drillcore_name')"><font-awesome-icon :icon="icon"/> Drillcore</span></th>
-                <th><span @click="changeOrder('depth')"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
+                <th><span @click="changeOrder('depth')" style="display: inline-block"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
                 <th><span @click="changeOrder('end_depth')"><font-awesome-icon :icon="icon"/> Depth to (m)</span></th>
                 <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
                 <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis ID</span></th>
@@ -586,12 +586,17 @@
   }
 
   .loading-overlay {
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.5);
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    /*background: rgba(255, 255, 255, 0.5);*/
+    /*width: 100%;*/
+    /*padding: 20% 0;*/
+  }
+
+  span {
+    white-space: nowrap;
   }
 </style>
