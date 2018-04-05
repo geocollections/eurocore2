@@ -324,6 +324,7 @@
             } else {
               this.response.count = 0;
               this.response.results = [];
+              this.isSearching = false;
             }
           }
           //TODO: DEMO
@@ -440,7 +441,6 @@
             }
           });
 
-          //TODO: currently shown parameters url building
           if (parameters === true) {
             if (currentlyShownParams.length > 1) {
               url += 'analysis__analysisresult__parameter__parameter__in='
@@ -481,7 +481,6 @@
         /***************************************
          ***** MULTISELECT POPULATE START ******
          ***************************************/
-        // TODO: Make these 3 run after each change to be dependent on each other + that needs url builder methods.
         populateDrillcoreNames(params, currentlyShownParams) {
           if (this.isAuthenticated) { // TODO: DEMO
             let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
