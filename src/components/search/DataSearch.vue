@@ -1,5 +1,8 @@
 <template>
   <div>
+
+    <spinner v-show="isSearching" class="loading-overlay" size="huge" message="Searching..."></spinner>
+
     <div class="row">
       <div class="col">
         <h2>Data Search</h2>
@@ -26,9 +29,9 @@
             v-model="searchParameters.watched.analyticalMethods"
             :options="analyticalMethods"
             :multiple="true"
-            track-by="analysis_method"
+            track-by="analysis__analysis_method__method"
             :close-on-select="false"
-            label="analysis_method"></vue-multiselect>
+            label="analysis__analysis_method__method"></vue-multiselect>
         </div>
 
         <div class="form-group">
@@ -46,7 +49,7 @@
         <div class="form-group" v-for="(item, key) in numOfComparableParameters">
           <div class="input-group">
             <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
-              <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.parameter__parameter}} {{parameter.unit__unit}}</option>
+              <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysis__analysisresult__parameter__parameter}} {{parameter.analysis__analysisresult__unit__unit}}</option>
             </b-form-select>
             <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
             <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number"></b-form-input>
@@ -94,8 +97,7 @@
     </div>
 
 
-    <spinner v-show="isSearching" class="loading-overlay" size="huge" message="Searching..."></spinner>
-    <div class="row">
+    <div class="row" v-show="response.count > 0">
       <div class="col">
         <div class="table-responsive">
           <table id="table-search" class="table table-hover table-bordered ">
@@ -107,7 +109,7 @@
                 <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
                 <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis ID</span></th>
                 <th><span @click="changeOrder('analysis_method')"><font-awesome-icon :icon="icon"/> Method</span></th>
-                <th v-for="parameter in searchParameters.currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)"><font-awesome-icon :icon="icon"/> {{parameter.parameter__parameter + ' ' + parameter.unit__unit}}</span></th>
+                <th v-for="parameter in searchParameters.currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)"><font-awesome-icon :icon="icon"/> {{parameter.analysis__analysisresult__parameter__parameter + ' ' + parameter.analysis__analysisresult__unit__unit}}</span></th>
               </tr>
             </thead>
             <tbody>
@@ -184,17 +186,17 @@
               orderBy: 'id',
             },
             currentlyShownParameters: [
-              { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
-              { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
-              { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
-              { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
-              { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-              { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
-              { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
-              { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-              { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
-              { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
-              { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+              { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
+              { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
+              { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+              { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+              { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
+              { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
             ],
           },
           response: {
@@ -237,17 +239,23 @@
           },
           deep: true
         },
-        'searchParameters.currentlyShownParameters': function () {
-          console.log(this.searchParameters.currentlyShownParameters)
-          console.log(this.showParameters)
-          console.log('higgrgrgr')
+        'searchParameters.watched.drillcoreNames': function(newVal, oldVal) {
+          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+        },
+        'searchParameters.watched.analyticalMethods': function(newVal, oldVal) {
+          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+        },
+        'searchParameters.currentlyShownParameters': function (newVal, oldVal) {
+          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
         },
       },
       created: function () {
         this.isSearching = true;
         //TODO: FOR DEMO START
         if (this.$session.exists() && this.$session.get('userData') != null) {
-          console.log(this)
           this.isAuthenticated = true;
         } else {
           this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'},{id: 18, name: 'Kylylahti KU-262'} ];
@@ -255,9 +263,7 @@
         //TODO: FOR DEMO END
 
 
-        this.populateDrillcoreNames();
-        this.populateAnalyticalMethods();
-        this.populateShowParameters();
+        this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
 
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
@@ -338,12 +344,12 @@
         },
 
         buildSearchUrl(params) {
-          let url = this.API_URL + '/analysis_summary/?';
+          let url = this.API_URL + 'analysis_summary/?';
           Object.keys(params).forEach(function (key) {
-            console.log(key + ' ' + params[key]);
+            // console.log(key + ' ' + params[key]);
             // TODO: Should optimise this block | START
             if (key === 'drillcoreNames' && params[key].length > 0) {
-              console.log('DRILLCORE');
+              // console.log('DRILLCORE');
               if (params[key].length > 1) {
                 url += 'drillcore_id__in='; // MULTI
               } else {
@@ -360,7 +366,7 @@
             // TODO: Should optimise this block | END
 
             if (key === 'analyticalMethods' && params[key].length > 0) {
-              console.log('ANALYTICAL');
+              // console.log('ANALYTICAL');
               if (params[key].length > 1) {
                 url += 'analysis_method__in=';
               } else {
@@ -368,7 +374,7 @@
               }
 
               for (const analysis in params[key]) {
-                url += params[key][analysis].analysis_method + ',';
+                url += params[key][analysis].analysis__analysis_method__method + ',';
               }
 
               url = url.slice(0, -1);
@@ -376,8 +382,8 @@
             }
 
             if (key === 'comparableParameter') {
-              console.log('COMPARABLE');
-              console.log(params[key]);
+              // console.log('COMPARABLE');
+              // console.log(params[key]);
               for (const i in params[key]) {
                 if (params['comparableParameter'][i].length > 0 && params['comparableParameterValue'][i].length > 0) {
                   url += params['comparableParameter'][i] + '__' + params['comparableParameterOperator'][i] + '=' + params['comparableParameterValue'][i] + '&'
@@ -393,18 +399,74 @@
           //   url = url.slice(0, -1);
           // }
 
+          // console.log(url)
+
           return url;
         },
 
+        buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods) {
+          let url = this.API_URL + 'drillcore/?';
+          Object.keys(params).forEach(function (key) {
+            // console.log(key + ' ' + params[key]);
+            if (key === 'drillcoreNames' && params[key].length > 0 && drillcoreNames === true) {
+              if (params[key].length > 1) {
+                url += 'id__in='; // MULTI
+              } else {
+                url += 'id='; // SINGLE
+              }
 
+              for (const drillcore in params[key]) {
+                url += params[key][drillcore].id + ',';
+              }
+
+              url = url.slice(0, -1); // removes comma
+              url += '&';
+            }
+            if (key === 'analyticalMethods' && params[key].length > 0 && analyticalMethods === true) {
+              // console.log('ANALYTICAL');
+              if (params[key].length > 1) {
+                url += 'analysis__analysis_method__method__in=';
+              } else {
+                url += 'analysis__analysis_method__method=';
+              }
+
+              for (const analysis in params[key]) {
+                url += params[key][analysis].analysis__analysis_method__method + ',';
+              }
+
+              url = url.slice(0, -1);
+              url += '&';
+            }
+          });
+
+          if (url.slice(-1) === '?' || url.slice(-1) === '&') {
+            url = url.slice(0, -1);
+          }
+
+          //TODO: currently shown parameters url building
+          console.log(currentlyShownParams)
+          return url
+
+        },
+
+
+        /***************************************
+         ***** MULTISELECT POPULATE START ******
+         ***************************************/
         // TODO: Make these 3 run after each change to be dependent on each other + that needs url builder methods.
-        populateDrillcoreNames() {
+        populateDrillcoreNames(params, currentlyShownParams) {
           if (this.isAuthenticated) { // TODO: DEMO
-            this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
+            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true);
+            console.log(url)
+
+            // this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
+            this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'id,name'}}).then(response => {
               console.log(response);
               if (response.status === 200) {
                 if (response.body.count > 0) {
                   this.drillcoreNames = response.body.results;
+                } else {
+                  this.drillcoreNames = [];
                 }
               }
             }, errResponse => {
@@ -412,11 +474,15 @@
               console.log(errResponse);
             })
           } else {
+            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true);
+            console.log(url)
             this.$http.jsonp(this.API_URL + 'drillcore' , {params: {id__in: '17,18', format: 'jsonp', fields: 'id,name'}}).then(response => {
               console.log(response);
               if (response.status === 200) {
                 if (response.body.count > 0) {
                   this.drillcoreNames = response.body.results;
+                } else {
+                  this.drillcoreNames = [];
                 }
               }
             }, errResponse => {
@@ -426,12 +492,18 @@
           }
         },
 
-        populateAnalyticalMethods() {
-          this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
+        populateAnalyticalMethods(params, currentlyShownParams) {
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false);
+          console.log(url);
+
+          this.$http.jsonp(url , {params: {analysis__analysis_method__method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
+          // this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
                 this.analyticalMethods = response.body.results;
+              } else {
+                this.analyticalMethods = [];
               }
             }
           }, errResponse => {
@@ -440,31 +512,50 @@
           })
         },
 
-        populateShowParameters() {
-          this.$http.jsonp(this.API_URL + 'analysis_result' , {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit'}}).then(response => {
+        populateShowParameters(params, currentlyShownParams) {
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true);
+          console.log(url)
+          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysis__analysisresult__parameter__parameter', fields: 'analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
-                this.showParameters = response.body.results;
-                console.log(this.showParameters)
+                const allParameters = response.body.results;
+                this.showParameters = [];
+                for (const param in allParameters) {
+                  if (allParameters[param].analysis__analysisresult__parameter__parameter !== null && allParameters[param].analysis__analysisresult__unit__unit !== null) {
+                    this.showParameters.push(allParameters[param]);
+                  }
+                }
+                // this.showParameters = response.body.results;
+                // console.log(this.showParameters)
                 for (const i in this.showParameters) {
                   this.showParameters[i].formattedValue = this.getCorrectParameterFormat(this.showParameters[i]);
                 }
               }
             }
-            console.log(this.showParameters)
+            // console.log(this.showParameters)
           }, errResponse => {
             console.log('*** ERROR ***');
             console.log(errResponse);
           })
         },
 
+        populateAll(params, currentlyShownParams) {
+          this.populateAnalyticalMethods(params, currentlyShownParams);
+          this.populateShowParameters(params, currentlyShownParams);
+          this.populateDrillcoreNames(params, currentlyShownParams);
+        },
+        /***************************************
+         *****  MULTISELECT POPULATE END  ******
+         ***************************************/
+
+
         getCorrectParameterFormat(param) {
           // console.log(param);
           if (param !== 'undefined') {
             let unformattedParam = param;
-            let firstHalf = unformattedParam.parameter__parameter.toLowerCase();
-            let secondHalf = unformattedParam.unit__unit.toLowerCase();
+            let firstHalf = unformattedParam.analysis__analysisresult__parameter__parameter.toLowerCase();
+            let secondHalf = unformattedParam.analysis__analysisresult__unit__unit.toLowerCase();
             if (secondHalf === '%') {
               secondHalf = 'pct';
             }
@@ -474,10 +565,9 @@
         },
 
         customLabelForParameters(option) {
-          return `${option.parameter__parameter} ${option.unit__unit}`
+          return `${option.analysis__analysisresult__parameter__parameter} ${option.analysis__analysisresult__unit__unit}`
         },
 
-        // TODO: Make order changing responsive + order should be object like sortField: { order: 'fields', direction: 'ASC' }
         changeOrder(orderValue) {
           orderValue = orderValue.toLowerCase();
           if (this.searchParameters.watched.orderBy === orderValue) {
@@ -519,7 +609,7 @@
         addFloatingTableHeaders() {
           $('#table-search').floatThead({
             position: 'absolute',
-            zIndex: 1090,
+            zIndex: 1035,
             top: 98 // headers height
           });
         },
@@ -539,17 +629,17 @@
                 orderBy: 'id',
               },
               currentlyShownParameters: [
-                { parameter__parameter: 'Au', unit__unit: 'ppm', formattedValue: 'au_ppm' },
-                { parameter__parameter: 'Co', unit__unit: '%', formattedValue: 'co_pct' },
-                { parameter__parameter: 'Co', unit__unit: 'ppm', formattedValue: 'co_ppm' },
-                { parameter__parameter: 'Cu', unit__unit: '%', formattedValue: 'cu_pct' },
-                { parameter__parameter: 'Cu', unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-                { parameter__parameter: 'Fe', unit__unit: '%', formattedValue: 'fe_pct' },
-                { parameter__parameter: 'Ni', unit__unit: '%', formattedValue: 'ni_pct' },
-                { parameter__parameter: 'Ni', unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-                { parameter__parameter: 'S', unit__unit: '%', formattedValue: 's_pct' },
-                { parameter__parameter: 'Zn', unit__unit: '%', formattedValue: 'zn_pct' },
-                { parameter__parameter: 'Zn', unit__unit: 'ppm', formattedValue: 'zn_ppm' },
+                { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
+                { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
+                { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
+                { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
+                { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
+                { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
               ],
             };
           console.log(this.searchParameters);
@@ -570,20 +660,10 @@
 
   .th-sort > th > span:hover {
     color: #000;
-    /*opacity: 0.6;*/
   }
 
   .button-right {
     float: right;
-  }
-
-  .export-buttons {
-    text-align: right;
-    margin-bottom: 1rem;
-  }
-
-  .hide-column {
-    display: none;
   }
 
   .loading-overlay {
@@ -591,10 +671,10 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1100;
-    /*background: rgba(255, 255, 255, 0.5);*/
-    /*width: 100%;*/
-    /*padding: 20% 0;*/
+    z-index: 1025;
+    background: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    padding: 50% 0;
   }
 
   span {
