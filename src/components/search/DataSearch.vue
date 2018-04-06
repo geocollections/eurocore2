@@ -17,6 +17,7 @@
           <vue-multiselect
             v-model="searchParameters.watched.drillcoreNames"
             :options="drillcoreNames"
+            placeholder="Select drillcore"
             :multiple="true"
             track-by="name"
             :close-on-select="false"
@@ -28,6 +29,7 @@
           <vue-multiselect
             v-model="searchParameters.watched.analyticalMethods"
             :options="analyticalMethods"
+            placeholder="select method"
             :multiple="true"
             track-by="analysis__analysis_method__method"
             :close-on-select="false"
@@ -39,24 +41,51 @@
           <vue-multiselect
             v-model="searchParameters.currentlyShownParameters"
             :options="showParameters"
+            placeholder="select parameter"
             :multiple="true"
             track-by="formattedValue"
             :close-on-select="false"
             :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
 
+        <div class="form-group">
+          <label>Dataset</label>
+          <vue-multiselect
+            v-model="searchParameters.watched.dataset"
+            :options="dataset"
+            placeholder="select dataset"
+            :multiple="true"
+            track-by="name"
+            :close-on-select="false"
+            :disabled="true"
+            label="name"></vue-multiselect>
+        </div>
+
         <label>Parameter filter</label>
-        <div class="form-group" v-for="(item, key) in numOfComparableParameters">
-          <div class="input-group">
-            <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
-              <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysis__analysisresult__parameter__parameter}} {{parameter.analysis__analysisresult__unit__unit}}</option>
-            </b-form-select>
-            <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
-            <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number"></b-form-input>
-            <button class="btn btn-danger ml-2" :disabled="numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+        <div class="row mb-3">
+          <div class="col">
+            <button class="btn btn-outline-primary" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
           </div>
         </div>
-        <button class="btn btn-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
+
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in numOfComparableParameters">
+            <div class="input-group">
+              <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
+                <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysis__analysisresult__parameter__parameter}} {{parameter.analysis__analysisresult__unit__unit}}</option>
+              </b-form-select>
+              <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
+              <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
+              <button class="btn btn-outline-danger ml-2" :disabled="numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <button class="btn btn-outline-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -178,6 +207,7 @@
               comparableParameter: [''],
               comparableParameterOperator: ['gt'],
               comparableParameterValue: [''],
+              dataset: [],
               page: 1,
               paginateBy: 100,
               orderBy: 'id',
@@ -204,6 +234,7 @@
           drillcoreNames: [],
           analyticalMethods: [],
           showParameters: [],
+          dataset: [],
           parameterOptions: [
             { value: 'iexact', text: 'Equals' },
             { value: 'gt', text: 'Greater than' },
