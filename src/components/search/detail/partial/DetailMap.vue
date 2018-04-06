@@ -25,6 +25,7 @@
   import SourceStamen from 'ol/source/stamen';
   import TileWMS from 'ol/source/tilewms';
   import ScaleLine from 'ol/control/scaleline';
+  import Attribution from 'ol/control/attribution';
   import 'ol/ol.css'
   import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
@@ -92,7 +93,8 @@
               url: 'http://gis.geokogud.info/geoserver/wms',
               params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
               serverType: 'geoserver',
-              projection: ''
+              projection: '',
+              attributions: 'Bedrock age'
             }),
             opacity: 0.5,
           }),
@@ -103,7 +105,8 @@
             source: new TileWMS({
               url: 'http://gtkdata.gtk.fi/arcgis/services/Inspire/GTK_Bedrock_and_Superficial_Geology/MapServer/WMSServer?',
               params: { 'LAYERS': 'FI_GTK_1M_Bedrock_Lithology', 'TILED': true },
-              projection: ''
+              projection: '',
+              attributions: 'Rocks of Finland'
             }),
             opacity: 0.5,
           }),

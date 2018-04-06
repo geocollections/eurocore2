@@ -170,9 +170,6 @@
       data() {
         return {
           API_URL: 'https://api.eurocore.rocks/',
-          //TODO: FOR DEMO START
-          isAuthenticated: false,
-          //TODO: FOR DEMO END
           isSearching: false,
           searchParameters: {
             watched: {
@@ -224,14 +221,17 @@
           numOfComparableParameters: 1,
         }
       },
+
       metaInfo: {
         title: 'EUROCORE Data Portal: Data Search'
       },
+
       computed: {
         icon() {
           return faSort;
         }
       },
+
       watch: {
         'searchParameters.watched': {
           handler: function () {
@@ -253,96 +253,45 @@
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
         },
       },
+
       created: function () {
         this.isSearching = true;
-        //TODO: FOR DEMO START
-        if (this.$session.exists() && this.$session.get('userData') != null) {
-          this.isAuthenticated = true;
-        } else {
-          this.searchParameters.watched.drillcoreNames = [ {id: 17, name: 'Kylylahti KU-223'},{id: 18, name: 'Kylylahti KU-262'} ];
-        }
-        //TODO: FOR DEMO END
-
 
         this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
 
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
-          if (this.isAuthenticated) { // TODO: DEMO ONLYlo
-            this.searchParameters = this.$session.get('dataSearch');
-          }
+          this.searchParameters = this.$session.get('dataSearch');
         } else {
           this.searchEntities(this.searchParameters.watched)
         }
       },
+
       updated: function () {
         $('#table-search').floatThead('reflow');
         this.addFloatingTableHeaders();
       },
+
       beforeDestroy: function () {
-        if (this.isAuthenticated) { //TODO: DEMO ONLY
-          this.$session.set('dataSearch', this.searchParameters);
-        }
+        this.$session.set('dataSearch', this.searchParameters);
       },
+
       methods: {
         searchEntities(params) {
-          //TODO: DEMO
-          if (this.searchParameters.watched.drillcoreNames.length > 0) {
-            console.log(params);
-            let url = this.buildSearchUrl(params);
+          console.log(params);
+          let url = this.buildSearchUrl(params);
 
-            this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
-              console.log(response);
-              if (response.status === 200) {
-                this.response.count = response.body.count;
-                this.response.results = response.body.results;
-                this.isSearching = false;
-              }
-            }, errResponse => {
-              console.log('*** ERROR ***');
-              console.log(errResponse);
-              // this.$router.push('/404/')
-            })
-          } else if (this.searchParameters.watched.drillcoreNames.length === 0 ) {
-            if (this.isAuthenticated) {
-              console.log(params);
-              let url = this.buildSearchUrl(params);
-
-              this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
-                console.log(response);
-                if (response.status === 200) {
-                  this.response.count = response.body.count;
-                  this.response.results = response.body.results;
-                  this.isSearching = false;
-                }
-              }, errResponse => {
-                console.log('*** ERROR ***');
-                console.log(errResponse);
-                // this.$router.push('/404/')
-              })
-            } else {
-              this.response.count = 0;
-              this.response.results = [];
+          this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+            console.log(response);
+            if (response.status === 200) {
+              this.response.count = response.body.count;
+              this.response.results = response.body.results;
               this.isSearching = false;
             }
-          }
-          //TODO: DEMO
-
-          // console.log(params);
-          // let url = this.buildSearchUrl(params);
-          //
-          // this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
-          //   console.log(response);
-          //   if (response.status === 200) {
-          //     this.response.count = response.body.count;
-          //     this.response.results = response.body.results;
-          //   }
-          // }, errResponse => {
-          //   console.log('*** ERROR ***');
-          //   console.log(errResponse);
-          //   // this.$router.push('/404/')
-          // })
+          }, errResponse => {
+            console.log('ERROR: ' + JSON.stringify(errResponse));
+          })
         },
 
         buildSearchUrl(params) {
@@ -486,41 +435,21 @@
          ***** MULTISELECT POPULATE START ******
          ***************************************/
         populateDrillcoreNames(params, currentlyShownParams) {
-          if (this.isAuthenticated) { // TODO: DEMO
-            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
-            console.log(url)
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
+          console.log(url);
 
-            // this.$http.jsonp(this.API_URL + 'drillcore' , {params: {format: 'jsonp', fields: 'id,name'}}).then(response => {
-            this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'id,name'}}).then(response => {
-              console.log(response);
-              if (response.status === 200) {
-                if (response.body.count > 0) {
-                  this.drillcoreNames = response.body.results;
-                } else {
-                  this.drillcoreNames = [];
-                }
+          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'id,name'}}).then(response => {
+            console.log(response);
+            if (response.status === 200) {
+              if (response.body.count > 0) {
+                this.drillcoreNames = response.body.results;
+              } else {
+                this.drillcoreNames = [];
               }
-            }, errResponse => {
-              console.log('*** ERROR ***');
-              console.log(errResponse);
-            })
-          } else {
-            let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
-            console.log(url)
-            this.$http.jsonp(this.API_URL + 'drillcore' , {params: {id__in: '17,18', format: 'jsonp', fields: 'id,name'}}).then(response => {
-              console.log(response);
-              if (response.status === 200) {
-                if (response.body.count > 0) {
-                  this.drillcoreNames = response.body.results;
-                } else {
-                  this.drillcoreNames = [];
-                }
-              }
-            }, errResponse => {
-              console.log('*** ERROR ***');
-              console.log(errResponse);
-            })
-          }
+            }
+          }, errResponse => {
+            console.log('ERROR: ' + JSON.stringify(errResponse));
+          })
         },
 
         populateAnalyticalMethods(params, currentlyShownParams) {
@@ -528,7 +457,6 @@
           console.log(url);
 
           this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
-          // this.$http.jsonp(this.API_URL + 'analysis_summary' , {params: {analysis_method__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'analysis_method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -545,14 +473,14 @@
               }
             }
           }, errResponse => {
-            console.log('*** ERROR ***');
-            console.log(errResponse);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         },
 
         populateShowParameters(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false);
           console.log(url)
+
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysis__analysisresult__parameter__parameter', fields: 'analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
@@ -575,8 +503,7 @@
             }
             // console.log(this.showParameters)
           }, errResponse => {
-            console.log('*** ERROR ***');
-            console.log(errResponse);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         },
 

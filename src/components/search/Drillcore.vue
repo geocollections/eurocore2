@@ -844,7 +844,8 @@
                 url: 'http://gis.geokogud.info/geoserver/wms',
                 params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
                 serverType: 'geoserver',
-                projection: ''
+                projection: '',
+                attributions: 'Bedrock age'
               }),
               opacity: 0.5,
             })

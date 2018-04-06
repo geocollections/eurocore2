@@ -27,8 +27,8 @@
   import SourceOSM from 'ol/source/osm';
   import SourceStamen from 'ol/source/stamen';
   import TileWMS from "ol/source/tilewms";
-  import 'ol/ol.css'
-  import 'ol-layerswitcher/src/ol-layerswitcher.css'
+  import 'ol/ol.css';
+  import 'ol-layerswitcher/src/ol-layerswitcher.css';
 
   export default {
     props: ['results', 'currentResults', 'value'],
