@@ -69,14 +69,14 @@
         </div>
 
         <div class="row">
-          <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in numOfComparableParameters">
+          <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in searchParameters.numOfComparableParameters">
             <div class="input-group">
               <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
                 <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysis__analysisresult__parameter__parameter}} {{parameter.analysis__analysisresult__unit__unit}}</option>
               </b-form-select>
               <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
               <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
-              <button class="btn btn-outline-danger ml-2" :disabled="numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+              <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
             </div>
           </div>
         </div>
@@ -226,6 +226,7 @@
             //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
             // ],
             currentlyShownParameters: [],
+            numOfComparableParameters: 1,
           },
           response: {
             count: 0,
@@ -249,7 +250,6 @@
             { value: 500, text: 'Show 500 results per page' },
             { value: 1000, text: 'Show 1000 results per page' }
           ],
-          numOfComparableParameters: 1,
         }
       },
 
@@ -580,20 +580,20 @@
         },
 
         addParameterField() {
-          if (this.numOfComparableParameters < (this.showParameters.length * 2)) {
+          if (this.searchParameters.numOfComparableParameters < (this.showParameters.length * 2)) {
             this.searchParameters.watched.comparableParameter.push('');
             this.searchParameters.watched.comparableParameterOperator.push('gt');
             this.searchParameters.watched.comparableParameterValue.push('');
-            this.numOfComparableParameters += 1;
+            this.searchParameters.numOfComparableParameters += 1;
           }
         },
 
         deleteParameterField(fieldToDelete) {
-          if (this.numOfComparableParameters > 1) {
+          if (this.searchParameters.numOfComparableParameters > 1) {
             this.searchParameters.watched.comparableParameter.splice(fieldToDelete, 1);
             this.searchParameters.watched.comparableParameterOperator.splice(fieldToDelete, 1);
             this.searchParameters.watched.comparableParameterValue.splice(fieldToDelete, 1);
-            this.numOfComparableParameters -= 1;
+            this.searchParameters.numOfComparableParameters -= 1;
           }
         },
 
@@ -640,6 +640,7 @@
               //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
               // ],
               currentlyShownParameters: [],
+              numOfComparableParameters: 1,
             };
           console.log(this.searchParameters);
         },
