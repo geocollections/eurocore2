@@ -6,6 +6,7 @@
       </div>
     </div>
 
+
     <div class="row mt-3">
       <div class="col">
         <div>
@@ -15,14 +16,38 @@
                              :indeterminate="indeterminate"
                              @change="toggleAllParameters">{{ allSelected ? 'Deselect All' : 'Select All' }}
             </b-form-checkbox>
+
+            <b-form-checkbox v-if="ctExists"
+                             v-model="ctCheckbox">{{ ctCheckbox ? 'Deselect CT' : 'SelectCT' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="faAasExists"
+                             v-model="faAasCheckbox">{{ faAasCheckbox ? 'Deselect FA-AAS' : 'Select FA-AAS' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="icpOesExists"
+                             v-model="icpOesCheckbox">{{ icpOesCheckbox ? 'Deselect ICP-OES' : 'Select ICP-OES' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="lecoExists"
+                             v-model="lecoCheckbox">{{ lecoCheckbox ? 'Deselect Leco' : 'Select Leco' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="xrfExists"
+                             v-model="xrfCheckbox">{{ xrfCheckbox ? 'Deselect XRF' : 'Select XRF' }}
+            </b-form-checkbox>
+
+
             <b-form-checkbox-group v-model="currentlyShownParameters"
                                    :options="parameters"
-                                   class="ml-4"
+                                   class="row ml-4"
+                                   id="checkboxGroup"
             ></b-form-checkbox-group>
           </b-form-group>
         </div>
       </div>
     </div>
+
 
     <div class="row">
       <div class="col">
@@ -160,6 +185,16 @@
         allSelected: false,
         indeterminate: false,
         isChartOpen: false,
+        ctExists: false,
+        faAasExists: false,
+        icpOesExists: false,
+        lecoExists: false,
+        xrfExists: false,
+        ctCheckbox: false,
+        faAasCheckbox: false,
+        icpOesCheckbox: false,
+        lecoCheckbox: false,
+        xrfCheckbox: false,
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -169,23 +204,6 @@
           { value: 500, text: 'Show 500 results per page' },
           { value: 1000, text: 'Show 1000 results per page' }
         ],
-        exportFields: {
-          'Depth from (m)': 'depth',
-          'Depth to (m)': 'end_depth',
-          'Sample': 'sample_number',
-          'Analysis': 'analysis_id',
-          'Au ppm': 'au_ppm',
-          'Co %': 'co_pct',
-          'Co ppm': 'co_ppm',
-          'Cu %': 'cu_pct',
-          'Cu ppm': 'cu_ppm',
-          'Fe %': 'fe_pct',
-          'Ni %': 'ni_pct',
-          'Ni ppm': 'ni_ppm',
-          'S %': 's_pct',
-          'Zn %': 'zn_pct',
-          'Zn ppm': 'zn_ppm',
-        },
       }
     },
     metaInfo () {
@@ -233,8 +251,53 @@
         } else {
           $('body')[0].removeAttribute('class')
         }
+      },
+      'ctCheckbox': function (newVal, oldVal) {
+
+        //TODO: Fix delete function
+        //TODO: set others to false
+
+        if (newVal) {
+          this.addParametersUsingMethod('CT');
+        } else if (oldVal && !newVal) {
+          // this.deleteParametersUsingMethod('CT');
+          this.currentlyShownParameters = [];
+        }
+      },
+      'faAasCheckbox': function (newVal, oldVal) {
+        if (newVal) {
+          this.addParametersUsingMethod('FA-AAS');
+        } else if (oldVal && !newVal) {
+          // this.deleteParametersUsingMethod('FA-AAS');
+          this.currentlyShownParameters = [];
+        }
+      },
+      'icpOesCheckbox': function (newVal, oldVal) {
+        if (newVal) {
+          this.addParametersUsingMethod('ICP-OES');
+        } else if (oldVal && !newVal) {
+          // this.deleteParametersUsingMethod('ICP-OES');
+          this.currentlyShownParameters = [];
+        }
+      },
+      'lecoCheckbox': function (newVal, oldVal) {
+        if (newVal) {
+          this.addParametersUsingMethod('Leco');
+        } else if (oldVal && !newVal) {
+          // this.deleteParametersUsingMethod('Leco');
+          this.currentlyShownParameters = [];
+        }
+      },
+      'xrfCheckbox': function (newVal, oldVal) {
+        if (newVal) {
+          this.addParametersUsingMethod('XRF');
+        } else if (oldVal && !newVal) {
+          // this.deleteParametersUsingMethod('XRF');
+          this.currentlyShownParameters = [];
+        }
       }
     },
+
     created: function () {
       this.getDrillcoreName(this.drillcoreId);
 
@@ -246,14 +309,19 @@
 
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
+
     updated: function () {
       $('#table-search').floatThead('reflow');
       this.addFloatingTableHeaders();
+      this.addResponsiveDesignToCheckboxes()
     },
+
     beforeDestroy: function () {
       this.$session.set('drillcore_data/' + this.drillcoreId, this.searchParameters);
     },
+
     methods: {
+
       getAnalysisSummary(id, searchParams) {
         this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: searchParams.orderBy, format: 'jsonp'}}).then(response => {
           console.log(response.body.results);
@@ -285,6 +353,9 @@
           console.log(response);
           if (response.status === 200) {
             const allParameters = response.body.results;
+
+            this.addMethodCheckboxes(allParameters);
+
             for (const i in allParameters) {
               if (this.areParametersEligible(allParameters[i])) {
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
@@ -390,6 +461,62 @@
           zIndex: 1090,
           top: 98 // headers height
         });
+      },
+
+      addResponsiveDesignToCheckboxes() {
+        $('#checkboxGroup').find('div').addClass('mr-0 col-6 col-sm-4 col-md-3 col-lg-2 text-center')
+      },
+
+      addMethodCheckboxes(parameters) {
+        for (const param in parameters) {
+          if (parameters[param].analysis__analysisresult__parameter__parameter !== null
+            && parameters[param].analysis__analysisresult__unit__unit !== null
+            && parameters[param].analysis__analysis_method__method !== null
+            && parameters[param].analysis__analysis_method__method) {
+
+            let method = parameters[param].analysis__analysis_method__method;
+            // if (!this.listOfAvailableMethods.includes(method)) {
+              // this.listOfAvailableMethods.push(method);
+
+              if (method === 'CT') {
+                this.ctExists = true
+              } else if (method === 'FA-AAS') {
+                this.faAasExists = true
+              } else if (method === 'ICP-OES') {
+                this.icpOesExists = true
+              } else if (method === 'Leco') {
+                this.lecoExists = true
+              } else if (method === 'XRF') {
+                this.xrfExists = true
+              }
+
+
+            // }
+          }
+        }
+      },
+
+      addParametersUsingMethod(methodName) {
+        for (const param in this.parameters) {
+          if (this.parameters[param].includes(methodName)) {
+            if (!this.currentlyShownParameters.includes(this.parameters[param])) {
+              this.currentlyShownParameters.push(this.parameters[param]);
+            }
+          }
+        }
+      },
+
+      deleteParametersUsingMethod(methodName) {
+        for (const param in this.currentlyShownParameters) {
+          if (this.currentlyShownParameters[param].includes(methodName)) {
+            // TODO: Remove element from array
+          }
+        }
+      },
+
+      selectAll($event, method) {
+        console.log($event)
+        console.log(method)
       },
 
       resetData() {

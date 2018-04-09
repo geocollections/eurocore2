@@ -132,11 +132,16 @@
       logIn() {
         this.loggingIn = true;
 
+        //TODO: user and password should be sent through headers
+        console.log(window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password))
         this.$http.jsonp('https://api.eurocore.rocks/login/', {
           params: {
             user: this.user.passwordCredentials.username,
             pwd: this.user.passwordCredentials.password,
             format: 'jsonp'
+          },
+          headers: {
+            'Authorization': 'Basic ' + window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password)
           }
         }).then(response => {
           if (response.status === 200) {
