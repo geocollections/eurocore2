@@ -88,7 +88,7 @@
       </div>
 
       <div class="col mb-3">
-        <export-buttons filename="drillcoreSearch"></export-buttons>
+        <export-buttons filename="drillcoreSearch"/>
       </div>
 
       <div class="col">

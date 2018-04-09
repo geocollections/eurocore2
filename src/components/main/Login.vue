@@ -191,7 +191,7 @@
       },
 
       handleKeyup(event) {
-        if (event.keyCode === 13) {
+        if (event.keyCode === 13 || event.which === 13) {
           if (this.isAuthenticated) {
             this.logOut();
           }

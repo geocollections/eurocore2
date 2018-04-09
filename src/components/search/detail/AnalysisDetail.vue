@@ -99,7 +99,12 @@
 
       <div class="col" v-if="analysisResults != null">
         <h3>Analysis results</h3>
-        <table class="table table-bordered table-hover">
+
+        <div class="mb-2">
+          <export-buttons filename="analysisResults" />
+        </div>
+
+        <table id="table-search" class="table table-bordered table-hover">
           <thead class="thead-light">
           <tr class="th-sort">
             <th>
@@ -145,11 +150,13 @@
   import Spinner from 'vue-simple-spinner'
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+  import ExportButtons from './partial/ExportButtons'
 
   export default {
     components: {
       Spinner,
-      FontAwesomeIcon
+      FontAwesomeIcon,
+      ExportButtons
     },
     props: ['id'],
     name: "analysis-detail",
