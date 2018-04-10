@@ -37,7 +37,6 @@
                              v-model="xrfCheckbox">{{ xrfCheckbox ? 'Deselect XRF' : 'Select XRF' }}
             </b-form-checkbox>
 
-
             <b-form-checkbox-group v-model="currentlyShownParameters"
                                    :options="parameters"
                                    class="row ml-4"
@@ -206,16 +205,18 @@
         ],
       }
     },
-    metaInfo () {
+    metaInfo() {
       return {
         title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId
       }
     },
+
     computed: {
       icon() {
         return faSort;
       }
     },
+
     watch: {
       'drillcoreId': function () {
         this.resetData();
@@ -253,48 +254,20 @@
         }
       },
       'ctCheckbox': function (newVal, oldVal) {
-
-        //TODO: Fix delete function
-        //TODO: set others to false
-
-        if (newVal) {
-          this.addParametersUsingMethod('CT');
-        } else if (oldVal && !newVal) {
-          // this.deleteParametersUsingMethod('CT');
-          this.currentlyShownParameters = [];
-        }
+        newVal ? this.addParametersUsingMethod('CT') : this.deleteParametersUsingMethod('CT');
       },
       'faAasCheckbox': function (newVal, oldVal) {
-        if (newVal) {
-          this.addParametersUsingMethod('FA-AAS');
-        } else if (oldVal && !newVal) {
-          // this.deleteParametersUsingMethod('FA-AAS');
-          this.currentlyShownParameters = [];
-        }
+        newVal ? this.addParametersUsingMethod('FA-AAS') : this.deleteParametersUsingMethod('FA-AAS');
       },
       'icpOesCheckbox': function (newVal, oldVal) {
-        if (newVal) {
-          this.addParametersUsingMethod('ICP-OES');
-        } else if (oldVal && !newVal) {
-          // this.deleteParametersUsingMethod('ICP-OES');
-          this.currentlyShownParameters = [];
-        }
+        newVal ? this.addParametersUsingMethod('ICP-OES') : this.deleteParametersUsingMethod('ICP-OES');
       },
       'lecoCheckbox': function (newVal, oldVal) {
-        if (newVal) {
-          this.addParametersUsingMethod('Leco');
-        } else if (oldVal && !newVal) {
-          // this.deleteParametersUsingMethod('Leco');
-          this.currentlyShownParameters = [];
-        }
+        newVal ? this.addParametersUsingMethod('Leco') : this.deleteParametersUsingMethod('Leco');
+
       },
       'xrfCheckbox': function (newVal, oldVal) {
-        if (newVal) {
-          this.addParametersUsingMethod('XRF');
-        } else if (oldVal && !newVal) {
-          // this.deleteParametersUsingMethod('XRF');
-          this.currentlyShownParameters = [];
-        }
+        newVal ? this.addParametersUsingMethod('XRF') : this.deleteParametersUsingMethod('XRF');
       }
     },
 
@@ -507,16 +480,12 @@
       },
 
       deleteParametersUsingMethod(methodName) {
-        for (const param in this.currentlyShownParameters) {
-          if (this.currentlyShownParameters[param].includes(methodName)) {
-            // TODO: Remove element from array
+        let i = this.currentlyShownParameters.length;
+        while (i--) {
+          if (this.currentlyShownParameters[i].includes(methodName)) {
+            this.currentlyShownParameters.splice(i, 1);
           }
         }
-      },
-
-      selectAll($event, method) {
-        console.log($event)
-        console.log(method)
       },
 
       resetData() {
@@ -535,6 +504,16 @@
         this.parameters = [];
         this.allSelected = false;
         this.indeterminate = false;
+        ctExists=  false;
+        faAasExists = false;
+        icpOesExists = false;
+        lecoExists = false;
+        xrfExists = false;
+        ctCheckbox = false;
+        faAasCheckbox = false;
+        icpOesCheckbox = false;
+        lecoCheckbox = false;
+        xrfCheckbox = false;
       },
 
     }
