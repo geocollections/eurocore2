@@ -276,8 +276,11 @@
     created: function () {
       this.getDrillcoreName(this.drillcoreId);
 
-        if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
-        this.searchParameters = this.$session.get('drillcore_data/' + this.drillcoreId);
+      if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
+        const dataToImport = this.$session.get('drillcore_data/' + this.drillcoreId);
+
+        this.searchParameters = dataToImport.searchParameters;
+        this.currentlyShownParameters = dataToImport.currentlyShownParameters;
       } else {
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
       }
@@ -292,7 +295,11 @@
     },
 
     beforeDestroy: function () {
-      this.$session.set('drillcore_data/' + this.drillcoreId, this.searchParameters);
+      const dataToExport = {
+        searchParameters: this.searchParameters,
+        currentlyShownParameters: this.currentlyShownParameters
+      }
+      this.$session.set('drillcore_data/' + this.drillcoreId, dataToExport);
     },
 
     methods: {
