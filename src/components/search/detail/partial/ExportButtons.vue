@@ -2,28 +2,55 @@
   <div>
     <b-dropdown text="EXPORT" variant="primary">
 
-      <b-dropdown-item @click="exportToXLSX()">Export to XLSX</b-dropdown-item>
+      <b-dropdown-item @click="exportToXLSX()">Export to XLSX &nbsp;<font-awesome-icon :icon="faFileExcel" /></b-dropdown-item>
 
-      <b-dropdown-item @click="exportToCSV()">Export to CSV</b-dropdown-item>
+      <b-dropdown-item @click="exportToCSV()">Export to CSV &nbsp;<font-awesome-icon :icon="faFile" /></b-dropdown-item>
+
+      <b-dropdown-item @click="copyToClipboard()" >Copy to Clipboard &nbsp;<font-awesome-icon :icon="faCopy" /></b-dropdown-item>
 
     </b-dropdown>
   </div>
 </template>
 
 <script>
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faFileExcel from '@fortawesome/fontawesome-free-regular/faFileExcel'
+  import faFile from '@fortawesome/fontawesome-free-regular/faFile'
+  import faCopy from '@fortawesome/fontawesome-free-regular/faCopy'
+
   export default {
+    components: {
+      FontAwesomeIcon
+    },
     props: ['filename', 'table-id'],
     name: "export-buttons",
+
     data() {
       return {
         table: this.tableId
       }
     },
+
+    computed: {
+      faFileExcel() {
+        return faFileExcel;
+      },
+
+      faFile() {
+        return faFile;
+      },
+
+      faCopy() {
+        return faCopy;
+      }
+    },
+
     created: function () {
       if (typeof(this.table) === 'undefined') {
         this.table = 'table-search'
       }
     },
+
     methods: {
 
       exportToXLSX() {
@@ -78,7 +105,30 @@
         let exportCSVtable = instance.getExportData()[this.table]['csv'];
 
         instance.export2file(exportCSVtable.data, exportCSVtable.mimeType, exportCSVtable.filename, exportCSVtable.fileExtension)
-      }
+      },
+
+      copyToClipboard() {
+        const el = document.getElementById(this.table);
+        let body = document.body, range, sel;
+        if (document.createRange && window.getSelection) {
+          range = document.createRange();
+          sel = window.getSelection();
+          sel.removeAllRanges();
+          try {
+            range.selectNodeContents(el);
+            sel.addRange(range);
+          } catch (e) {
+            range.selectNode(el);
+            sel.addRange(range);
+          }
+        } else if (body.createTextRange) {
+          range = body.createTextRange();
+          range.moveToElementText(el);
+          range.select();
+        }
+        document.execCommand('Copy');
+        sel.removeAllRanges();
+      },
     }
   }
 </script>

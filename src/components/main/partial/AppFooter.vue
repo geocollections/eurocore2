@@ -6,7 +6,7 @@
       </a>
     </div>
 
-    <div>CC 2017-2018. EIT RawMaterials project EUROCORE: European Core Sample Collection for Master Training.</div>
+    <div><font-awesome-icon :icon="icon" /> 2017-2018. EIT RawMaterials project EUROCORE: European Core Sample Collection for Master Training.</div>
 
     <div>
       <a target="_blank" href="http://ttu.ee/geoloogia-instituut">Developed and hosted by the Department of Geology, Tallinn University of Technology.</a>
@@ -15,8 +15,19 @@
 </template>
 
 <script>
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faCreativeCommons from '@fortawesome/fontawesome-free-brands/faCreativeCommons'
+
   export default {
-    name: "app-footer"
+    components: {
+      FontAwesomeIcon
+    },
+    name: "app-footer",
+    computed: {
+      icon() {
+        return faCreativeCommons
+      }
+    }
   }
 </script>
 

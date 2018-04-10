@@ -184,6 +184,8 @@
         allSelected: false,
         indeterminate: false,
         isChartOpen: false,
+
+        //TODO: Parameters shouldn't be hardcoded.
         ctExists: false,
         faAasExists: false,
         icpOesExists: false,
@@ -504,16 +506,16 @@
         this.parameters = [];
         this.allSelected = false;
         this.indeterminate = false;
-        ctExists=  false;
-        faAasExists = false;
-        icpOesExists = false;
-        lecoExists = false;
-        xrfExists = false;
-        ctCheckbox = false;
-        faAasCheckbox = false;
-        icpOesCheckbox = false;
-        lecoCheckbox = false;
-        xrfCheckbox = false;
+        this.ctExists =  false;
+        this.faAasExists = false;
+        this.icpOesExists = false;
+        this.lecoExists = false;
+        this.xrfExists = false;
+        this.ctCheckbox = false;
+        this.faAasCheckbox = false;
+        this.icpOesCheckbox = false;
+        this.lecoCheckbox = false;
+        this.xrfCheckbox = false;
       },
 
     }
