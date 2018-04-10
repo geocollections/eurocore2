@@ -90,6 +90,8 @@
         }
 
         instance.export2file(exportXLSXtable.data, exportXLSXtable.mimeType, exportXLSXtable.filename, exportXLSXtable.fileExtension)
+
+        this.toastSuccess('Exported to <strong>XLSX</strong>');
       },
 
       exportToCSV() {
@@ -105,6 +107,8 @@
         let exportCSVtable = instance.getExportData()[this.table]['csv'];
 
         instance.export2file(exportCSVtable.data, exportCSVtable.mimeType, exportCSVtable.filename, exportCSVtable.fileExtension)
+
+        this.toastSuccess('Exported to <strong>CSV</strong>');
       },
 
       copyToClipboard() {
@@ -128,7 +132,16 @@
         }
         document.execCommand('Copy');
         sel.removeAllRanges();
+
+        this.toastSuccess('Copied to <strong>clipboard!</strong>');
       },
+
+      toastSuccess(text) {
+        this.$toast.success(text, 'OK', {
+          position: 'bottomRight',
+          timeout: 3000,
+        })
+      }
     }
   }
 </script>

@@ -8,10 +8,14 @@ import BootstrapVue from 'bootstrap-vue'
 import './assets/css/styles.css'
 import VueSession from 'vue-session'
 import moment from 'moment'
+import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/vue-izitoast
+
+import 'izitoast/dist/css/iziToast.min.css'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
 Vue.use(VueSession);
+Vue.use(VueIziToast);
 
 Vue.config.productionTip = false;
 

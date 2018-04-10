@@ -150,11 +150,13 @@
               this.user.passwordCredentials.username = response.body.user;
               this.isAuthenticated = true;
               this.loginMessage = response.body.message;
+              this.toastSuccess(response.body.message)
               this.success = true;
               this.error = false;
               this.$session.set('userData', this.user.passwordCredentials.username)
             } else {
               this.loginMessage = response.body.message;
+              this.toastError(response.body.message)
               this.error = true;
               this.success = false;
             }
@@ -185,6 +187,7 @@
         }).then(response => {
           if (response.status === 200) {
             this.loginMessage = response.body.message;
+            this.toastSuccess(response.body.message);
             this.isAuthenticated = false;
             this.success = true;
           }
@@ -201,7 +204,23 @@
             this.logOut();
           }
         }
-      }
+      },
+
+      toastSuccess(text) {
+        this.$toast.success(text, 'OK', {
+          position: 'bottomRight',
+          timeout: 2000,
+          pauseOnHover: false
+        })
+      },
+
+      toastError(text) {
+        this.$toast.error(text, 'Error', {
+          position: 'bottomRight',
+          timeout: 2000,
+          pauseOnHover: false
+        })
+      },
     }
   }
 </script>
