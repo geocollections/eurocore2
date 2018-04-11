@@ -1,7 +1,17 @@
 <template>
-  <div ref="coreboxChart" class="mt-3">
-    <!-- Chart is drawn here -->
+  <div>
+    <div ref="coreboxChart" class="mt-3">
+      <!-- Chart is drawn here -->
+    </div>
+
+    <div class="row image-container">
+      <div class="col mt-3 mb-3 test">
+        IMAGE HERE
+        <!--TODO: Image(s) here-->
+      </div>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -167,7 +177,7 @@
 
         let d3 = Plotly.d3;
 
-        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+        const WIDTH_IN_PERCENT_OF_PARENT = 100, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
 
         let gd3 = d3.select(this.$refs.coreboxChart).style({
             width: WIDTH_IN_PERCENT_OF_PARENT + '%',
@@ -199,5 +209,15 @@
 </script>
 
 <style scoped>
+  .image-container {
+    margin: 0 auto;
+    width: 89.5%;
+  }
+
+  .test {
+    height: 40px;
+    background-color: grey;
+    text-align: center;
+  }
 
 </style>

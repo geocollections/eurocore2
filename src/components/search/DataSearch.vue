@@ -337,6 +337,14 @@
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
         },
+        'searchParameters.watched.paginateBy': function(newVal, oldVal) {
+          console.log(oldVal)
+          console.log(newVal)
+
+          if (oldVal !== newVal) {
+            this.toastInfo('Now showing <strong>' + newVal + '</strong> results per page!')
+          }
+        }
       },
 
       created: function () {
@@ -363,6 +371,7 @@
       },
 
       methods: {
+
         searchEntities(params) {
           console.log(params);
           let url = this.buildSearchUrl(params);
@@ -664,6 +673,14 @@
             zIndex: 1035,
             top: 98 // headers height
           });
+        },
+
+        toastInfo(text) {
+          this.$toast.info(text, 'Info', {
+            position: 'bottomRight',
+            timeout: 3000,
+            pauseOnHover: false
+          })
         },
 
         resetSearchParameters() {

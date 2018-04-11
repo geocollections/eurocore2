@@ -75,13 +75,13 @@
                   <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
-                        <th><span @click="changeOrder('depth', $event)">
+                        <th><span @click="changeOrder('depth')">
                             <font-awesome-icon v-if="searchParameters.orderBy !== 'depth' && searchParameters.orderBy !== '-depth'" :icon="icon"/>
                             <font-awesome-icon v-else :icon="sortingDirection" />
                             Depth from (m)</span>
                         </th>
 
-                        <th><span @click="changeOrder('end_depth', $event)">
+                        <th><span @click="changeOrder('end_depth')">
                             <font-awesome-icon v-if="searchParameters.orderBy !== 'end_depth' && searchParameters.orderBy !== '-end_depth'" :icon="icon"/>
                             <font-awesome-icon v-else :icon="sortingDirection" />
                             Depth to (m)</span>
@@ -259,6 +259,8 @@
         deep: true
       },
       'currentlyShownParameters': function (newVal, oldVal) {
+        console.log('wtttf')
+        console.log(newVal)
         if (newVal.length === 0) {
           this.indeterminate = false;
           this.allSelected = false;
@@ -303,7 +305,6 @@
 
       if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
         const dataToImport = this.$session.get('drillcore_data/' + this.drillcoreId);
-
         this.searchParameters = dataToImport.searchParameters;
         this.currentlyShownParameters = dataToImport.currentlyShownParameters;
       } else {
@@ -368,17 +369,19 @@
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
 
 
-                if (this.drillcoreName[0].deposit__main_commodity !== null || this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
-                  const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
-                  if (defaultCommodities.length > 0) {
-                    for (const commodity in defaultCommodities) {
-                      if (allParameters[i].analysis__analysisresult__parameter__parameter === defaultCommodities[commodity]) {
-                        this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
+                if (this.currentlyShownParameters.length === 0) { // Only if no params are chosen at start
+                  if (this.drillcoreName[0].deposit__main_commodity !== null || this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
+                    const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
+                    if (defaultCommodities.length > 0) {
+                      for (const commodity in defaultCommodities) {
+                        if (allParameters[i].analysis__analysisresult__parameter__parameter === defaultCommodities[commodity]) {
+                          this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
+                        }
                       }
                     }
+                  } else if (i < 10) { // Populates 10 first params
+                    this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
                   }
-                } else if (i < 10) { // Populates 10 first params
-                  this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
                 }
 
 
@@ -423,7 +426,7 @@
         this.currentlyShownParameters = checked ? this.parameters.slice() : [];
       },
 
-      changeOrder(orderValue, event) {
+      changeOrder(orderValue) {
         if (this.searchParameters.orderBy === orderValue) {
           if (orderValue.charAt(0) !== '-') {
             orderValue = '-' + orderValue;
