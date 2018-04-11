@@ -132,13 +132,61 @@
           <table id="table-search" class="table table-hover table-bordered ">
             <thead class="thead-light">
               <tr class="th-sort">
-                <th><span @click="changeOrder('drillcore_name')"><font-awesome-icon :icon="icon"/> Drillcore</span></th>
-                <th><span @click="changeOrder('depth')" style="display: inline-block"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
-                <th><span @click="changeOrder('end_depth')"><font-awesome-icon :icon="icon"/> Depth to (m)</span></th>
-                <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
-                <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis ID</span></th>
-                <th><span @click="changeOrder('analysis_method')"><font-awesome-icon :icon="icon"/> Method</span></th>
-                <th v-for="parameter in searchParameters.currentlyShownParameters"><span @click="changeOrder(parameter.formattedValue)"><font-awesome-icon :icon="icon"/> {{parameter.analysis__analysisresult__parameter__parameter + ' ' + parameter.analysis__analysisresult__unit__unit}}</span></th>
+                <th>
+                  <span @click="changeOrder('drillcore_name')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Drillcore
+                  </span>
+                </th>
+
+                <th>
+                  <span @click="changeOrder('depth')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Depth from (m)
+                  </span>
+                </th>
+
+                <th>
+                  <span @click="changeOrder('end_depth')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Depth to (m)
+                  </span>
+                </th>
+
+                <th>
+                  <span @click="changeOrder('sample_number')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Sample
+                  </span>
+                </th>
+
+                <th>
+                  <span @click="changeOrder('analysis_id')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Analysis ID
+                  </span>
+                </th>
+
+                <th>
+                  <span @click="changeOrder('analysis_method')">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    Method
+                  </span>
+                </th>
+
+                <th v-for="parameter in searchParameters.currentlyShownParameters">
+                  <span @click="changeOrder(parameter.formattedValue)">
+                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>
+                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    {{parameter.analysis__analysisresult__parameter__parameter + ' ' + parameter.analysis__analysisresult__unit__unit}}
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -186,6 +234,8 @@
     import ExportButtons from './detail/partial/ExportButtons'
     import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
     import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+    import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
+    import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
     import Spinner from 'vue-simple-spinner'
 
     export default {
@@ -260,6 +310,10 @@
       computed: {
         icon() {
           return faSort;
+        },
+
+        sortingDirection() {
+          return this.searchParameters.watched.orderBy.includes('-') ? faSortDown : faSortUp
         }
       },
 

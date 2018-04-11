@@ -108,12 +108,20 @@
           <thead class="thead-light">
           <tr class="th-sort">
             <th>
-              <span v-if="analysisResults.length > 1" @click="changeOrder('parameter__parameter')"><font-awesome-icon :icon="icon"/> Parameter</span>
+              <span v-if="analysisResults.length > 1" @click="changeOrder('parameter__parameter')">
+                <font-awesome-icon v-if="analysisResultsOrder !== 'parameter__parameter' && analysisResultsOrder !== '-parameter__parameter'" :icon="icon"/>
+                <font-awesome-icon v-else :icon="sortingDirection" />
+                Parameter
+              </span>
               <div v-else>Parameter</div>
             </th>
             <th>Unit</th>
             <th>
-              <span  v-if="analysisResults.length > 1" @click="changeOrder('value')"><font-awesome-icon :icon="icon"/> Value</span>
+              <span v-if="analysisResults.length > 1" @click="changeOrder('value')">
+                <font-awesome-icon v-if="analysisResultsOrder !== 'value' && analysisResultsOrder !== '-value'" :icon="icon"/>
+                <font-awesome-icon v-else :icon="sortingDirection" />
+                Value
+              </span>
               <div v-else>Value</div>
             </th>
             <th>Error</th>
@@ -150,6 +158,8 @@
   import Spinner from 'vue-simple-spinner'
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+  import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
+  import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
   import ExportButtons from './partial/ExportButtons'
 
   export default {
@@ -178,6 +188,10 @@
     computed: {
       icon() {
         return faSort;
+      },
+
+      sortingDirection() {
+        return this.analysisResultsOrder.includes('-') ? faSortDown : faSortUp
       }
     },
     created: function () {

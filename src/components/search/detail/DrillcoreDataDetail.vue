@@ -75,10 +75,29 @@
                   <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
-                        <th><span @click="changeOrder('depth')"><font-awesome-icon :icon="icon"/> Depth from (m)</span></th>
-                        <th><span @click="changeOrder('end_depth')"><font-awesome-icon :icon="icon"/> Depth to (m)</span></th>
-                        <th><span @click="changeOrder('sample_number')"><font-awesome-icon :icon="icon"/> Sample</span></th>
-                        <th><span @click="changeOrder('analysis_id')"><font-awesome-icon :icon="icon"/> Analysis</span></th>
+                        <th><span @click="changeOrder('depth', $event)">
+                            <font-awesome-icon v-if="searchParameters.orderBy !== 'depth' && searchParameters.orderBy !== '-depth'" :icon="icon"/>
+                            <font-awesome-icon v-else :icon="sortingDirection" />
+                            Depth from (m)</span>
+                        </th>
+
+                        <th><span @click="changeOrder('end_depth', $event)">
+                            <font-awesome-icon v-if="searchParameters.orderBy !== 'end_depth' && searchParameters.orderBy !== '-end_depth'" :icon="icon"/>
+                            <font-awesome-icon v-else :icon="sortingDirection" />
+                            Depth to (m)</span>
+                        </th>
+
+                        <th><span @click="changeOrder('sample_number')">
+                          <font-awesome-icon v-if="searchParameters.orderBy !== 'sample_number' && searchParameters.orderBy !== '-sample_number'" :icon="icon"/>
+                          <font-awesome-icon v-else :icon="sortingDirection" />
+                          Sample</span></th>
+
+                        <th><span @click="changeOrder('analysis_id')">
+                          <font-awesome-icon v-if="searchParameters.orderBy !== 'analysis_id' && searchParameters.orderBy !== '-analysis_id'" :icon="icon"/>
+                          <font-awesome-icon v-else :icon="sortingDirection" />
+                          Analysis</span>
+                        </th>
+
                         <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
                         <th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>
                       </tr>
@@ -155,6 +174,8 @@
   import Spinner from 'vue-simple-spinner'
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+  import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
+  import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
 
   export default {
     components: {
@@ -216,6 +237,10 @@
     computed: {
       icon() {
         return faSort;
+      },
+
+      sortingDirection() {
+        return this.searchParameters.orderBy.includes('-') ? faSortDown : faSortUp
       }
     },
 
@@ -306,7 +331,7 @@
 
       getAnalysisSummary(id, searchParams) {
         this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: searchParams.orderBy, format: 'jsonp'}}).then(response => {
-          console.log(response.body.results);
+          console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
             this.response.results = response.body.results;
@@ -398,7 +423,7 @@
         this.currentlyShownParameters = checked ? this.parameters.slice() : [];
       },
 
-      changeOrder(orderValue) {
+      changeOrder(orderValue, event) {
         if (this.searchParameters.orderBy === orderValue) {
           if (orderValue.charAt(0) !== '-') {
             orderValue = '-' + orderValue;

@@ -105,15 +105,78 @@
             <table ref="table" id="table-search" class="table table-hover table-bordered ">
               <thead class="thead-light">
                 <tr class="th-sort">
-                  <th><span @click="changeOrder('id')"><font-awesome-icon :icon="icon"/> ID</span></th>
-                  <th><span @click="changeOrder('name')"><font-awesome-icon :icon="icon"/> Name</span></th>
-                  <th><span @click="changeOrder('deposit__name')"><font-awesome-icon :icon="icon"/> Deposit</span></th>
-                  <th><span @click="changeOrder('deposit__main_commodity')"><font-awesome-icon :icon="icon"/> Commodity</span></th>
-                  <th><span @click="changeOrder('latitude')"><font-awesome-icon :icon="icon"/> Latitude</span></th>
-                  <th><span @click="changeOrder('longitude')"><font-awesome-icon :icon="icon"/> Longitude</span></th>
-                  <th><span @click="changeOrder('hole_length')"><font-awesome-icon :icon="icon"/> Length</span></th>
-                  <th><span @click="changeOrder('hole_dip')"><font-awesome-icon :icon="icon"/> Dip</span></th>
-                  <th><span @click="changeOrder('hole_azimuth')"><font-awesome-icon :icon="icon"/> Azimuth</span></th>
+                  <th>
+                    <span @click="changeOrder('id')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'id' && searchParameters.orderBy !== '-id'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      ID
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('name')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'name' && searchParameters.orderBy !== '-name'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Name
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('deposit__name')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'deposit__name' && searchParameters.orderBy !== '-deposit__name'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Deposit
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('deposit__main_commodity')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'deposit__main_commodity' && searchParameters.orderBy !== '-deposit__main_commodity'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Commodity
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('latitude')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'latitude' && searchParameters.orderBy !== '-latitude'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Latitude
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('longitude')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'longitude' && searchParameters.orderBy !== '-longitude'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Longitude
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('hole_length')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'hole_length' && searchParameters.orderBy !== '-hole_length'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Length
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('hole_dip')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'hole_dip' && searchParameters.orderBy !== '-hole_dip'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Dip
+                    </span>
+                  </th>
+
+                  <th>
+                    <span @click="changeOrder('hole_azimuth')">
+                      <font-awesome-icon v-if="searchParameters.orderBy !== 'hole_azimuth' && searchParameters.orderBy !== '-hole_azimuth'" :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection" />
+                      Azimuth
+                    </span>
+                  </th>
+
                   <th></th>
                 </tr>
               </thead>
@@ -163,6 +226,8 @@
   import ExportButtons from './detail/partial/ExportButtons'
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
+  import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
+  import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
   // import DrillcoreMap from "../main/partial/DrillcoreMap";
 
   /* MAP IMPORTS START */
@@ -252,6 +317,10 @@
     computed: {
       icon() {
         return faSort;
+      },
+
+      sortingDirection() {
+        return this.searchParameters.orderBy.includes('-') ? faSortDown : faSortUp
       }
     },
     watch: {
