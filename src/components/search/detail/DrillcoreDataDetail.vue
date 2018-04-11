@@ -147,7 +147,7 @@
             </div>
           </b-tab>
           <b-tab title="Chart" @click="openChart()">
-            <plotly-chart :results="response.results" :parameters="currentlyShownParameters" :name="drillcoreName[0].name" v-if="isChartOpen" ></plotly-chart>
+            <plotly-chart :results="response.results" :parameters="currentlyShownParameters" :name="drillcoreName[0].name" :drillcore-id="drillcoreName[0].id" v-if="isChartOpen" ></plotly-chart>
           </b-tab>
         </b-tabs>
       </div>
@@ -259,8 +259,6 @@
         deep: true
       },
       'currentlyShownParameters': function (newVal, oldVal) {
-        console.log('wtttf')
-        console.log(newVal)
         if (newVal.length === 0) {
           this.indeterminate = false;
           this.allSelected = false;
@@ -343,7 +341,7 @@
       },
 
       getDrillcoreName(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,deposit__main_commodity', format: 'jsonp'}}).then(response => {
+        this.$http.jsonp('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,deposit__main_commodity,id', format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.results.length > 0) {

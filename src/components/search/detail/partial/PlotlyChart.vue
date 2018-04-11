@@ -4,20 +4,57 @@
       <!-- Chart is drawn here -->
     </div>
 
-    <div class="row image-container">
+    <div class="row images-container" v-if="locationHref">
       <div class="col mt-3 mb-3 test">
-        IMAGE HERE
+
         <!--TODO: Image(s) here-->
+        <div class="test" v-if="response.count > 0">
+          <img width="100%" :src="buildImageUrl(150, response.results[0].image__url)"/>
+        </div>
+
       </div>
     </div>
+
+    <div class="row">
+      <div class="col">
+        <span style="float: left; font-size: 25px">{{xMin}}</span>
+        <span style="float: right; font-size: 25px">{{xMax}}</span>
+      </div>
+    </div>
+
+
   </div>
 
 </template>
 
 <script>
   export default {
-    props: ['results', 'parameters', 'name'],
+    props: ['results', 'parameters', 'name', 'drillcoreId'],
+
     name: "plotly-chart",
+
+    data() {
+      return {
+        API_URL: 'https://api.eurocore.rocks/drillcore_interval/',
+        xMin: 0,
+        xMax: 0,
+        response: {
+          count: 0,
+          results: []
+        },
+        locationHref: false
+      }
+    },
+
+    created: function () {
+      this.getFirstAndLastDepth(this.results);
+      this.getImages(this.results);
+
+      if (location.href.includes('drillcore_data')) {
+        this.locationHref = true;
+      }
+    },
+
     mounted: function () {
       window.addEventListener('resize', this.onResize);
       if (this.parameters.length > 0) {
@@ -34,7 +71,9 @@
       },
       'results': function () {
         this.drawChart(this.results, this.parameters, this.name);
-      }
+        this.getFirstAndLastDepth(this.results);
+        this.getImages(this.results);
+      },
     },
     methods: {
 
@@ -143,7 +182,7 @@
             ticks: "outside",
             ticklen: 5,
             tickwidth: 1,
-            tickcolor: 'black'
+            tickcolor: 'black',
           },
           yaxis: {
             side: 'left',
@@ -155,7 +194,8 @@
             ticks: "outside",
             ticklen: 5,
             tickwidth: 1,
-            tickcolor: 'black'
+            tickcolor: 'black',
+            fixedrange: true,
           },
           yaxis2: {
             title: 'ppm',
@@ -172,6 +212,7 @@
             tickwidth: 1,
             tickcolor: 'black',
             showgrid: false,
+            fixedrange: true,
           }
         };
 
@@ -202,22 +243,89 @@
             displaylogo: false
           }
         );
-      }
+
+        this.$refs.coreboxChart.on('plotly_relayout', this.getPlotlyRanges)
+
+      },
+
+      getPlotlyRanges(eventData) {
+        console.log(eventData)
+        for (const key in eventData) {
+
+          if (key === 'xaxis.range[0]') {
+            this.xMin = eventData[key].toFixed(1)
+          }
+
+          if (key === 'xaxis.range[1]') {
+            this.xMax = eventData[key].toFixed(1)
+          }
+
+          if (key === 'xaxis.autorange') {
+            this.getFirstAndLastDepth(this.results);
+          }
+        }
+      },
+
+
+      /************************
+       *** IMAGE CODE START ***
+       ************************/
+      getImages() {
+        this.$http.jsonp(this.API_URL, {params: {drillcore__id: this.drillcoreId, format: 'jsonp'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.response.count = response.body.count;
+            this.response.results = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ' + JSON.stringify(errResponse));
+        })
+      },
+
+      buildImageUrl(size, url) {
+        if (url != null) {
+          return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+        }
+      },
+
+      getFirstAndLastDepth(results) {
+        this.getFirstDepth(results);
+        this.getLastDepth(results);
+      },
+
+      getFirstDepth(results) {
+        let lowest = Number.POSITIVE_INFINITY;
+        for (let i = 0; i < results.length; i++) {
+          let tmp = results[i].depth;
+          if (tmp < lowest) lowest = tmp;
+        }
+        this.xMin = lowest
+      },
+
+      getLastDepth(results) {
+        let highest = Number.NEGATIVE_INFINITY;
+        for (let i = 0; i < results.length; i++) {
+          let tmp = results[i].depth;
+          if (tmp > highest) highest = tmp;
+        }
+        this.xMax = highest;
+      },
+      /************************
+       ***  IMAGE CODE END  ***
+       ************************/
 
     }
   }
 </script>
 
 <style scoped>
-  .image-container {
+  .images-container {
     margin: 0 auto;
     width: 89.5%;
   }
 
   .test {
-    height: 40px;
-    background-color: grey;
-    text-align: center;
+    padding: 0;
   }
 
 </style>
