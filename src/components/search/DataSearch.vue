@@ -315,7 +315,7 @@
         'searchParameters.watched.drillcoreNames': function(newVal, oldVal) {
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         },
         'searchParameters.watched.analyticalMethods': function(newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
@@ -325,7 +325,7 @@
         'searchParameters.currentlyShownParameters': function (newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         },
         'searchParameters.watched.dataset': function (newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
@@ -493,7 +493,11 @@
 
             if (key === 'dataset' && params[key].length > 0 && dataset === true) {
               // console.log('DATSET')
-              url += 'analysis__dataset__id=';
+              if (params[key].length > 1) {
+                url+= 'analysis__dataset__id__in=';
+              } else {
+                url += 'analysis__dataset__id=';
+              }
 
               for (const dataset in params[key]) {
                 url += params[key][dataset].analysis__dataset__id + ',';
@@ -519,6 +523,7 @@
             url = url.slice(0, -1);
             url += '&';
 
+            // TODO: Units should also be used in dependable search (too slow currently)
             // if (currentlyShownParams.length > 1) {
             //   url += 'analysis__analysisresult__unit__unit__in='
             // } else if (currentlyShownParams.length > 0) {
@@ -739,23 +744,11 @@
                 comparableParameter: [''],
                 comparableParameterOperator: ['gt'],
                 comparableParameterValue: [''],
+                dataset: [],
                 page: 1,
                 paginateBy: 100,
                 orderBy: 'id',
               },
-              // currentlyShownParameters: [
-              //   { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
-              //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
-              //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-              //   { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-              //   { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
-              //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-              // ],
               currentlyShownParameters: [],
               numOfComparableParameters: 1,
             };

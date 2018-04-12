@@ -9,7 +9,9 @@
 
     <div class="row">
       <div class="col-6">
+        <!--TODO: add v-if and add (previous/next)boxIds-->
         <router-link class="pull-left" :to="{ path: '/corebox/' + (parseInt(id) - 1)  }">Previous</router-link>
+        <!--<router-link v-if="previousBoxId !== null" class="pull-left" :to="{ path: '/corebox/' + previousBoxId  }">Previous</router-link>-->
         <router-link class="pull-right" :to="{ path: '/corebox/' + (parseInt(id) + 1)  }">Next</router-link>
       </div>
     </div>
@@ -120,6 +122,14 @@
         corebox: null,
         parameters: [],
         isChartOpen: false,
+        availableBoxes: {
+          count: 0,
+          results: []
+        },
+        previousBoxExists: false,
+        previousBoxId: null,
+        nextBoxExists: false,
+        nextBoxId: null,
         response: {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -151,6 +161,10 @@
       },
       'corebox': function () {
         if (this.corebox != null) {
+          if (this.availableBoxes.count === 0) {
+            this.getAvailableCoreboxes(this.corebox[0].drillcore__id);
+          }
+
           this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getCoreboxDataByDepth('analysis', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
           this.getAnalysisSummary(this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
@@ -159,6 +173,14 @@
         } else {
           $('body')[0].setAttribute('class', 'background-color-white')
         }
+      },
+      'availableBoxes.results': function (newVal, oldVal) {
+        // if (newVal.length > 0 && this.corebox !== null) {
+        //   this.previousBoxid = this.getPreviousBoxId(this.corebox[0].number, newVal);
+        //   console.log(this.previousBoxid)
+        //   this.nextBoxid = this.getNextBoxId(this.corebox[0].number, newVal);
+        //
+        // }
       }
     },
     methods: {
@@ -179,6 +201,18 @@
           console.log(response);
           if (response.status === 200) {
             this.corebox = response.body.results;
+          }
+        }, errResponse => {
+          console.log('ERROR: ' + JSON.stringify(errResponse));
+        });
+      },
+
+      getAvailableCoreboxes(id) {
+        this.$http.jsonp(this.API_URL, {params: {drillcore__id: id, fields: 'id,number', format: 'jsonp'}}).then(response => {
+          console.log(response);
+          if (response.status === 200) {
+            this.availableBoxes.count = response.body.count;
+            this.availableBoxes.results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
@@ -248,20 +282,66 @@
       handleKeyup(event) {
         if (event.keyCode === 37) {
           //  LEFT KEY
-          this.goLeft(this.id)
+          this.goLeft(this.id, this.availableBoxes)
         }
         if (event.keyCode === 39) {
           //  RIGHT KEY
-          this.goRight(this.id)
+          this.goRight(this.id, this.availableBoxes)
         }
       },
 
-      goLeft(id) {
-        this.$router.push({ path: '/corebox/' + (parseInt(id) - 1) })
+      goLeft(id, availableBoxes) {
+
+        if (this.corebox !== null) {
+
+          const currentBoxNumber = parseInt(this.corebox[0].number);
+          const previousBoxNumber = currentBoxNumber - 1;
+          let previousBoxId = id;
+          let previousBoxExists = false;
+
+          for (const box in availableBoxes.results) {
+            if (previousBoxNumber == availableBoxes.results[box].number) {
+              previousBoxExists = true
+              previousBoxId = availableBoxes.results[box].id;
+            }
+          }
+
+          if (previousBoxExists) {
+            console.log(previousBoxId)
+            this.$router.push({ path: '/corebox/' + previousBoxId })
+
+          } else {
+            console.log('previous box does not exist!')
+          }
+
+        }
       },
 
-      goRight(id) {
+      goRight(id, availableBoxes) {
         this.$router.push({ path: '/corebox/' + (parseInt(id) + 1) })
+      },
+
+      getPreviousBoxId(currentBoxNumber, availableBoxes) {
+        const previousBoxNumber = parseInt(currentBoxNumber) - 1;
+        let prevBoxExists = false;
+
+
+        for (const box in availableBoxes) {
+          if (previousBoxNumber == availableBoxes[box].number) {
+            this.previousBoxExists = true
+            prevBoxExists = true
+            return availableBoxes[box].id;
+          }
+        }
+
+        if (!prevBoxExists) {
+          this.previousBoxExists = false;
+        }
+
+      },
+
+      getNextBoxId(currentBoxNumber) {
+
       },
 
       openChart() {
@@ -280,6 +360,11 @@
         this.corebox = null;
         this.parameters = [];
         this.isChartOpen = false;
+        // No need to reset availableBoxes
+        // this.availableBoxes = {
+        //   count: 0,
+        //   results: []
+        // };
         this.response = {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
