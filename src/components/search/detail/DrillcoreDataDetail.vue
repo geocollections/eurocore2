@@ -98,7 +98,8 @@
                           Analysis</span>
                         </th>
 
-                        <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION <th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
+                        <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION -->
+                        <!--<th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
                         <th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>
                       </tr>
                     </thead>

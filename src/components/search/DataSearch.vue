@@ -55,10 +55,9 @@
             :options="dataset"
             placeholder="select dataset"
             :multiple="true"
-            track-by="name"
+            track-by="analysis__dataset__name"
             :close-on-select="false"
-            :disabled="true"
-            label="name"></vue-multiselect>
+            label="analysis__dataset__name"></vue-multiselect>
         </div>
 
         <label>Parameter filter</label>
@@ -262,19 +261,6 @@
               paginateBy: 100,
               orderBy: 'id',
             },
-            // currentlyShownParameters: [
-            //   { analysis__analysisresult__parameter__parameter: 'Au', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'au_ppm' },
-            //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: '%', formattedValue: 'co_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Co', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'co_ppm' },
-            //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: '%', formattedValue: 'cu_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Cu', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'cu_ppm' },
-            //   { analysis__analysisresult__parameter__parameter: 'Fe', analysis__analysisresult__unit__unit: '%', formattedValue: 'fe_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: '%', formattedValue: 'ni_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Ni', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'ni_ppm' },
-            //   { analysis__analysisresult__parameter__parameter: 'S', analysis__analysisresult__unit__unit: '%', formattedValue: 's_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: '%', formattedValue: 'zn_pct' },
-            //   { analysis__analysisresult__parameter__parameter: 'Zn', analysis__analysisresult__unit__unit: 'ppm', formattedValue: 'zn_ppm' },
-            // ],
             currentlyShownParameters: [],
             numOfComparableParameters: 1,
           },
@@ -325,39 +311,46 @@
           },
           deep: true
         },
+        // TODO: Enable populateDataset after API gets fixed!!!
         'searchParameters.watched.drillcoreNames': function(newVal, oldVal) {
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         },
         'searchParameters.watched.analyticalMethods': function(newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         },
         'searchParameters.currentlyShownParameters': function (newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+        },
+        'searchParameters.watched.dataset': function (newVal, oldVal) {
+          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
         },
         'searchParameters.watched.paginateBy': function(newVal, oldVal) {
-          console.log(oldVal)
-          console.log(newVal)
-
-          if (oldVal !== newVal) {
-            this.toastInfo('Now showing <strong>' + newVal + '</strong> results per page!')
-          }
-        }
+          this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
+        },
       },
 
       created: function () {
         this.isSearching = true;
 
-        this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
-
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.$session.exists() && this.$session.get('dataSearch') != null) {
           this.searchParameters = this.$session.get('dataSearch');
+
+          // TODO: Disable it after API gets fixed!!!
+          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          // TODO: Disable it after API gets fixed!!!
         } else {
           this.searchEntities(this.searchParameters.watched)
+          this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         }
       },
 
@@ -426,6 +419,20 @@
               url += '&';
             }
 
+            if (key === 'dataset' && params[key].length > 0) {
+              // console.log('DATASET')
+
+              // LookUpTypes are not needed because array type (ISSUE #30)
+              url += 'dataset_id=';
+
+              for (const dataset in params[key]) {
+                url += params[key][dataset].analysis__dataset__id + ',';
+              }
+
+              url = url.slice(0, -1);
+              url += '&';
+            }
+
             if (key === 'comparableParameter') {
               // console.log('COMPARABLE');
               // console.log(params[key]);
@@ -449,7 +456,7 @@
           return url;
         },
 
-        buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods, parameters) {
+        buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods, parameters, dataset) {
           let url = this.API_URL + 'drillcore/?';
           Object.keys(params).forEach(function (key) {
             // console.log(key + ' ' + params[key]);
@@ -467,6 +474,7 @@
               url = url.slice(0, -1); // removes comma
               url += '&';
             }
+
             if (key === 'analyticalMethods' && params[key].length > 0 && analyticalMethods === true) {
               // console.log('ANALYTICAL');
               if (params[key].length > 1) {
@@ -482,6 +490,19 @@
               url = url.slice(0, -1);
               url += '&';
             }
+
+            if (key === 'dataset' && params[key].length > 0 && dataset === true) {
+              // console.log('DATSET')
+              url += 'analysis__dataset__id=';
+
+              for (const dataset in params[key]) {
+                url += params[key][dataset].analysis__dataset__id + ',';
+              }
+
+              url = url.slice(0, -1);
+              url += '&';
+            }
+
           });
 
           if (parameters === true) {
@@ -529,7 +550,7 @@
          ***** MULTISELECT POPULATE START ******
          ***************************************/
         populateDrillcoreNames(params, currentlyShownParams) {
-          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true);
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true, true);
           console.log(url);
 
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'id,name'}}).then(response => {
@@ -547,7 +568,7 @@
         },
 
         populateAnalyticalMethods(params, currentlyShownParams) {
-          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true);
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true, true);
           console.log(url);
 
           this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
@@ -572,7 +593,7 @@
         },
 
         populateShowParameters(params, currentlyShownParams) {
-          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false);
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false, true);
           console.log(url)
 
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysis__analysisresult__parameter__parameter', fields: 'analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit'}}).then(response => {
@@ -601,10 +622,35 @@
           })
         },
 
+        populateDataset(params, currentlyShownParams) {
+          let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, true, false)
+          console.log(url)
+          this.$http.jsonp(url , {params: {analysis__dataset__id__isnull: 'false' ,format: 'jsonp', distinct: 'true', fields: 'analysis__dataset__name,analysis__dataset__id'}}).then(response => {
+            console.log(response);
+            if (response.status === 200) {
+              if (response.body.count > 0) {
+                const allDatasets = response.body.results;
+                this.dataset = [];
+                for (const dataset in allDatasets) {
+                  if (allDatasets[dataset].analysis__dataset__name !== null) {
+                    this.dataset.push(allDatasets[dataset]);
+                  }
+                }
+              } else {
+                this.dataset = [];
+              }
+            }
+          }, errResponse => {
+            console.log('ERROR: ' + JSON.stringify(errResponse));
+          })
+
+        },
+
         populateAll(params, currentlyShownParams) {
           this.populateAnalyticalMethods(params, currentlyShownParams);
           this.populateShowParameters(params, currentlyShownParams);
           this.populateDrillcoreNames(params, currentlyShownParams);
+          this.populateDataset(params, currentlyShownParams);
         },
         /***************************************
          *****  MULTISELECT POPULATE END  ******
