@@ -670,7 +670,7 @@
         addFloatingTableHeaders() {
           $('#table-search').floatThead({
             position: 'absolute',
-            zIndex: 1035,
+            zIndex: 1025,
             top: 98 // headers height
           });
         },
@@ -742,7 +742,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1025;
+    z-index: 1020;
     background: rgba(255, 255, 255, 0.5);
     width: 100%;
     padding: 50% 0;

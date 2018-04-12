@@ -4,7 +4,7 @@
       <!-- Chart is drawn here -->
     </div>
 
-    <div class="row images-container" v-if="locationHref">
+    <div class="row images-container">
       <div class="col mt-3 mb-3 test">
 
         <!--TODO: Image(s) here-->
@@ -48,11 +48,11 @@
 
     created: function () {
       this.getFirstAndLastDepth(this.results);
-      this.getImages(this.results);
 
-      if (location.href.includes('drillcore_data')) {
-        this.locationHref = true;
+      if (typeof (this.drillcoreId) !== 'undefined') {
+        this.getImages(this.results);
       }
+
     },
 
     mounted: function () {
@@ -72,8 +72,12 @@
       'results': function () {
         this.drawChart(this.results, this.parameters, this.name);
         this.getFirstAndLastDepth(this.results);
-        this.getImages(this.results);
       },
+      'drillcoreId': function (newVal, oldVal) {
+        if (typeof (newVal) !== 'undefined') {
+          this.getImages(this.results);
+        }
+      }
     },
     methods: {
 
@@ -271,6 +275,7 @@
        *** IMAGE CODE START ***
        ************************/
       getImages() {
+        console.log(this.drillcoreId)
         this.$http.jsonp(this.API_URL, {params: {drillcore__id: this.drillcoreId, format: 'jsonp'}}).then(response => {
           console.log(response);
           if (response.status === 200) {

@@ -73,7 +73,7 @@
           </b-tab>
 
           <b-tab v-if="response.analysis_summary.count > 0" title="Chart" @click="openChart()">
-            <plotly-chart :results="response.analysis_summary.results" :parameters="parameters" :name="corebox[0].number" v-if="isChartOpen"></plotly-chart>
+            <plotly-chart :results="response.analysis_summary.results" :parameters="parameters" :name="corebox[0].number" :drillcore-id="corebox[0].drillcore__id" v-if="isChartOpen"></plotly-chart>
           </b-tab>
 
           <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">

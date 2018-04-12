@@ -9,7 +9,7 @@
     <div><font-awesome-icon :icon="icon" /> 2017-2018. EIT RawMaterials project EUROCORE: European Core Sample Collection for Master Training.</div>
 
     <div>
-      <a target="_blank" href="http://ttu.ee/geoloogia-instituut">Developed and hosted by the Department of Geology, Tallinn University of Technology</a> and <a href='http://natarc.ut.ee'>NATARC</a>.
+      <a target="_blank" href="http://ttu.ee/geoloogia-instituut">Developed and hosted by the Department of Geology, Tallinn University of Technology</a> and <a target="_blank" href="http://natarc.ut.ee">NATARC</a>.
     </div>
   </footer>
 </template>
