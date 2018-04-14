@@ -9,10 +9,8 @@
 
     <div class="row">
       <div class="col-6">
-        <!--TODO: add v-if and add (previous/next)boxIds-->
-        <router-link class="pull-left" :to="{ path: '/corebox/' + (parseInt(id) - 1)  }">Previous</router-link>
-        <!--<router-link v-if="previousBoxId !== null" class="pull-left" :to="{ path: '/corebox/' + previousBoxId  }">Previous</router-link>-->
-        <router-link class="pull-right" :to="{ path: '/corebox/' + (parseInt(id) + 1)  }">Next</router-link>
+        <router-link v-if="previousBoxExists" class="pull-left" :to="{ path: '/corebox/' + previousBoxId  }">Previous</router-link>
+        <router-link v-if="nextBoxExists" class="pull-right" :to="{ path: '/corebox/' + nextBoxId  }">Next</router-link>
       </div>
     </div>
 
@@ -130,6 +128,7 @@
         previousBoxId: null,
         nextBoxExists: false,
         nextBoxId: null,
+        oldDrillcoreId: null,
         response: {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -155,14 +154,31 @@
     },
     watch: {
       'id': function () {
+
         this.resetData();
         this.getCoreboxById(this.id);
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
-      'corebox': function () {
+      'corebox': function (newVal, oldVal) {
+        if (oldVal !== null && typeof (oldVal) !== 'undefined') {
+          this.oldDrillcoreId = oldVal[0].drillcore__id;
+        }
+
         if (this.corebox != null) {
+
+          // This code block needed if user changes ID from url.
+          if (this.oldDrillcoreId !== null) {
+            if (this.oldDrillcoreId !== this.corebox[0].drillcore__id) {
+              this.resetAvailableBoxes();
+            }
+          }
+
           if (this.availableBoxes.count === 0) {
             this.getAvailableCoreboxes(this.corebox[0].drillcore__id);
+          }
+          if (this.availableBoxes.count > 0) {
+            this.previousBoxId = this.getPreviousBoxId(this.corebox[0].number, this.availableBoxes.results);
+            this.nextBoxId = this.getNextBoxId(this.corebox[0].number, this.availableBoxes.results);
           }
 
           this.getCoreboxDataByDepth('sample', this.corebox[0].drillcore__id, this.corebox[0].start_depth, this.corebox[0].end_depth);
@@ -175,12 +191,20 @@
         }
       },
       'availableBoxes.results': function (newVal, oldVal) {
-        // if (newVal.length > 0 && this.corebox !== null) {
-        //   this.previousBoxid = this.getPreviousBoxId(this.corebox[0].number, newVal);
-        //   console.log(this.previousBoxid)
-        //   this.nextBoxid = this.getNextBoxId(this.corebox[0].number, newVal);
-        //
-        // }
+        if (newVal.length > 0) {
+          this.previousBoxId = this.getPreviousBoxId(this.corebox[0].number, this.availableBoxes.results);
+          this.nextBoxId = this.getNextBoxId(this.corebox[0].number, this.availableBoxes.results);
+        }
+      },
+      'previousBoxId': function (newVal, oldVal) {
+        if (newVal !== null && typeof (newVal) !== 'undefined') {
+          this.previousBoxExists = true;
+        }
+      },
+      'nextBoxId': function (newVal, oldVal) {
+        if (newVal !== null && typeof (newVal) !== 'undefined') {
+          this.nextBoxExists = true;
+        }
       }
     },
     methods: {
@@ -282,66 +306,45 @@
       handleKeyup(event) {
         if (event.keyCode === 37) {
           //  LEFT KEY
-          this.goLeft(this.id, this.availableBoxes)
+          this.goLeft(this.previousBoxId)
         }
         if (event.keyCode === 39) {
           //  RIGHT KEY
-          this.goRight(this.id, this.availableBoxes)
+          this.goRight(this.nextBoxId)
         }
       },
 
-      goLeft(id, availableBoxes) {
-
-        if (this.corebox !== null) {
-
-          const currentBoxNumber = parseInt(this.corebox[0].number);
-          const previousBoxNumber = currentBoxNumber - 1;
-          let previousBoxId = id;
-          let previousBoxExists = false;
-
-          for (const box in availableBoxes.results) {
-            if (previousBoxNumber == availableBoxes.results[box].number) {
-              previousBoxExists = true
-              previousBoxId = availableBoxes.results[box].id;
-            }
-          }
-
-          if (previousBoxExists) {
-            console.log(previousBoxId)
-            this.$router.push({ path: '/corebox/' + previousBoxId })
-
-          } else {
-            console.log('previous box does not exist!')
-          }
+      goLeft(previousBoxId) {
+        if (this.corebox !== null && this.previousBoxExists) {
+          this.$router.push({ path: '/corebox/' + previousBoxId })
 
         }
       },
 
-      goRight(id, availableBoxes) {
-        this.$router.push({ path: '/corebox/' + (parseInt(id) + 1) })
+      goRight(nextBoxId) {
+        if (this.corebox !== null && this.nextBoxExists) {
+          this.$router.push({ path: '/corebox/' + nextBoxId })
+        }
       },
 
       getPreviousBoxId(currentBoxNumber, availableBoxes) {
         const previousBoxNumber = parseInt(currentBoxNumber) - 1;
-        let prevBoxExists = false;
-
 
         for (const box in availableBoxes) {
           if (previousBoxNumber == availableBoxes[box].number) {
-            this.previousBoxExists = true
-            prevBoxExists = true
             return availableBoxes[box].id;
           }
         }
-
-        if (!prevBoxExists) {
-          this.previousBoxExists = false;
-        }
-
       },
 
-      getNextBoxId(currentBoxNumber) {
+      getNextBoxId(currentBoxNumber, availableBoxes) {
+        const nextBoxNumber = parseInt(currentBoxNumber) + 1;
 
+        for (const box in availableBoxes) {
+          if (nextBoxNumber == availableBoxes[box].number) {
+            return availableBoxes[box].id;
+          }
+        }
       },
 
       openChart() {
@@ -360,11 +363,11 @@
         this.corebox = null;
         this.parameters = [];
         this.isChartOpen = false;
-        // No need to reset availableBoxes
-        // this.availableBoxes = {
-        //   count: 0,
-        //   results: []
-        // };
+        this.previousBoxExists = false;
+        this.previousBoxId = null;
+        this.nextBoxExists = false;
+        this.nextBoxId = null;
+        // Do not reset oldDrillcoreId, it is needed!
         this.response = {
           sample: { count: 0, results: [] },
           analysis: { count: 0, results: [] },
@@ -373,6 +376,13 @@
           attachment_link: { count: 0, results: [] },
         }
       },
+
+      resetAvailableBoxes() {
+        this.availableBoxes = {
+          count: 0,
+          results: []
+        };
+      }
 
     }
   }
