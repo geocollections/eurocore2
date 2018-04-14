@@ -25,6 +25,18 @@
         </div>
 
         <div class="form-group">
+          <label>Dataset</label>
+          <vue-multiselect
+            v-model="searchParameters.watched.dataset"
+            :options="dataset"
+            placeholder="select dataset"
+            :multiple="true"
+            track-by="analysis__dataset__name"
+            :close-on-select="false"
+            label="analysis__dataset__name"></vue-multiselect>
+        </div>
+
+        <div class="form-group">
           <label>Analytical method(s)</label>
           <vue-multiselect
             v-model="searchParameters.watched.analyticalMethods"
@@ -46,18 +58,6 @@
             track-by="formattedValue"
             :close-on-select="false"
             :custom-label="customLabelForParameters"></vue-multiselect>
-        </div>
-
-        <div class="form-group">
-          <label>Dataset</label>
-          <vue-multiselect
-            v-model="searchParameters.watched.dataset"
-            :options="dataset"
-            placeholder="select dataset"
-            :multiple="true"
-            track-by="analysis__dataset__name"
-            :close-on-select="false"
-            label="analysis__dataset__name"></vue-multiselect>
         </div>
 
         <label>Parameter filter</label>
