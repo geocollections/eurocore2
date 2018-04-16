@@ -18,9 +18,9 @@
             :options="drillcoreNames"
             placeholder="Select drillcore"
             :multiple="true"
-            track-by="name"
+            track-by="drillcore__name"
             :close-on-select="false"
-            label="name"></vue-multiselect>
+            label="drillcore__name"></vue-multiselect>
         </div>
       </div>
 
@@ -32,9 +32,9 @@
             :options="dataset"
             placeholder="select dataset"
             :multiple="true"
-            track-by="analysis__dataset__name"
+            track-by="dataset__name"
             :close-on-select="false"
-            label="analysis__dataset__name"></vue-multiselect>
+            label="dataset__name"></vue-multiselect>
         </div>
       </div>
     </div>
@@ -63,9 +63,9 @@
             :options="analyticalMethods"
             placeholder="select method"
             :multiple="true"
-            track-by="analysis__analysis_method__method"
+            track-by="analysis_method__method"
             :close-on-select="false"
-            label="analysis__analysis_method__method"></vue-multiselect>
+            label="analysis_method__method"></vue-multiselect>
         </div>
       </div>
     </div>
@@ -85,7 +85,7 @@
           <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in searchParameters.numOfComparableParameters">
             <div class="input-group">
               <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
-                <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysis__analysisresult__parameter__parameter}} {{parameter.analysis__analysisresult__unit__unit}}</option>
+                <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysisresult__parameter__parameter}} {{parameter.analysisresult__unit__unit}}</option>
               </b-form-select>
               <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
               <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
@@ -197,7 +197,7 @@
                   <span @click="changeOrder(parameter.formattedValue)">
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
-                    {{parameter.analysis__analysisresult__parameter__parameter + ' ' + parameter.analysis__analysisresult__unit__unit}}
+                    {{parameter.analysisresult__parameter__parameter + ' ' + parameter.analysisresult__unit__unit}}
                   </span>
                 </th>
               </tr>
@@ -403,13 +403,13 @@
             if (key === 'drillcoreNames' && params[key].length > 0) {
               // console.log('DRILLCORE');
               if (params[key].length > 1) {
-                url += 'drillcore_id__in='; // MULTI
+                url += 'drillcore_name__in='; // MULTI
               } else {
-                url += 'drillcore_id='; // SINGLE
+                url += 'drillcore_name='; // SINGLE
               }
 
               for (const drillcore in params[key]) {
-                url += params[key][drillcore].id + ',';
+                url += params[key][drillcore].drillcore__name + ',';
               }
 
               url = url.slice(0, -1); // removes comma
@@ -426,7 +426,7 @@
               }
 
               for (const analysis in params[key]) {
-                url += params[key][analysis].analysis__analysis_method__method + ',';
+                url += params[key][analysis].analysis_method__method + ',';
               }
 
               url = url.slice(0, -1);
@@ -440,7 +440,7 @@
               url += 'dataset_id=';
 
               for (const dataset in params[key]) {
-                url += params[key][dataset].analysis__dataset__id + ',';
+                url += params[key][dataset].dataset__id + ',';
               }
 
               url = url.slice(0, -1);
@@ -471,18 +471,18 @@
         },
 
         buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods, parameters, dataset) {
-          let url = this.API_URL + 'drillcore/?';
+          let url = this.API_URL + 'analysis/?';
           Object.keys(params).forEach(function (key) {
             // console.log(key + ' ' + params[key]);
             if (key === 'drillcoreNames' && params[key].length > 0 && drillcoreNames === true) {
               if (params[key].length > 1) {
-                url += 'id__in='; // MULTI
+                url += 'drillcore__name__in='; // MULTI
               } else {
-                url += 'id='; // SINGLE
+                url += 'drillcore__name='; // SINGLE
               }
 
               for (const drillcore in params[key]) {
-                url += params[key][drillcore].id + ',';
+                url += params[key][drillcore].drillcore__name + ',';
               }
 
               url = url.slice(0, -1); // removes comma
@@ -492,13 +492,13 @@
             if (key === 'analyticalMethods' && params[key].length > 0 && analyticalMethods === true) {
               // console.log('ANALYTICAL');
               if (params[key].length > 1) {
-                url += 'analysis__analysis_method__method__in=';
+                url += 'analysis_method__method__in=';
               } else {
-                url += 'analysis__analysis_method__method=';
+                url += 'analysis_method__method=';
               }
 
               for (const analysis in params[key]) {
-                url += params[key][analysis].analysis__analysis_method__method + ',';
+                url += params[key][analysis].analysis_method__method + ',';
               }
 
               url = url.slice(0, -1);
@@ -508,13 +508,13 @@
             if (key === 'dataset' && params[key].length > 0 && dataset === true) {
               // console.log('DATSET')
               if (params[key].length > 1) {
-                url+= 'analysis__dataset__id__in=';
+                url+= 'dataset__id__in=';
               } else {
-                url += 'analysis__dataset__id=';
+                url += 'dataset__id=';
               }
 
               for (const dataset in params[key]) {
-                url += params[key][dataset].analysis__dataset__id + ',';
+                url += params[key][dataset].dataset__id + ',';
               }
 
               url = url.slice(0, -1);
@@ -525,32 +525,32 @@
 
           if (parameters === true) {
             if (currentlyShownParams.length > 1) {
-              url += 'analysis__analysisresult__parameter__parameter__in='
+              url += 'analysisresult__parameter__parameter__in='
             } else if (currentlyShownParams.length > 0) {
-              url += 'analysis__analysisresult__parameter__parameter='
+              url += 'analysisresult__parameter__parameter='
             }
             Object.keys(currentlyShownParams).forEach(function (key) {
-              console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
-              url += currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ','
+              console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+              url += currentlyShownParams[key].analysisresult__parameter__parameter + ','
             });
 
             url = url.slice(0, -1);
             url += '&';
 
             // TODO: Units should also be used in dependable search (too slow currently)
-            // if (currentlyShownParams.length > 1) {
-            //   url += 'analysis__analysisresult__unit__unit__in='
-            // } else if (currentlyShownParams.length > 0) {
-            //   url += 'analysis__analysisresult__unit__unit='
-            // }
-            // Object.keys(currentlyShownParams).forEach(function (key) {
-            //   console.log(currentlyShownParams[key].analysis__analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysis__analysisresult__unit__unit);
-            //   if (currentlyShownParams[key].analysis__analysisresult__unit__unit === '%' && !url.includes('%')) {
-            //     url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
-            //   } else if (currentlyShownParams[key].analysis__analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
-            //     url += currentlyShownParams[key].analysis__analysisresult__unit__unit + ','
-            //   }
-            // });
+            if (currentlyShownParams.length > 1) {
+              url += 'analysisresult__unit__unit__in='
+            } else if (currentlyShownParams.length > 0) {
+              url += 'analysisresult__unit__unit='
+            }
+            Object.keys(currentlyShownParams).forEach(function (key) {
+              console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+              if (currentlyShownParams[key].analysisresult__unit__unit === '%' && !url.includes('%')) {
+                url += currentlyShownParams[key].analysisresult__unit__unit + ','
+              } else if (currentlyShownParams[key].analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
+                url += currentlyShownParams[key].analysisresult__unit__unit + ','
+              }
+            });
           }
 
           url = url.slice(0, -1);
@@ -572,7 +572,7 @@
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true, true);
           console.log(url);
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'id,name'}}).then(response => {
+          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'drillcore__name'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -590,14 +590,14 @@
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true, true);
           console.log(url);
 
-          this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis__analysis_method__method'}}).then(response => {
+          this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis_method__method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
                 const allMethods = response.body.results;
                 this.analyticalMethods = [];
                 for (const method in allMethods) {
-                  if (allMethods[method].analysis__analysis_method__method !== null) {
+                  if (allMethods[method].analysis_method__method !== null) {
                     this.analyticalMethods.push(allMethods[method]);
                   }
                 }
@@ -615,14 +615,14 @@
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false, true);
           console.log(url)
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysis__analysisresult__parameter__parameter', fields: 'analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit'}}).then(response => {
+          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysisresult__parameter__parameter', fields: 'analysisresult__parameter__parameter,analysisresult__unit__unit'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
                 const allParameters = response.body.results;
                 this.showParameters = [];
                 for (const param in allParameters) {
-                  if (allParameters[param].analysis__analysisresult__parameter__parameter !== null && allParameters[param].analysis__analysisresult__unit__unit !== null) {
+                  if (allParameters[param].analysisresult__parameter__parameter !== null && allParameters[param].analysisresult__unit__unit !== null) {
                     this.showParameters.push(allParameters[param]);
                   }
                 }
@@ -644,14 +644,14 @@
         populateDataset(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, true, false)
           console.log(url)
-          this.$http.jsonp(url , {params: {analysis__dataset__id__isnull: 'false' ,format: 'jsonp', distinct: 'true', fields: 'analysis__dataset__name,analysis__dataset__id'}}).then(response => {
+          this.$http.jsonp(url , {params: {dataset__id__isnull: 'false' ,format: 'jsonp', distinct: 'true', fields: 'dataset__name,dataset__id'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
                 const allDatasets = response.body.results;
                 this.dataset = [];
                 for (const dataset in allDatasets) {
-                  if (allDatasets[dataset].analysis__dataset__name !== null) {
+                  if (allDatasets[dataset].dataset__name !== null) {
                     this.dataset.push(allDatasets[dataset]);
                   }
                 }
@@ -680,8 +680,8 @@
           // console.log(param);
           if (param !== 'undefined') {
             let unformattedParam = param;
-            let firstHalf = unformattedParam.analysis__analysisresult__parameter__parameter.toLowerCase();
-            let secondHalf = unformattedParam.analysis__analysisresult__unit__unit.toLowerCase();
+            let firstHalf = unformattedParam.analysisresult__parameter__parameter.toLowerCase();
+            let secondHalf = unformattedParam.analysisresult__unit__unit.toLowerCase();
             if (secondHalf === '%') {
               secondHalf = 'pct';
             }
@@ -691,7 +691,7 @@
         },
 
         customLabelForParameters(option) {
-          return `${option.analysis__analysisresult__parameter__parameter} ${option.analysis__analysisresult__unit__unit}`
+          return `${option.analysisresult__parameter__parameter} ${option.analysisresult__unit__unit}`
         },
 
         changeOrder(orderValue) {

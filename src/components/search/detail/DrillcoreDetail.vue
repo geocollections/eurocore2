@@ -84,6 +84,8 @@
       <div class="col">
         <b-tabs v-if="drillcoreSummary != null" v-model="tabIndex">
 
+          <!-- TODO: Hide disabled tabs from user view -->
+
           <b-tab v-show="drillcoreSummary[0].boxes > 0"
                  @click="addTabToUrl('core_boxes')"
                  :disabled="drillcoreSummary[0].boxes === 0"
