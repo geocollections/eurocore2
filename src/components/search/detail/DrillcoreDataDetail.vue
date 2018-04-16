@@ -50,7 +50,7 @@
 
     <div class="row">
       <div class="col">
-        <b-tabs>
+        <b-tabs v-model="tabIndex">
           <b-tab :title="'Data (' + (response.count) + ')'" @click="openData()">
             <div class="row mt-3">
               <div class="col-xs-1 pl-3 pr-3">
@@ -190,6 +190,7 @@
     data() {
       return {
         showLabel: true,
+        tabIndex: 0,
         searchParameters: {
           page: 1,
           paginateBy: 250,
@@ -299,8 +300,29 @@
       }
     },
 
+    beforeRouteUpdate: function (to, from, next) {
+      if (typeof (to.query.tab) === 'undefined') {
+        this.tabIndex = 0;
+      }
+
+      if (Object.keys(to.query).length > 0 && to.query.constructor === Object) {
+        if (to.query.tab) {
+          if (to.query.tab === 'data') {
+            this.tabIndex = 0;
+            this.isChartOpen = false;
+          } else if (to.query.tab === 'chart') {
+            this.tabIndex = 1;
+            this.isChartOpen = true
+          }
+        }
+      }
+      next()
+    },
+
     created: function () {
       this.getDrillcoreName(this.drillcoreId);
+
+      this.setTabFromUrl();
 
       if (this.$session.exists() && this.$session.get('drillcore_data/' + this.drillcoreId) != null) {
         const dataToImport = this.$session.get('drillcore_data/' + this.drillcoreId);
@@ -451,10 +473,12 @@
 
       openData() {
         this.isChartOpen = false;
+        this.$router.push({ path: '/drillcore_data/' + this.drillcoreId, query: { tab: 'data' } })
       },
 
       openChart() {
         this.isChartOpen = true;
+        this.$router.push({ path: '/drillcore_data/' + this.drillcoreId, query: { tab: 'chart' } })
       },
 
       openInNewWindow(params) {
@@ -524,8 +548,25 @@
         }
       },
 
+      setTabFromUrl() {
+        if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
+          if (this.$route.query.tab) {
+            if (this.$route.query.tab === 'data') {
+              this.tabIndex = 0
+              this.isChartOpen = false;
+            } else if (this.$route.query.tab === 'chart') {
+              this.tabIndex = 1;
+              this.isChartOpen = true;
+            }
+          } else {
+            this.tabIndex = 0;
+          }
+        }
+      },
+
       resetData() {
         this.showLabel = true;
+        // this.tabIndex = 0; Not Resetting it!
         this.searchParameters = {
           page: 1,
           paginateBy: 250,

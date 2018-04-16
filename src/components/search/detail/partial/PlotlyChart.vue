@@ -179,6 +179,10 @@
           },
           xaxis: {
             title: 'Depth',
+            titlefont: {
+              size: 18,
+              color: '#004393'
+            },
             domain: [0.05, 0.95],
             linecolor: 'black',
             linewidth: 1,
@@ -191,6 +195,10 @@
           yaxis: {
             side: 'left',
             title: '%',
+            titlefont: {
+              size: 18,
+              color: '#004393'
+            },
             linecolor: 'black',
             linewidth: 1,
             mirror: true,
@@ -222,7 +230,12 @@
 
         let d3 = Plotly.d3;
 
-        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+        const WIDTH_IN_PERCENT_OF_PARENT = 100;
+        let HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+
+        if (window.matchMedia("(max-height: 550px)").matches) {
+          HEIGHT_IN_PERCENT_OF_PARENT = 100;
+        }
 
         let gd3 = d3.select(this.$refs.coreboxChart).style({
             width: WIDTH_IN_PERCENT_OF_PARENT + '%',
