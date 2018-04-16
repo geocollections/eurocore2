@@ -349,6 +349,10 @@
         'searchParameters.watched.paginateBy': function(newVal, oldVal) {
           this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
         },
+        'searchParameters.watched.comparableParameter': function (newVal, oldVal) {
+          //TODO: complete it
+          // this.appendChosenParameter(newVal, this.searchParameters.watched.comparableParameter);
+        }
       },
 
       created: function () {
@@ -747,6 +751,36 @@
             pauseOnHover: false
           })
         },
+
+        // appendChosenParameter(valueToAppend, comparableParameters) {
+        //   for (const value in comparableParameters) {
+        //     if (comparableParameters[value] !== null && comparableParameters[value] !== "") {
+        //       let formattedValue = comparableParameters[value].split('_');
+        //       let parameter = formattedValue[0];
+        //       let unit = formattedValue[1];
+        //
+        //       parameter = parameter[0].toUpperCase() + parameter.substring(1);
+        //       if (unit === 'pct') {
+        //         unit = '%'
+        //       }
+        //
+        //       let objectToAdd = {
+        //         analysisresults__parameter__parameter: parameter,
+        //         analysisresults__unit__unit: unit,
+        //         formattedValue: comparableParameters[value]
+        //       }
+        //
+        //       console.log(this.searchParameters.currentlyShownParameters)
+        //
+        //       this.searchParameters.currentlyShownParameters.push(objectToAdd);
+        //
+        //       console.log(this.searchParameters.currentlyShownParameters)
+        //     }
+        //   }
+        //
+        //
+        //   console.log(valueToAppend)
+        // },
 
         resetSearchParameters() {
           console.log(this.searchParameters);
