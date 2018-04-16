@@ -218,12 +218,12 @@
 
     <div class="row">
       <div class="col">
-        <b-tabs>
-          <b-tab v-if="response.drillcore.count > 0" :title="'Drillcores (' + response.drillcore.count + ')'">
+        <b-tabs v-model="tabIndex">
+          <b-tab v-show="response.drillcore.count > 0" @click="openDrillcores()" :title="'Drillcores (' + response.drillcore.count + ')'">
             <drillcore :results="response.drillcore.results"></drillcore>
           </b-tab>
 
-          <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
+          <b-tab v-show="response.reference.count > 0" @click="openReferences()" :title="'References (' + response.reference.count + ')'">
             <reference :results="response.reference.results"></reference>
           </b-tab>
         </b-tabs>
@@ -267,6 +267,7 @@
           drillcore: { count: 0, results: [] },
           reference: { count: 0, results: [] }
         },
+        tabIndex: 0,
       }
     },
     metaInfo () {
@@ -274,12 +275,25 @@
         title: 'EUROCORE Data Portal: Deposit ' + this.id
       }
     },
+
+    beforeRouteUpdate: function (to, from, next) {
+      if (to.query.tab === 'reference') {
+        this.tabIndex = 1;
+      } else {
+        this.tabIndex = 0;
+      }
+      next()
+    },
+
     created: function () {
+      this.setTabFromUrl();
+
       this.getDepositById(this.id);
       this.getResultsByDepositId('drillcore', this.id, 'id');
       this.getResultsByDepositId('reference', this.id, 'id');
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
+
     watch: {
       'id': function () {
         this.resetData();
@@ -294,7 +308,7 @@
         } else {
           $('body')[0].removeAttribute('class')
         }
-      }
+      },
     },
     methods: {
 
@@ -327,13 +341,30 @@
         }
       },
 
+      setTabFromUrl() {
+        if (this.$route.query.tab === 'reference') {
+          this.tabIndex = 1;
+        } else {
+          this.tabIndex = 0;
+        }
+      },
+
+      openDrillcores() {
+        this.$router.push({ path: '/deposit/' + this.id, query: { tab: 'drillcore' } })
+      },
+
+      openReferences() {
+        this.$router.push({ path: '/deposit/' + this.id, query: { tab: 'reference' } })
+      },
+
       resetData() {
         this.showLabel = true;
         this.deposit = null;
         this.response = {
           drillcore: { count: 0, results: [] },
           reference: { count: 0, results: [] }
-        }
+        };
+        // this.tabIndex = 0; Not Resetting it!
       },
 
     },

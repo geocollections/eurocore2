@@ -301,21 +301,14 @@
     },
 
     beforeRouteUpdate: function (to, from, next) {
-      if (typeof (to.query.tab) === 'undefined') {
+      if (to.query.tab === 'chart') {
+        this.tabIndex = 1;
+        this.isChartOpen = true
+      } else {
         this.tabIndex = 0;
+        this.isChartOpen = false;
       }
 
-      if (Object.keys(to.query).length > 0 && to.query.constructor === Object) {
-        if (to.query.tab) {
-          if (to.query.tab === 'data') {
-            this.tabIndex = 0;
-            this.isChartOpen = false;
-          } else if (to.query.tab === 'chart') {
-            this.tabIndex = 1;
-            this.isChartOpen = true
-          }
-        }
-      }
       next()
     },
 
@@ -549,18 +542,12 @@
       },
 
       setTabFromUrl() {
-        if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
-          if (this.$route.query.tab) {
-            if (this.$route.query.tab === 'data') {
-              this.tabIndex = 0
-              this.isChartOpen = false;
-            } else if (this.$route.query.tab === 'chart') {
-              this.tabIndex = 1;
-              this.isChartOpen = true;
-            }
-          } else {
-            this.tabIndex = 0;
-          }
+        if (this.$route.query.tab === 'chart') {
+          this.tabIndex = 1;
+          this.isChartOpen = true;
+        } else {
+          this.tabIndex = 0
+          this.isChartOpen = false;
         }
       },
 
