@@ -82,26 +82,35 @@
 
     <div class="row">
       <div class="col">
-        <b-tabs v-if="drillcoreSummary != null">
-          <b-tab v-if="drillcoreSummary[0].boxes > 0" :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
+        <b-tabs v-if="drillcoreSummary != null" v-model="tabIndex">
+
+          <b-tab v-show="drillcoreSummary[0].boxes > 0"
+                 @click="addTabToUrl('core_boxes')"
+                 :disabled="drillcoreSummary[0].boxes === 0"
+                 :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
             <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
             <infinite-loading @infinite="infiniteHandler">
               <span slot="no-more"></span>
             </infinite-loading>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].lithologies > 0"
+          <b-tab v-show="drillcoreSummary[0].lithologies > 0"
+                 :disabled="drillcoreSummary[0].lithologies === 0"
                  :title="'Lithology' + ' (' + drillcoreSummary[0].lithologies + ')'"
                  @click="getResultsByDrillcoreId('lithology', id, 'start_depth')">
             <lithology :results="response.lithology.results"></lithology>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].dips > 0" :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'"
+          <b-tab v-show="drillcoreSummary[0].dips > 0"
+                 :disabled="drillcoreSummary[0].dip === 0"
+                 :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'"
                  @click="getResultsByDrillcoreId('dip', id, 'depth')">
             <dip :results="response.dip.results"></dip>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].rqds > 0" :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'"
+          <b-tab v-show="drillcoreSummary[0].rqds > 0"
+                 :disabled="drillcoreSummary[0].rqds === 0"
+                 :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'"
                  @click="getResultsByDrillcoreId('rqd', id, 'depth')">
             <rqd :results="response.rqd.results"></rqd>
           </b-tab>
@@ -116,17 +125,23 @@
             <br>I'm the first fading tab
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].samples > 0" :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'"
+          <b-tab v-show="drillcoreSummary[0].samples > 0"
+                 :disabled="drillcoreSummary[0].samples === 0"
+                 :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'"
                  @click="getResultsByDrillcoreId('sample', id, 'depth')">
             <sample :results="response.sample.results"></sample>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].analyses > 0" :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'"
+          <b-tab v-show="drillcoreSummary[0].analyses > 0"
+                 :disabled="drillcoreSummary[0].analyses === 0"
+                 :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'"
                  @click="getResultsByDrillcoreId('analysis', id, 'depth')">
             <analysis :results="response.analysis.results"></analysis>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].ctscans > 0" :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
+          <b-tab v-show="drillcoreSummary[0].ctscans > 0"
+                 :disabled="drillcoreSummary[0].ctscans === null"
+                 :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
                  @click="getCTscansByDrillcoreId(id)">
             <ct-scans :results="response.ctscans.results"></ct-scans>
           </b-tab>
@@ -190,6 +205,7 @@
         showLabel: true,
         drillcore: null,
         drillcoreSummary: null,
+        tabIndex: 0,
         response: {
           drillcore_box: {page: 0, paginateBy: 5, count: 0, results: []},
           lithology: {count: 0, results: []},
@@ -205,19 +221,43 @@
         }
       }
     },
+
     metaInfo() {
       return {
         title: 'EUROCORE Data Portal: Drillcore ' + this.id
       }
     },
+
+    beforeRouteUpdate: function (to, from, next) {
+      if (to.query.tab === 'lithology') {
+        this.tabIndex = 1;
+      } else if (to.query.tab === 'dip') {
+        this.tabIndex = 2;
+      } else if (to.query.tab === 'rqd') {
+        this.tabIndex = 3;
+      } else if (to.query.tab === 'sample') {
+        this.tabIndex = 4;
+      } else if (to.query.tab === 'analysis') {
+        this.tabIndex = 5;
+      } else if (to.query.tab === 'ct_scans') {
+        this.tabIndex = 6;
+      } else {
+        this.tabIndex = 0;
+      }
+      next()
+    },
+
     created: function () {
+      this.setTabFromUrl(this.id);
       this.getDrillcoreById(this.id);
       this.getDrillcoreSummary(this.id);
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
+
     watch: {
       'id': function () {
         this.resetData();
+        this.setTabFromUrl(this.id)
         this.getDrillcoreById(this.id);
         this.getDrillcoreSummary(this.id);
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
@@ -230,6 +270,7 @@
         }
       }
     },
+
     methods: {
       getDrillcoreById(id) {
         this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
@@ -249,7 +290,6 @@
           console.log(response);
           if (response.status === 200) {
             this.drillcoreSummary = response.body.results;
-            // console.log(this.drillcoreSummary)
           }
         }, errResponse => {
           console.log('ERROR: ');
@@ -259,6 +299,8 @@
       },
 
       getCTscansByDrillcoreId(id) {
+        this.addTabToUrl('ct_scans')
+
         if (!(this.response.ctscans.count > 0 && this.response.ctscans.results.length > 0 && typeof(this.response.ctscans.results !== 'undefined'))) {
           this.$http.jsonp('https://api.eurocore.rocks/analysis/', {
             params: {
@@ -281,6 +323,8 @@
       },
 
       getResultsByDrillcoreId(table, drillcoreId, orderBy) {
+        this.addTabToUrl(table);
+
         if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
           this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {
             params: {
@@ -289,7 +333,7 @@
               format: 'jsonp'
             }
           }).then(response => {
-            console.log(response.body.results);
+            console.log(response);
             if (response.status === 200) {
               this.response[table].count = response.body.count;
               this.response[table].results = response.body.results;
@@ -333,10 +377,41 @@
         }
       },
 
+      setTabFromUrl(drillcoreId) {
+        if (this.$route.query.tab === 'lithology') {
+          this.getResultsByDrillcoreId('lithology', drillcoreId, 'start_depth')
+          this.tabIndex = 1;
+        } else if (this.$route.query.tab === 'dip') {
+          this.getResultsByDrillcoreId('dip', drillcoreId, 'depth')
+          this.tabIndex = 2;
+        } else if (this.$route.query.tab === 'rqd') {
+          this.getResultsByDrillcoreId('rqd', drillcoreId, 'depth')
+          this.tabIndex = 3;
+        } else if (this.$route.query.tab === 'sample') {
+          this.getResultsByDrillcoreId('sample', drillcoreId, 'depth')
+          this.tabIndex = 4;
+        } else if (this.$route.query.tab === 'analysis') {
+          this.getResultsByDrillcoreId('analysis', drillcoreId, 'depth')
+          this.tabIndex = 5;
+        } else if (this.$route.query.tab === 'ct_scans') {
+          this.getCTscansByDrillcoreId(drillcoreId)
+          this.tabIndex = 6;
+        } else {
+          this.tabIndex = 0;
+        }
+      },
+
+      addTabToUrl(table) {
+        if (this.$route.query.tab !== table) {
+          this.$router.push({ path: '/drillcore/' + this.id, query: { tab: table } })
+        }
+      },
+
       resetData() {
         this.showLabel = true;
         this.drillcore = null;
         this.drillcoreSummary = null;
+        // this.tabIndex = 0; Not Resetting it!
         this.response = {
           drillcore_box: {page: 0, paginateBy: 5, count: 0, results: []},
           lithology: {count: 0, results: []},

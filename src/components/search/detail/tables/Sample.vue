@@ -51,9 +51,6 @@
     },
     props: ['results'],
     name: "sample",
-    mounted: function () {
-      console.log(this.$parent)
-    },
     updated: function () {
       $('#sample-table').floatThead('reflow');
       this.addFloatingTableHeaders();

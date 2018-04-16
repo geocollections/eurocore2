@@ -9,9 +9,8 @@
       </div>
     </div>
 
-
     <div class="row">
-      <div class="col">
+      <div class="col-sm-12 col-md-6">
         <div class="form-group">
           <label>Drillcore name(s)</label>
           <vue-multiselect
@@ -23,7 +22,9 @@
             :close-on-select="false"
             label="name"></vue-multiselect>
         </div>
+      </div>
 
+      <div class="col-sm-12 col-md-6">
         <div class="form-group">
           <label>Dataset</label>
           <vue-multiselect
@@ -35,19 +36,12 @@
             :close-on-select="false"
             label="analysis__dataset__name"></vue-multiselect>
         </div>
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label>Analytical method(s)</label>
-          <vue-multiselect
-            v-model="searchParameters.watched.analyticalMethods"
-            :options="analyticalMethods"
-            placeholder="select method"
-            :multiple="true"
-            track-by="analysis__analysis_method__method"
-            :close-on-select="false"
-            label="analysis__analysis_method__method"></vue-multiselect>
-        </div>
 
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
         <div class="form-group">
           <label>Show parameter(s)</label>
           <vue-multiselect
@@ -59,6 +53,26 @@
             :close-on-select="false"
             :custom-label="customLabelForParameters"></vue-multiselect>
         </div>
+      </div>
+
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+          <label>Analytical method(s)</label>
+          <vue-multiselect
+            v-model="searchParameters.watched.analyticalMethods"
+            :options="analyticalMethods"
+            placeholder="select method"
+            :multiple="true"
+            track-by="analysis__analysis_method__method"
+            :close-on-select="false"
+            label="analysis__analysis_method__method"></vue-multiselect>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col">
 
         <label>Parameter filter</label>
         <div class="row mb-3">
@@ -80,11 +94,11 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col">
-            <button class="btn btn-outline-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
-          </div>
-        </div>
+        <!--<div class="row">-->
+          <!--<div class="col">-->
+            <!--<button class="btn btn-outline-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>-->
+          <!--</div>-->
+        <!--</div>-->
       </div>
     </div>
 
@@ -253,16 +267,16 @@
             watched: {
               drillcoreNames: [],
               analyticalMethods: [],
-              comparableParameter: [''],
-              comparableParameterOperator: ['gt'],
-              comparableParameterValue: [''],
+              comparableParameter: ['', ''],
+              comparableParameterOperator: ['gt', 'gt'],
+              comparableParameterValue: ['', ''],
               dataset: [],
               page: 1,
               paginateBy: 100,
               orderBy: 'id',
             },
             currentlyShownParameters: [],
-            numOfComparableParameters: 1,
+            numOfComparableParameters: 2,
           },
           response: {
             count: 0,
@@ -320,7 +334,7 @@
         'searchParameters.watched.analyticalMethods': function(newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
           this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          // this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         },
         'searchParameters.currentlyShownParameters': function (newVal, oldVal) {
           this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
@@ -741,16 +755,16 @@
               watched: {
                 drillcoreNames: [],
                 analyticalMethods: [],
-                comparableParameter: [''],
-                comparableParameterOperator: ['gt'],
-                comparableParameterValue: [''],
+                comparableParameter: ['', ''],
+                comparableParameterOperator: ['gt', 'gt'],
+                comparableParameterValue: ['', ''],
                 dataset: [],
                 page: 1,
                 paginateBy: 100,
                 orderBy: 'id',
               },
               currentlyShownParameters: [],
-              numOfComparableParameters: 1,
+              numOfComparableParameters: 2,
             };
           console.log(this.searchParameters);
         },
