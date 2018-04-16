@@ -94,7 +94,7 @@
               params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
               serverType: 'geoserver',
               projection: '',
-              attributions: 'Bedrock age'
+              attributions: 'Bedrock age: <a target="_blank" href="https://www.bgr.bund.de/EN/Themen/Sammlungen-Grundlagen/GG_geol_Info/Karten/International/Europa/IGME5000/IGME_Project/IGME_Projectinfo.html?nn=1556388">IGME 5000</a>. '
             }),
             opacity: 0.5,
           }),
@@ -106,7 +106,7 @@
               url: 'http://gtkdata.gtk.fi/arcgis/services/Inspire/GTK_Bedrock_and_Superficial_Geology/MapServer/WMSServer?',
               params: { 'LAYERS': 'FI_GTK_1M_Bedrock_Lithology', 'TILED': true },
               projection: '',
-              attributions: 'Rocks of Finland'
+              attributions: 'Rocks of Finland: <a target="_blank" href="http://en.gtk.fi/">Geological Survey of Finland</a>. '
             }),
             opacity: 0.5,
           }),

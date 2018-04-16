@@ -222,7 +222,7 @@
 
         let d3 = Plotly.d3;
 
-        const WIDTH_IN_PERCENT_OF_PARENT = 100, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
+        const WIDTH_IN_PERCENT_OF_PARENT = 90, HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
 
         let gd3 = d3.select(this.$refs.coreboxChart).style({
             width: WIDTH_IN_PERCENT_OF_PARENT + '%',

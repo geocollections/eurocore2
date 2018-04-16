@@ -914,7 +914,7 @@
                 params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
                 serverType: 'geoserver',
                 projection: '',
-                attributions: 'Bedrock age'
+                attributions: 'Bedrock age: <a target="_blank" href="https://www.bgr.bund.de/EN/Themen/Sammlungen-Grundlagen/GG_geol_Info/Karten/International/Europa/IGME5000/IGME_Project/IGME_Projectinfo.html?nn=1556388">IGME 5000</a>. '
               }),
               opacity: 0.5,
             })
