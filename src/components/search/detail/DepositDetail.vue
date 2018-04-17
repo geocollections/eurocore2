@@ -10,7 +10,7 @@
 
     <div class="row">
       <div class="col-md-12 col-lg-6">
-        <b-tabs>
+        <b-tabs pills >
           <b-tab title="Deposit data">
             <table class="table table-bordered table-hover th-styles mt-2">
               <tr v-if="deposit[0].id">
