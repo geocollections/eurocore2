@@ -192,7 +192,6 @@
   import Analysis from './tables/Analysis';
   import CtScans from './tables/CtScans';
   import Spinner from 'vue-simple-spinner'
-  import test from '../../../assets/js/test'
 
   export default {
     components: {
@@ -262,9 +261,6 @@
       this.getDrillcoreById(this.id);
       this.getDrillcoreSummary(this.id);
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
-
-
-      test.bar() // TODO: Delete it because it is for testing purposes
     },
 
     watch: {
