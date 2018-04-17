@@ -406,135 +406,67 @@
           })
         },
 
+
+        /*******************************
+         ***** URL BUILDING START ******
+         *******************************/
+
         buildSearchUrl(params) {
           let url = this.API_URL + 'analysis_summary/?';
-          Object.keys(params).forEach(function (key) {
-            // console.log(key + ' ' + params[key]);
-            // TODO: Should optimise this block | START
-            if (key === 'drillcoreNames' && params[key].length > 0) {
-              // console.log('DRILLCORE');
-              if (params[key].length > 1) {
-                url += 'drillcore_name__in='; // MULTI
-              } else {
-                url += 'drillcore_name='; // SINGLE
+
+          for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+
+              if (key === 'drillcoreNames') {
+                url = this.addFieldToUrl(params[key], url, 'drillcore_name__in=', 'drillcore_name=', 'drillcore__name');
               }
 
-              for (const drillcore in params[key]) {
-                url += params[key][drillcore].drillcore__name + ',';
+              if (key === 'analyticalMethods') {
+                url = this.addFieldToUrl(params[key], url, 'analysis_method__in=', 'analysis_method=', 'analysis_method__method');
               }
 
-              url = url.slice(0, -1); // removes comma
-              url += '&';
-            }
-            // TODO: Should optimise this block | END
-
-            if (key === 'analyticalMethods' && params[key].length > 0) {
-              // console.log('ANALYTICAL');
-              if (params[key].length > 1) {
-                url += 'analysis_method__in=';
-              } else {
-                url += 'analysis_method=';
+              if (key === 'dataset') {
+                url = this.addFieldToUrl(params[key], url, null, 'dataset_id=', 'dataset__id');
               }
 
-              for (const analysis in params[key]) {
-                url += params[key][analysis].analysis_method__method + ',';
-              }
-
-              url = url.slice(0, -1);
-              url += '&';
-            }
-
-            if (key === 'dataset' && params[key].length > 0) {
-              // console.log('DATASET')
-
-              // LookUpTypes are not needed because array type (ISSUE #30)
-              url += 'dataset_id=';
-
-              for (const dataset in params[key]) {
-                url += params[key][dataset].dataset__id + ',';
-              }
-
-              url = url.slice(0, -1);
-              url += '&';
-            }
-
-            if (key === 'comparableParameter') {
-              // console.log('COMPARABLE');
-              // console.log(params[key]);
-              for (const i in params[key]) {
-                if (params['comparableParameter'][i].length > 0 && params['comparableParameterValue'][i].length > 0) {
-                  url += params['comparableParameter'][i] + '__' + params['comparableParameterOperator'][i] + '=' + params['comparableParameterValue'][i] + '&'
+              if (key === 'comparableParameter') {
+                for (const i in params[key]) {
+                  if (params['comparableParameter'][i].length > 0 && params['comparableParameterValue'][i].length > 0) {
+                    url += params['comparableParameter'][i] + '__' + params['comparableParameterOperator'][i] + '=' + params['comparableParameterValue'][i] + '&'
+                  }
                 }
               }
+
             }
-          });
-
-          if (url.slice(-1) === '?' || url.slice(-1) === '&') {
-            url = url.slice(0, -1);
           }
-          // if (url.slice(-1) === '&') {
-          //   url = url.slice(0, -1);
-          // }
 
-          // console.log(url)
+          url = this.removeQuestionMarkOrAmpersand(url);
 
           return url;
         },
 
         buildSearchUrlForPopulate(params, currentlyShownParams, drillcoreNames, analyticalMethods, parameters, dataset) {
           let url = this.API_URL + 'analysis/?';
-          Object.keys(params).forEach(function (key) {
-            // console.log(key + ' ' + params[key]);
-            if (key === 'drillcoreNames' && params[key].length > 0 && drillcoreNames === true) {
-              if (params[key].length > 1) {
-                url += 'drillcore__name__in='; // MULTI
-              } else {
-                url += 'drillcore__name='; // SINGLE
+
+          for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+
+              if (key === 'drillcoreNames' && drillcoreNames === true) {
+                url = this.addFieldToUrl(params[key], url, 'drillcore__name__in=', 'drillcore__name=', 'drillcore__name');
               }
 
-              for (const drillcore in params[key]) {
-                url += params[key][drillcore].drillcore__name + ',';
+              if (key === 'analyticalMethods' && analyticalMethods === true) {
+                url = this.addFieldToUrl(params[key], url, 'analysis_method__method__in=', 'analysis_method__method=', 'analysis_method__method');
               }
 
-              url = url.slice(0, -1); // removes comma
-              url += '&';
+              if (key === 'dataset' && dataset === true) {
+                url = this.addFieldToUrl(params[key], url, 'dataset__id__in=', 'dataset__id=', 'dataset__id');
+              }
             }
 
-            if (key === 'analyticalMethods' && params[key].length > 0 && analyticalMethods === true) {
-              // console.log('ANALYTICAL');
-              if (params[key].length > 1) {
-                url += 'analysis_method__method__in=';
-              } else {
-                url += 'analysis_method__method=';
-              }
+          }
 
-              for (const analysis in params[key]) {
-                url += params[key][analysis].analysis_method__method + ',';
-              }
-
-              url = url.slice(0, -1);
-              url += '&';
-            }
-
-            if (key === 'dataset' && params[key].length > 0 && dataset === true) {
-              // console.log('DATSET')
-              if (params[key].length > 1) {
-                url+= 'dataset__id__in=';
-              } else {
-                url += 'dataset__id=';
-              }
-
-              for (const dataset in params[key]) {
-                url += params[key][dataset].dataset__id + ',';
-              }
-
-              url = url.slice(0, -1);
-              url += '&';
-            }
-
-          });
-
-          if (parameters === true) {
+          if (parameters === true)  {
 
             // PARAMETER (Ag, As, ...)
             if (currentlyShownParams.length > 1) {
@@ -542,13 +474,14 @@
             } else if (currentlyShownParams.length > 0) {
               url += 'analysisresult__parameter__parameter='
             }
-            Object.keys(currentlyShownParams).forEach(function (key) {
-              // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
-              url += currentlyShownParams[key].analysisresult__parameter__parameter + ','
-            });
+            for (const key in currentlyShownParams) {
+              if (currentlyShownParams.hasOwnProperty(key)) {
+                // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+                url += currentlyShownParams[key].analysisresult__parameter__parameter + ','
+              }
+            }
 
-            url = url.slice(0, -1);
-            url += '&';
+            url = this.removeCommaAndAddAmpersand(url);
 
             // UNIT (%, ppm, ...)
             if (currentlyShownParams.length > 1) {
@@ -556,30 +489,66 @@
             } else if (currentlyShownParams.length > 0) {
               url += 'analysisresult__unit__unit='
             }
-            Object.keys(currentlyShownParams).forEach(function (key) {
-              // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
-              if (currentlyShownParams[key].analysisresult__unit__unit === '%' && !url.includes('%')) {
-                url += currentlyShownParams[key].analysisresult__unit__unit + ','
-              } else if (currentlyShownParams[key].analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
-                url += currentlyShownParams[key].analysisresult__unit__unit + ','
+            for (const key in currentlyShownParams) {
+              if (currentlyShownParams.hasOwnProperty(key)) {
+                // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+                if (currentlyShownParams[key].analysisresult__unit__unit === '%' && !url.includes('%')) {
+                  url += currentlyShownParams[key].analysisresult__unit__unit + ','
+                } else if (currentlyShownParams[key].analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
+                  url += currentlyShownParams[key].analysisresult__unit__unit + ','
+                }
               }
-            });
+            }
           }
 
-          url = url.slice(0, -1);
-          url += '&';
+          url = this.removeCommaAndAddAmpersand(url);
 
-          if (url.slice(-1) === '?' || url.slice(-1) === '&') {
-            url = url.slice(0, -1);
-          }
+          url = this.removeQuestionMarkOrAmpersand(url);
 
           return url
         },
+
+        addFieldToUrl(paramArray, url, multiField, singleField, paramArrayField) {
+          if (paramArray.length > 0) {
+            if (paramArray.length > 1 && multiField !== null) {
+              url += multiField;
+            } else {
+              url += singleField;
+            }
+
+            for (const item in paramArray) {
+              url += paramArray[item][paramArrayField] + ',';
+            }
+
+            url = this.removeCommaAndAddAmpersand(url);
+          }
+
+          return url;
+        },
+
+        removeCommaAndAddAmpersand(url) {
+          url = url.slice(0, -1);
+          url += '&';
+          return url;
+        },
+
+        removeQuestionMarkOrAmpersand(url) {
+          if (url.slice(-1) === '?' || url.slice(-1) === '&') {
+            url = url.slice(0, -1);
+          }
+          return url;
+        },
+
+        /*******************************
+         *****  URL BUILDING END  ******
+         *******************************/
+
 
 
         /***************************************
          ***** MULTISELECT POPULATE START ******
          ***************************************/
+
         populateDrillcoreNames(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true, true);
 
@@ -680,9 +649,11 @@
           this.populateDrillcoreNames(params, currentlyShownParams);
           this.populateDataset(params, currentlyShownParams);
         },
+
         /***************************************
          *****  MULTISELECT POPULATE END  ******
          ***************************************/
+
 
 
         getCorrectParameterFormat(param) {
