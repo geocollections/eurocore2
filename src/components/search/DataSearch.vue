@@ -85,14 +85,12 @@
           <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in searchParameters.numOfComparableParameters">
             <div class="input-group">
               <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
-                <!--<option :value="''">Select parameter</option>-->
+                <option :value="''">Select parameter</option>
                 <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysisresult__parameter__parameter}} {{parameter.analysisresult__unit__unit}}</option>
               </b-form-select>
               <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
               <b-form-input id="custom-border-radius" v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
               <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
-              <!-- TODO: This button is not good! -->
-              <button class="btn btn-outline-danger ml-2" v-if="searchParameters.numOfComparableParameters === 1" @click="clearParameterField">Clear Parameter</button>
             </div>
           </div>
         </div>
@@ -373,7 +371,7 @@
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
         if (this.isDataSearchInSession()) {
-          
+
           this.searchParameters = this.$session.get('dataSearch');
           this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         } else {
@@ -584,7 +582,6 @@
          ***************************************/
         populateDrillcoreNames(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true, true);
-          console.log(url);
 
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'drillcore__name'}}).then(response => {
             console.log(response);
@@ -602,7 +599,6 @@
 
         populateAnalyticalMethods(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true, true);
-          console.log(url);
 
           this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis_method__method'}}).then(response => {
             console.log(response);
@@ -627,7 +623,6 @@
 
         populateShowParameters(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false, true);
-          console.log(url)
 
           this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysisresult__parameter__parameter', fields: 'analysisresult__parameter__parameter,analysisresult__unit__unit'}}).then(response => {
             console.log(response);
@@ -657,7 +652,7 @@
 
         populateDataset(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, true, false)
-          console.log(url)
+
           this.$http.jsonp(url , {params: {dataset__id__isnull: 'false' ,format: 'jsonp', distinct: 'true', fields: 'dataset__name,dataset__id'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
@@ -736,14 +731,6 @@
             this.searchParameters.watched.comparableParameterOperator.splice(fieldToDelete, 1);
             this.searchParameters.watched.comparableParameterValue.splice(fieldToDelete, 1);
             this.searchParameters.numOfComparableParameters -= 1;
-          }
-        },
-
-        clearParameterField() {
-          if (this.searchParameters.watched.comparableParameter[0] !== '' || this.searchParameters.watched.comparableParameterOperator[0] !== 'gt' || this.searchParameters.watched.comparableParameterValue[0] !== '') {
-            this.searchParameters.watched.comparableParameter = [''];
-            this.searchParameters.watched.comparableParameterOperator = ['gt'];
-            this.searchParameters.watched.comparableParameterValue = [''];
           }
         },
 
