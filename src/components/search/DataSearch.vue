@@ -85,11 +85,14 @@
           <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in searchParameters.numOfComparableParameters">
             <div class="input-group">
               <b-form-select v-model="searchParameters.watched.comparableParameter[key]" >
+                <!--<option :value="''">Select parameter</option>-->
                 <option v-for="parameter in showParameters" :value="parameter.formattedValue">{{parameter.analysisresult__parameter__parameter}} {{parameter.analysisresult__unit__unit}}</option>
               </b-form-select>
               <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
-              <b-form-input v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
+              <b-form-input id="custom-border-radius" v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
               <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+              <!-- TODO: This button is not good! -->
+              <button class="btn btn-outline-danger ml-2" v-if="searchParameters.numOfComparableParameters === 1" @click="clearParameterField">Clear Parameter</button>
             </div>
           </div>
         </div>
@@ -258,7 +261,9 @@
         FontAwesomeIcon,
         Spinner
       },
+
       name: "data-search",
+
       data() {
         return {
           API_URL: 'https://api.eurocore.rocks/',
@@ -325,33 +330,40 @@
           },
           deep: true
         },
-        // TODO: Enable populateDataset after API gets fixed!!!
+        // TODO: Should optimise it, because currently it sends duplicates if any value is in session
         'searchParameters.watched.drillcoreNames': function(newVal, oldVal) {
-          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          if (newVal.length !== oldVal.length) {
+            this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          }
         },
         'searchParameters.watched.analyticalMethods': function(newVal, oldVal) {
-          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          if (newVal.length !== oldVal.length) {
+            this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          }
         },
         'searchParameters.currentlyShownParameters': function (newVal, oldVal) {
-          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          if (newVal.length !== oldVal.length) {
+            this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
+          }
         },
         'searchParameters.watched.dataset': function (newVal, oldVal) {
-          this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
-          this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          if (newVal.length !== oldVal.length) {
+            this.populateDrillcoreNames(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateAnalyticalMethods(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+            this.populateShowParameters(this.searchParameters.watched, this.searchParameters.currentlyShownParameters);
+          }
         },
         'searchParameters.watched.paginateBy': function(newVal, oldVal) {
           this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
         },
-        'searchParameters.watched.comparableParameter': function (newVal, oldVal) {
-          //TODO: complete it
-          // this.appendChosenParameter(newVal, this.searchParameters.watched.comparableParameter);
+        'searchParameters.watched.comparableParameter': function () {
+          this.appendChosenParameter(this.searchParameters.watched.comparableParameter);
         }
       },
 
@@ -360,14 +372,12 @@
 
         // TODO: Params should come from URL if exists
         // TODO: PARAMS sequnece from top priority URL -> SESSION -> INPUT FIELDS
-        if (this.$session.exists() && this.$session.get('dataSearch') != null) {
+        if (this.isDataSearchInSession()) {
+          
           this.searchParameters = this.$session.get('dataSearch');
-
-          // TODO: Disable it after API gets fixed!!!
-          this.populateDataset(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
-          // TODO: Disable it after API gets fixed!!!
+          this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         } else {
-          this.searchEntities(this.searchParameters.watched)
+          this.searchEntities(this.searchParameters.watched);
           this.populateAll(this.searchParameters.watched, this.searchParameters.currentlyShownParameters)
         }
       },
@@ -384,7 +394,6 @@
       methods: {
 
         searchEntities(params) {
-          console.log(params);
           let url = this.buildSearchUrl(params);
 
           this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
@@ -528,27 +537,29 @@
           });
 
           if (parameters === true) {
+
+            // PARAMETER (Ag, As, ...)
             if (currentlyShownParams.length > 1) {
               url += 'analysisresult__parameter__parameter__in='
             } else if (currentlyShownParams.length > 0) {
               url += 'analysisresult__parameter__parameter='
             }
             Object.keys(currentlyShownParams).forEach(function (key) {
-              console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+              // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
               url += currentlyShownParams[key].analysisresult__parameter__parameter + ','
             });
 
             url = url.slice(0, -1);
             url += '&';
 
-            // TODO: Units should also be used in dependable search (too slow currently)
+            // UNIT (%, ppm, ...)
             if (currentlyShownParams.length > 1) {
               url += 'analysisresult__unit__unit__in='
             } else if (currentlyShownParams.length > 0) {
               url += 'analysisresult__unit__unit='
             }
             Object.keys(currentlyShownParams).forEach(function (key) {
-              console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
+              // console.log(currentlyShownParams[key].analysisresult__parameter__parameter + ' ' + currentlyShownParams[key].analysisresult__unit__unit);
               if (currentlyShownParams[key].analysisresult__unit__unit === '%' && !url.includes('%')) {
                 url += currentlyShownParams[key].analysisresult__unit__unit + ','
               } else if (currentlyShownParams[key].analysisresult__unit__unit === 'ppm' && !url.includes('ppm')) {
@@ -565,7 +576,6 @@
           }
 
           return url
-
         },
 
 
@@ -729,6 +739,14 @@
           }
         },
 
+        clearParameterField() {
+          if (this.searchParameters.watched.comparableParameter[0] !== '' || this.searchParameters.watched.comparableParameterOperator[0] !== 'gt' || this.searchParameters.watched.comparableParameterValue[0] !== '') {
+            this.searchParameters.watched.comparableParameter = [''];
+            this.searchParameters.watched.comparableParameterOperator = ['gt'];
+            this.searchParameters.watched.comparableParameterValue = [''];
+          }
+        },
+
         openInNewWindow(params) {
           if (typeof (params.width) === 'undefined') {
             params.width = 800;
@@ -752,35 +770,46 @@
           })
         },
 
-        // appendChosenParameter(valueToAppend, comparableParameters) {
-        //   for (const value in comparableParameters) {
-        //     if (comparableParameters[value] !== null && comparableParameters[value] !== "") {
-        //       let formattedValue = comparableParameters[value].split('_');
-        //       let parameter = formattedValue[0];
-        //       let unit = formattedValue[1];
-        //
-        //       parameter = parameter[0].toUpperCase() + parameter.substring(1);
-        //       if (unit === 'pct') {
-        //         unit = '%'
-        //       }
-        //
-        //       let objectToAdd = {
-        //         analysisresults__parameter__parameter: parameter,
-        //         analysisresults__unit__unit: unit,
-        //         formattedValue: comparableParameters[value]
-        //       }
-        //
-        //       console.log(this.searchParameters.currentlyShownParameters)
-        //
-        //       this.searchParameters.currentlyShownParameters.push(objectToAdd);
-        //
-        //       console.log(this.searchParameters.currentlyShownParameters)
-        //     }
-        //   }
-        //
-        //
-        //   console.log(valueToAppend)
-        // },
+        appendChosenParameter(comparableParameters) {
+          for (const value in comparableParameters) {
+            if (comparableParameters[value] !== null && comparableParameters[value] !== "") {
+
+              let formattedValue = comparableParameters[value].split('_');
+              let parameter = formattedValue[0];
+              let unit = formattedValue[1];
+
+              parameter = parameter[0].toUpperCase() + parameter.substring(1);
+              if (unit === 'pct') {
+                unit = '%'
+              }
+
+              let objectToAdd = {
+                analysisresult__parameter__parameter: parameter,
+                analysisresult__unit__unit: unit,
+                formattedValue: comparableParameters[value]
+              };
+
+              // Add to currently shown parameters
+              if (this.searchParameters.currentlyShownParameters.length > 0) {
+
+                const result = this.searchParameters.currentlyShownParameters.find(x => x.formattedValue === objectToAdd.formattedValue)
+
+                // if undefined then it is not in currentlyShownParameters
+                if (typeof (result) === 'undefined') {
+                  this.searchParameters.currentlyShownParameters.push(objectToAdd);
+                }
+
+              } else {
+                this.searchParameters.currentlyShownParameters.push(objectToAdd);
+              }
+
+            }
+          }
+        },
+
+        isDataSearchInSession() {
+          return this.$session.exists() && this.$session.get('dataSearch') != null;
+        },
 
         resetSearchParameters() {
           console.log(this.searchParameters);
@@ -837,5 +866,10 @@
 
   span {
     white-space: nowrap;
+  }
+
+  #custom-border-radius {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
   }
 </style>
