@@ -77,7 +77,7 @@
         <label>Parameter filter</label>
         <div class="row mb-3">
           <div class="col">
-            <button class="btn btn-outline-primary" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
+            <button class="btn btn-outline-primary btn-sm" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
           </div>
         </div>
 
@@ -104,18 +104,20 @@
     </div>
 
 
-    <div class="searchButtons row">
-          <span class="mr-2 mb-2">
-            <button class="btn btn-primary" title="Sends request with inserted data" @click="searchEntities(searchParameters.watched)">SEARCH</button>
-          </span>
+    <div class="row">
+      <div class="col">
+        <span>
+          <button class="btn btn-primary btn-sm mr-2 mb-2" title="Sends request with inserted data" @click="searchEntities(searchParameters.watched)">SEARCH</button>
+        </span>
 
-      <span class="mr-2 mb-2">
-            <button class="btn btn-danger" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
-          </span>
+        <span>
+          <button class="btn btn-danger btn-sm mr-2 mb-2" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
+        </span>
+      </div>
     </div>
 
 
-    <div class="row">
+    <div class="row mt-1">
       <div class="col">
         <p v-if="response.count > 0 || response.count !== undefined">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>
@@ -124,15 +126,15 @@
 
 
     <div class="row" v-if="response.count > 0">
-      <div class="col-xs-1 pl-3 pr-3">
+      <div class="col-xs-1 pl-3 pr-3 t-paginate-by-center">
         <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
-      <div class="col mb-3">
+      <div class="col mb-3 export-center">
         <export-buttons filename="dataSearch"></export-buttons>
       </div>
 
-      <div class="col">
+      <div class="col pagination-center">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
         </b-pagination>
@@ -229,11 +231,11 @@
     </div>
 
     <div class="row mt-3" v-if="response.count > 0">
-      <div class="col-xs-1 pl-3 pr-3 mb-3">
+      <div class="col-xs-1 pl-3 pr-3 mb-3 b-paginate-by-center">
         <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions"></b-form-select>
       </div>
 
-      <div class="col mb-3">
+      <div class="col mb-3 pagination-center">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
         </b-pagination>
@@ -795,10 +797,6 @@
 </script>
 
 <style scoped>
-  .searchButtons {
-    margin: 0.75rem 0;
-  }
-
   .th-sort > th > span {
     cursor: pointer;
   }
@@ -829,5 +827,26 @@
   #custom-border-radius {
     border-top-right-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
+  }
+
+  @media (max-width: 767px) {
+    .export-center {
+      text-align: center;
+    }
+
+    .b-paginate-by-center {
+      margin: 0 auto;
+    }
+
+    /* Overrides bootstrap rule */
+    .pagination-center > .justify-content-end {
+      justify-content: center !important;
+    }
+  }
+
+  @media (max-width: 388px) {
+    .t-paginate-by-center {
+      margin: 0 auto;
+    }
   }
 </style>
