@@ -17,18 +17,18 @@
 
         <div class="row mt-2" v-if="response.count > 0 && isDepthEligibleForImage(xAxis.min, xAxis.max, 5)">
           <div class="col">
-            <div class="table-responsive draggable">
+            <div v-dragscroll class="table-responsive draggable">
 
               <table>
                 <tr>
                   <td v-for="image in response.results" class="box-depths">
                     <div class="row">
-                      <div class="col-2">{{image.start_depth}} (m)</div>
-                      <div class="col-2">{{ (image.start_depth + ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
-                      <div class="col-2">{{ (image.start_depth + 2 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
-                      <div class="col-2">{{ (image.start_depth + 3 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
-                      <div class="col-2">{{ (image.start_depth + 4 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
-                      <div class="col-2 text-right">{{image.end_depth}} (m)</div>
+                      <div class="col-2">{{image.start_depth.toFixed(1)}} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + ((image.end_depth - image.start_depth) / 6)).toFixed(1) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 2 * ((image.end_depth - image.start_depth) / 6)).toFixed(1) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 3 * ((image.end_depth - image.start_depth) / 6)).toFixed(1) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 4 * ((image.end_depth - image.start_depth) / 6)).toFixed(1) }} (m)</div>
+                      <div class="col-2 text-right">{{image.end_depth.toFixed(1)}} (m)</div>
                     </div>
                   </td>
                 </tr>
@@ -53,8 +53,12 @@
 </template>
 
 <script>
+  import { dragscroll } from 'vue-dragscroll'
+
   export default {
     props: ['results', 'parameters', 'name', 'drillcoreId'],
+
+    directives: { dragscroll },
 
     name: "plotly-chart",
 
@@ -410,8 +414,28 @@
     margin-right: -20px
   }
 
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 13px;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,67,147,0.3);
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
+    background: rgba(0,67,147,0.7);
+  }
+
   .draggable:hover {
     cursor: grab;
+  }
+
+  .draggable:active {
+    cursor: grabbing;
   }
 
   .box-depths > div {
@@ -425,6 +449,6 @@
      TODO: Pictures should be in the same format (imo), also currently I can't use 150 pictures because some are missing
      */
     /*max-height: 120px;*/
-    height: 20%;
+    height: 15%;
   }
 </style>
