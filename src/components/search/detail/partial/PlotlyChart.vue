@@ -5,24 +5,31 @@
     </div>
 
     <div class="row images-container">
-      <div class="col mt-3 mb-3 test">
+      <div class="col mb-3">
 
         <div class="row">
-          <div class="col">
-            <span style="float: left; font-size: 25px">{{xAxis.min}}</span>
-            <span style="float: right; font-size: 25px">{{xAxis.max}}</span>
+          <div class="col depths">
+            <span class="min-depth">{{xAxis.min}}</span>
+            <span class="max-depth">{{xAxis.max}}</span>
           </div>
         </div>
 
-        <!--TODO: Image(s) here-->
-        <div class="row" v-if="response.count > 0">
+
+        <div class="row mt-2" v-if="response.count > 0 && isDepthEligibleForImage(xAxis.min, xAxis.max, 5)">
           <div class="col">
             <div class="table-responsive draggable">
+
               <table>
                 <tr>
                   <td v-for="image in response.results" class="box-depths">
-                    <span>{{image.start_depth}}</span>
-                    <span style="float: right">{{image.end_depth}}</span>
+                    <div class="row">
+                      <div class="col-2">{{image.start_depth}} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 2 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 3 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
+                      <div class="col-2">{{ (image.start_depth + 4 * ((image.end_depth - image.start_depth) / 6)).toFixed(2) }} (m)</div>
+                      <div class="col-2 text-right">{{image.end_depth}} (m)</div>
+                    </div>
                   </td>
                 </tr>
 
@@ -32,9 +39,11 @@
                   </td>
                 </tr>
               </table>
+
             </div>
           </div>
         </div>
+
 
       </div>
     </div>
@@ -74,9 +83,9 @@
       'xAxis': {
         handler: function (newVal) {
           if (typeof (this.drillcoreId) !== 'undefined') {
-            // if (this.isDepthEligibleForImage(newVal.min, newVal.max)) {
+            if (this.isDepthEligibleForImage(newVal.min, newVal.max, 5)) {
               this.getImages(newVal.min, newVal.max);
-            // }
+            }
           }
         },
         deep: true
@@ -361,12 +370,13 @@
         this.xAxis.max = highest;
       },
 
-      isDepthEligibleForImage(min, max) {
-        console.log("min: " + min)
-        console.log("max: " + max)
-        const difference = max - min;
-        return difference <= 5;
+      isDepthEligibleForImage(min, max, gap) {
+        console.log("min: " + min);
+        console.log("max: " + max);
+        if (gap === null) gap = 5;
 
+        const difference = max - min;
+        return difference <= gap;
       }
 
       /************************
@@ -384,16 +394,37 @@
     width: 89.5%;
   }
 
+  .depths {
+    margin-top: -42px
+  }
+
+  .min-depth {
+    float: left;
+    font-size: 15px;
+    margin-left: -20px
+  }
+
+  .max-depth {
+    float: right;
+    font-size: 15px;
+    margin-right: -20px
+  }
+
   .draggable:hover {
     cursor: grab;
   }
 
-  .box-depths > span {
+  .box-depths > div {
     font-weight: bold;
-    font-size: larger;
+    font-size: large;
+    color: #004393;
   }
 
   .corebox-image {
-    max-height: 120px;
+    /* I want to use height 20%, because then pictures won't break their dimensions
+     TODO: Pictures should be in the same format (imo), also currently I can't use 150 pictures because some are missing
+     */
+    /*max-height: 120px;*/
+    height: 20%;
   }
 </style>
