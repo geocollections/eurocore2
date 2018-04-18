@@ -7,21 +7,37 @@
     <div class="row images-container">
       <div class="col mt-3 mb-3 test">
 
+        <div class="row">
+          <div class="col">
+            <span style="float: left; font-size: 25px">{{xAxis.min}}</span>
+            <span style="float: right; font-size: 25px">{{xAxis.max}}</span>
+          </div>
+        </div>
+
         <!--TODO: Image(s) here-->
-        <div class="test" v-if="response.count > 0">
-          <img width="100%" :src="buildImageUrl(150, response.results[0].image__url)"/>
+        <div class="row" v-if="response.count > 0">
+          <div class="col">
+            <div class="table-responsive draggable">
+              <table>
+                <tr>
+                  <td v-for="image in response.results" class="box-depths">
+                    <span>{{image.start_depth}}</span>
+                    <span style="float: right">{{image.end_depth}}</span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td v-for="image in response.results">
+                    <img class="corebox-image" :src="buildImageUrl(null, image.image__url)" alt="CoreboxImage"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
-
-    <div class="row">
-      <div class="col">
-        <span style="float: left; font-size: 25px">{{xMin}}</span>
-        <span style="float: right; font-size: 25px">{{xMax}}</span>
-      </div>
-    </div>
-
 
   </div>
 
@@ -36,23 +52,39 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore_interval/',
-        xMin: 0,
-        xMax: 0,
+        xAxis: {
+          min: 0,
+          max: 0,
+        },
         response: {
           count: 0,
           results: []
         },
-        locationHref: false
+      }
+    },
+
+    watch: {
+      'parameters': function () {
+        this.drawChart(this.results, this.parameters, this.name);
+      },
+      'results': function () {
+        this.drawChart(this.results, this.parameters, this.name);
+        this.getFirstAndLastDepth(this.results);
+      },
+      'xAxis': {
+        handler: function (newVal) {
+          if (typeof (this.drillcoreId) !== 'undefined') {
+            // if (this.isDepthEligibleForImage(newVal.min, newVal.max)) {
+              this.getImages(newVal.min, newVal.max);
+            // }
+          }
+        },
+        deep: true
       }
     },
 
     created: function () {
       this.getFirstAndLastDepth(this.results);
-
-      if (typeof (this.drillcoreId) !== 'undefined') {
-        this.getImages(this.results);
-      }
-
     },
 
     mounted: function () {
@@ -62,23 +94,11 @@
         this.drawChart(this.results, this.parameters, this.name);
       }
     },
+
     beforeDestroy: function () {
       window.removeEventListener('resize', this.onResize);
     },
-    watch: {
-      'parameters': function () {
-        this.drawChart(this.results, this.parameters, this.name);
-      },
-      'results': function () {
-        this.drawChart(this.results, this.parameters, this.name);
-        this.getFirstAndLastDepth(this.results);
-      },
-      'drillcoreId': function (newVal, oldVal) {
-        if (typeof (newVal) !== 'undefined') {
-          this.getImages(this.results);
-        }
-      }
-    },
+
     methods: {
 
       onResize(event) {
@@ -148,8 +168,7 @@
               name: name,
               yaxis: 'y2',
             })
-          }
-          else {
+          } else {
             data.push({
               x,
               y,
@@ -165,9 +184,9 @@
           showlegend: true,
           dragmode: 'pan',
           margin: {
-            l: 10,
-            r: 10,
-            b: 40,
+            l: 50,
+            r: 50,
+            b: 50,
             t: 120,
             pad: 4
           },
@@ -234,7 +253,7 @@
         let HEIGHT_IN_PERCENT_OF_PARENT = WIDTH_IN_PERCENT_OF_PARENT / 3 * 2;
 
         if (window.matchMedia("(max-height: 550px)").matches) {
-          HEIGHT_IN_PERCENT_OF_PARENT = 100;
+          HEIGHT_IN_PERCENT_OF_PARENT = 90;
         }
 
         let gd3 = d3.select(this.$refs.coreboxChart).style({
@@ -270,11 +289,11 @@
         for (const key in eventData) {
 
           if (key === 'xaxis.range[0]') {
-            this.xMin = eventData[key].toFixed(1)
+            this.xAxis.min = eventData[key].toFixed(1)
           }
 
           if (key === 'xaxis.range[1]') {
-            this.xMax = eventData[key].toFixed(1)
+            this.xAxis.max = eventData[key].toFixed(1)
           }
 
           if (key === 'xaxis.autorange') {
@@ -284,12 +303,21 @@
       },
 
 
+
       /************************
        *** IMAGE CODE START ***
        ************************/
-      getImages() {
-        console.log(this.drillcoreId)
-        this.$http.jsonp(this.API_URL, {params: {drillcore__id: this.drillcoreId, format: 'jsonp'}}).then(response => {
+
+      getImages(minDepth, maxDepth) {
+        this.$http.jsonp(this.API_URL, {
+          params:
+            {
+              drillcore__id: this.drillcoreId,
+              or_search: 'start_depth__range:' + minDepth + ',' + maxDepth + ';' + 'end_depth__range:' + minDepth + ',' + maxDepth,
+              order_by: 'start_depth',
+              format: 'jsonp'
+            }
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -302,7 +330,11 @@
 
       buildImageUrl(size, url) {
         if (url != null) {
-          return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+          if (size !== null) {
+            return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
+          } else {
+            return 'https://eurocore.rocks' + url;
+          }
         }
       },
 
@@ -317,7 +349,7 @@
           let tmp = results[i].depth;
           if (tmp < lowest) lowest = tmp;
         }
-        this.xMin = lowest
+        this.xAxis.min = lowest
       },
 
       getLastDepth(results) {
@@ -326,11 +358,21 @@
           let tmp = results[i].depth;
           if (tmp > highest) highest = tmp;
         }
-        this.xMax = highest;
+        this.xAxis.max = highest;
       },
+
+      isDepthEligibleForImage(min, max) {
+        console.log("min: " + min)
+        console.log("max: " + max)
+        const difference = max - min;
+        return difference <= 5;
+
+      }
+
       /************************
        ***  IMAGE CODE END  ***
        ************************/
+
 
     }
   }
@@ -342,8 +384,16 @@
     width: 89.5%;
   }
 
-  .test {
-    padding: 0;
+  .draggable:hover {
+    cursor: grab;
   }
 
+  .box-depths > span {
+    font-weight: bold;
+    font-size: larger;
+  }
+
+  .corebox-image {
+    max-height: 120px;
+  }
 </style>

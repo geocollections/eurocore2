@@ -89,7 +89,7 @@
           <b-tab v-show="drillcoreSummary[0].boxes > 0"
                  @click="addTabToUrl('core_boxes')"
                  :disabled="drillcoreSummary[0].boxes === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].boxes === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].boxes === 0 }"
                  :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
             <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
             <infinite-loading @infinite="infiniteHandler">
@@ -99,7 +99,7 @@
 
           <b-tab v-show="drillcoreSummary[0].lithologies > 0"
                  :disabled="drillcoreSummary[0].lithologies === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].lithologies === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].lithologies === 0 }"
                  :title="'Lithology' + ' (' + drillcoreSummary[0].lithologies + ')'"
                  @click="getResultsByDrillcoreId('lithology', id, 'start_depth')">
             <lithology :results="response.lithology.results"></lithology>
@@ -107,7 +107,7 @@
 
           <b-tab v-show="drillcoreSummary[0].dips > 0"
                  :disabled="drillcoreSummary[0].dip === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].dips === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].dips === 0 }"
                  :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'"
                  @click="getResultsByDrillcoreId('dip', id, 'depth')">
             <dip :results="response.dip.results"></dip>
@@ -115,7 +115,7 @@
 
           <b-tab v-show="drillcoreSummary[0].rqds > 0"
                  :disabled="drillcoreSummary[0].rqds === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].rqds === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].rqds === 0 }"
                  :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'"
                  @click="getResultsByDrillcoreId('rqd', id, 'depth')">
             <rqd :results="response.rqd.results"></rqd>
@@ -133,7 +133,7 @@
 
           <b-tab v-show="drillcoreSummary[0].samples > 0"
                  :disabled="drillcoreSummary[0].samples === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].samples === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].samples === 0 }"
                  :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'"
                  @click="getResultsByDrillcoreId('sample', id, 'depth')">
             <sample :results="response.sample.results"></sample>
@@ -141,7 +141,7 @@
 
           <b-tab v-show="drillcoreSummary[0].analyses > 0"
                  :disabled="drillcoreSummary[0].analyses === 0"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].analyses === 0 }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].analyses === 0 }"
                  :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'"
                  @click="getResultsByDrillcoreId('analysis', id, 'depth')">
             <analysis :results="response.analysis.results"></analysis>
@@ -149,7 +149,7 @@
 
           <b-tab v-show="drillcoreSummary[0].ctscans > 0"
                  :disabled="drillcoreSummary[0].ctscans === null"
-                 :title-item-class="{ hideMe : drillcoreSummary[0].ctscans === null }"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].ctscans === null }"
                  :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
                  @click="getCTscansByDrillcoreId(id)">
             <ct-scans :results="response.ctscans.results"></ct-scans>
@@ -450,11 +450,6 @@
 
   .card {
     border: none;
-  }
-
-  /* Hides tab if there is no info  */
-  .hideMe {
-    display: none !important;
   }
 
 </style>
