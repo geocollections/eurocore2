@@ -253,7 +253,7 @@
       },
 
       getPlotlyRanges(eventData) {
-        console.log(eventData)
+        // console.log(eventData)
         for (const key in eventData) {
 
           if (key === 'xaxis.range[0]') {

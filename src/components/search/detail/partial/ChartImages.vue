@@ -1,7 +1,7 @@
 <template>
   <div class="row mt-2" v-show="response.count > 0 && isDepthEligibleForImage(xAxis.min, xAxis.max, 5)">
     <div class="col">
-      <div v-dragscroll class="table-responsive draggable">
+      <div id="scroll-container" v-dragscroll class="table-responsive draggable">
 
         <table>
           <tr>
@@ -17,7 +17,7 @@
             </td>
           </tr>
 
-          <tr>
+          <tr id="image-container">
             <td v-for="image in response.results">
               <img class="corebox-image" :src="buildImageUrl(null, image.image__url)" alt="CoreboxImage"/>
             </td>
@@ -47,6 +47,19 @@
           count: 0,
           results: []
         },
+        middleDepth: 0,
+      }
+    },
+
+    created: function () {
+      if (this.isDepthEligibleForImage(this.xAxis.min, this.xAxis.max, 5)) {
+        this.getImages(this.xAxis.min, this.xAxis.max);
+      }
+    },
+
+    updated: function () {
+      if (this.isDepthEligibleForImage(this.xAxis.min, this.xAxis.max, 5)) {
+        this.moveScrollbar()
       }
     },
 
@@ -60,7 +73,7 @@
           }
         },
         deep: true
-      }
+      },
     },
 
     methods: {
@@ -96,12 +109,27 @@
       },
 
       isDepthEligibleForImage(min, max, gap) {
-        console.log("min: " + min);
-        console.log("max: " + max);
-        if (gap === null) gap = 5;
+        if (min !== Infinity && max !== -Infinity) {
+          // console.log("min: " + min);
+          // console.log("max: " + max);
+          if (gap === null) gap = 5;
 
-        const difference = max - min;
-        return difference <= gap;
+          const difference = max - min;
+          return difference <= gap;
+        }
+      },
+
+      moveScrollbar() {
+        const imageWidth = $('#image-container').width();
+        const div = $('#scroll-container');
+
+        console.log('IMAGE WIDTH: ' + imageWidth)
+        console.log('DIV WIDTH: ' + div.width())
+
+
+        // TODO: Got to make it better somehow
+
+        div.scrollLeft((imageWidth - div.width()) / 2)
       }
 
     },
@@ -111,7 +139,7 @@
 <style scoped>
   ::-webkit-scrollbar {
     width: 12px;
-    height: 13px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
