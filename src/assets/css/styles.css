@@ -27,6 +27,12 @@ a:hover {
   text-decoration: none;
 }
 
+
+
+/************************
+ *** TABLE HEAD START ***
+ ************************/
+
 /* Changes detail view table header style */
 .th-styles tr td:first-child {
   color: #495057;
@@ -35,10 +41,59 @@ a:hover {
   font-weight: bold;
 }
 
+.th-sort > th > span {
+  cursor: pointer;
+}
+
+.th-sort > th > span:hover {
+  color: #000;
+  /*opacity: 0.6;*/
+}
+
+/************************
+ ***  TABLE HEAD END  ***
+ ************************/
+
+
+
+/* OpenLayers layer switcher position */
 .layer-switcher {
   top: 0.5rem;
 }
 
+/* Error pages have whole background white */
 .background-color-white {
   background-color: #fff !important;
 }
+
+
+
+/*********************************
+ *** PAGINATE AND EXPORT START ***
+ *********************************/
+
+@media (max-width: 767px) {
+  .t-paginate-by-center {
+    margin: 0 auto;
+    width: unset;
+  }
+
+  .export-center {
+    text-align: center;
+    width: 100%;
+  }
+
+  .b-paginate-by-center {
+    margin: 0 auto;
+  }
+
+  /* Overrides bootstrap rule */
+  .pagination-center > .justify-content-end {
+    justify-content: center !important;
+    width: 100%;
+  }
+}
+
+/*********************************
+ ***  PAGINATE AND EXPORT END  ***
+ *********************************/

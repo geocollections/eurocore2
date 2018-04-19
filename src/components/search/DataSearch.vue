@@ -95,11 +95,6 @@
           </div>
         </div>
 
-        <!--<div class="row">-->
-          <!--<div class="col">-->
-            <!--<button class="btn btn-outline-primary button-right" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>-->
-          <!--</div>-->
-        <!--</div>-->
       </div>
     </div>
 
@@ -126,15 +121,15 @@
 
 
     <div class="row" v-if="response.count > 0">
-      <div class="col-xs-1 pl-3 pr-3 t-paginate-by-center">
+      <div class="col-sm-6 col-md-3 pl-3 pr-3 t-paginate-by-center">
         <b-form-select v-model="searchParameters.watched.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
-      <div class="col mb-3 export-center">
+      <div class="col-sm-12 col-md-3 mb-3 export-center">
         <export-buttons filename="dataSearch"></export-buttons>
       </div>
 
-      <div class="col pagination-center">
+      <div class="col-sm-12 col-md-6 pagination-center">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.watched.page" :per-page="searchParameters.watched.paginateBy">
         </b-pagination>
@@ -797,18 +792,6 @@
 </script>
 
 <style scoped>
-  .th-sort > th > span {
-    cursor: pointer;
-  }
-
-  .th-sort > th > span:hover {
-    color: #000;
-  }
-
-  .button-right {
-    float: right;
-  }
-
   .loading-overlay {
     position: fixed;
     left: 50%;
@@ -824,29 +807,9 @@
     white-space: nowrap;
   }
 
+  /* Parameter filter number field border style */
   #custom-border-radius {
     border-top-right-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
-  }
-
-  @media (max-width: 767px) {
-    .export-center {
-      text-align: center;
-    }
-
-    .b-paginate-by-center {
-      margin: 0 auto;
-    }
-
-    /* Overrides bootstrap rule */
-    .pagination-center > .justify-content-end {
-      justify-content: center !important;
-    }
-  }
-
-  @media (max-width: 388px) {
-    .t-paginate-by-center {
-      margin: 0 auto;
-    }
   }
 </style>

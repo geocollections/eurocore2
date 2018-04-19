@@ -83,15 +83,15 @@
 
 
     <div class="row" v-if="response.count > 0">
-      <div class="col-xs-1 pl-3 pr-3">
+      <div class="col-sm-6 col-md-3 pl-3 pr-3 t-paginate-by-center">
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
       </div>
 
-      <div class="col mb-3">
+      <div class="col-sm-12 col-md-3 mb-3 export-center">
         <export-buttons filename="drillcoreSearch"/>
       </div>
 
-      <div class="col">
+      <div class="col-sm-12 col-md-6 pagination-center">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
         </b-pagination>
@@ -207,11 +207,11 @@
     </div>
 
     <div class="row mt-3" v-if="response.count > 0">
-      <div class="col-xs-1 pl-3 pr-3 mb-3">
+      <div class="col-xs-1 pl-3 pr-3 mb-3 b-paginate-by-center">
         <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
       </div>
 
-      <div class="col mb-3">
+      <div class="col mb-3 pagination-center">
         <b-pagination
           size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
         </b-pagination>
@@ -266,7 +266,9 @@
       ExportButtons,
       FontAwesomeIcon,
     },
+
     name: "drillcore",
+
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/',
@@ -311,9 +313,11 @@
         ],
       }
     },
+
     metaInfo: {
       title: 'EUROCORE Data Portal: Drillcores'
     },
+
     computed: {
       icon() {
         return faSort;
@@ -323,6 +327,7 @@
         return this.searchParameters.orderBy.includes('-') ? faSortDown : faSortUp
       }
     },
+
     watch: {
       // TODO: Got to test it performance wise, maybe dependent search isnt necessary here
       'searchParameters': {
@@ -379,6 +384,7 @@
         }
       },
     },
+
     beforeRouteUpdate (to, from, next) {
       if (Object.keys(to.query).length > 0 && to.query.constructor === Object) {
         if (to.query.fastSearch) {
@@ -389,6 +395,7 @@
       }
       next()
     },
+
     created: function () {
       if (Object.keys(this.$route.query).length > 0 && this.$route.query.constructor === Object) {
         console.log(this.$route.query)
@@ -407,16 +414,20 @@
 
       this.getMapData();
     },
+
     mounted: function () {
       this.initMap();
     },
+
     updated: function () {
       $('#table-search').floatThead('reflow');
       this.addFloatingTableHeaders();
     },
+
     beforeDestroy: function () {
       this.addSessionStorage();
     },
+
     methods: {
 
       searchEntitiesAndPopulate(params, drillcoreIds) {
@@ -693,10 +704,14 @@
         };
       },
 
+
+
       /***************************************
        ***** MULTISELECT POPULATE START ******
        ***************************************/
+
       populateDrillcoreNames(params) {
+
         let url = this.buildSearchUrl(params);
         console.log(url);
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'name'}}).then(response => {
@@ -713,6 +728,7 @@
 
       populateDepositNames(params) {
         let url = this.buildSearchUrl(params);
+
         this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -727,6 +743,7 @@
 
       populateOreTypes(params) {
         let url = this.buildSearchUrl(params);
+
         this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -741,6 +758,7 @@
 
       populateCommodities(params) {
         let url = this.buildSearchUrl(params);
+
         this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -755,6 +773,7 @@
 
       populateCoreDepositors(params) {
         let url = this.buildSearchUrl(params);
+
         this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
@@ -766,9 +785,11 @@
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
+
       /***************************************
        *****  MULTISELECT POPULATE END  ******
        ***************************************/
+
 
 
       customLabelForCoreDepositors(option) {
@@ -840,9 +861,11 @@
       },
 
 
+
       /*****************************
        *****  MAP CODE START  ******
        *****************************/
+
       getMapData() {
         this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
           console.log(response);
@@ -1244,9 +1267,13 @@
         }
 
       }
+
       /*****************************
        *****   MAP CODE END   ******
        *****************************/
+
+
+
     }
   }
 </script>
@@ -1254,19 +1281,6 @@
 <style scoped>
   .searchButtons {
     margin: 0.75rem 0;
-  }
-
-  .th-sort > th > span {
-    cursor: pointer;
-  }
-
-  .th-sort > th > span:hover {
-    color: #000;
-    /*opacity: 0.6;*/
-  }
-
-  .sortingHead {
-    color: #004393!important;
   }
 
   .map {

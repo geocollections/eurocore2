@@ -53,15 +53,15 @@
         <b-tabs v-model="tabIndex">
           <b-tab :title="'Data (' + (response.count) + ')'" @click="openData()">
             <div class="row mt-3">
-              <div class="col-xs-1 pl-3 pr-3">
+              <div class="col-sm-6 col-md-3 pl-3 pr-3 t-paginate-by-center">
                 <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
               </div>
 
-              <div class="col mb-3">
+              <div class="col-sm-12 col-md-3 mb-3 export-center">
                 <export-buttons filename="drillcoreData"></export-buttons>
               </div>
 
-              <div class="col">
+              <div class="col-sm-12 col-md-6 pagination-center">
                 <b-pagination
                   size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
                 </b-pagination>
@@ -136,11 +136,11 @@
 
 
             <div class="row mt-3" v-if="response.count > 0">
-              <div class="col-xs-1 pl-3 pr-3 mb-3">
+              <div class="col-xs-1 pl-3 pr-3 mb-3 b-paginate-by-center">
                 <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
               </div>
 
-              <div class="col mb-3">
+              <div class="col mb-3 pagination-center">
                 <b-pagination
                   size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
                 </b-pagination>
@@ -593,15 +593,6 @@
 
   .title-link:hover {
     opacity: 0.7;
-  }
-
-  .th-sort > th > span {
-    cursor: pointer;
-  }
-
-  .th-sort > th > span:hover {
-    color: #000;
-    /*opacity: 0.6;*/
   }
 
   .error-text {
