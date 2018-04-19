@@ -54,16 +54,23 @@
     },
     props: ['results'],
     name: "lithology",
-    updated: function () {
-      $('#lithology-table').floatThead('reflow');
+
+    mounted: function () {
       this.addFloatingTableHeaders();
     },
+
+    updated: function () {
+      $('#lithology-table').floatThead('reflow');
+    },
+
     methods: {
       addFloatingTableHeaders() {
         $('#lithology-table').floatThead({
           position: 'absolute',
-          zIndex: 1090,
-          top: 98 // headers height
+          zIndex: 1025,
+          top: function () {
+            return $('#main').css('padding-top') === '22px' ? 0 : 98;
+          }
         });
       },
     }

@@ -177,6 +177,7 @@
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
   import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
   import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
+  // import * as helper from "../../../assets/js/helper";
 
   export default {
     components: {
@@ -328,9 +329,12 @@
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
 
-    updated: function () {
-      $('#table-search').floatThead('reflow');
+    mounted: function () {
       this.addFloatingTableHeaders();
+    },
+
+    updated: function () {
+      this.reflowFloatThead();
       this.addResponsiveDesignToCheckboxes()
     },
 
@@ -485,8 +489,14 @@
         $('#table-search').floatThead({
           position: 'absolute',
           zIndex: 1025,
-          top: 98 // headers height
+          top: function () {
+            return $('#main').css('padding-top') === '22px' ? 0 : 98;
+          }
         });
+      },
+
+      reflowFloatThead() {
+        $('#table-search').floatThead('reflow');
       },
 
       addResponsiveDesignToCheckboxes() {
@@ -603,5 +613,4 @@
   span {
     white-space: nowrap;
   }
-
 </style>

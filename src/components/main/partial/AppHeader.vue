@@ -179,6 +179,7 @@
     cursor: pointer;
   }
 
+
   @media (max-width: 991px) {
     #fast-search > input {
       padding-right: 40px;
@@ -191,6 +192,11 @@
     }
     #fast-search > input {
       padding-right: 45px;
+    }
+
+    /* Part of removing fixed navbar on smaller screens */
+    .fixed-top {
+      position: unset;
     }
 
   }

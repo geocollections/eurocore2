@@ -38,16 +38,23 @@
     },
     props: ['results'],
     name: "dip",
-    updated: function () {
-      $('#dip-table').floatThead('reflow');
+
+    mounted: function () {
       this.addFloatingTableHeaders();
     },
+
+    updated: function () {
+      $('#dip-table').floatThead('reflow');
+    },
+
     methods: {
       addFloatingTableHeaders() {
         $('#dip-table').floatThead({
           position: 'absolute',
-          zIndex: 1090,
-          top: 98 // headers height
+          zIndex: 1025,
+          top: function () {
+            return $('#main').css('padding-top') === '22px' ? 0 : 98;
+          }
         });
       },
     }

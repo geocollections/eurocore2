@@ -378,7 +378,7 @@
       },
 
       updated: function () {
-        $('#table-search').floatThead('reflow');
+        this.reflowFloatThead();
         this.addFloatingTableHeaders();
       },
 
@@ -713,8 +713,14 @@
           $('#table-search').floatThead({
             position: 'absolute',
             zIndex: 1025,
-            top: 98 // headers height
+            top: function () {
+              return $('#main').css('padding-top') === '22px' ? 0 : 98;
+            }
           });
+        },
+
+        reflowFloatThead() {
+          $('#table-search').floatThead('reflow');
         },
 
         toastInfo(text) {
