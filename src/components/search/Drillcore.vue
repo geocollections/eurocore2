@@ -362,6 +362,9 @@
         this.drillcoreIdsFromMap = null;
         this.searchParameters.fastSearch = '';
       },
+      'searchParameters.paginateBy': function(newVal, oldVal) {
+        this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
+      },
       'drillcoreIdsFromMap': function (newVal, oldVal) {
         if (newVal != null) {
           if (newVal.length > 0) {
@@ -865,6 +868,15 @@
       reflowFloatThead() {
         $('#table-search').floatThead('reflow');
       },
+
+      toastInfo(text) {
+        this.$toast.info(text, 'Info', {
+          position: 'bottomRight',
+          timeout: 3000,
+          pauseOnHover: false
+        })
+      },
+
 
 
 

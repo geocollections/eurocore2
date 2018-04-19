@@ -261,6 +261,9 @@
         },
         deep: true
       },
+      'searchParameters.paginateBy': function(newVal, oldVal) {
+        this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
+      },
       'currentlyShownParameters': function (newVal, oldVal) {
         if (newVal.length === 0) {
           this.indeterminate = false;
@@ -559,6 +562,14 @@
           this.tabIndex = 0
           this.isChartOpen = false;
         }
+      },
+
+      toastInfo(text) {
+        this.$toast.info(text, 'Info', {
+          position: 'bottomRight',
+          timeout: 3000,
+          pauseOnHover: false
+        })
       },
 
       resetData() {
