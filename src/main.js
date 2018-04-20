@@ -1,13 +1,13 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import VueResource from 'vue-resource'
+import Vue from 'vue' // https://vuejs.org/v2/guide/
+import VueResource from 'vue-resource' // https://github.com/pagekit/vue-resource
 import App from './App'
-import router from './router'
-import BootstrapVue from 'bootstrap-vue'
+import router from './router' // https://router.vuejs.org/en/
+import BootstrapVue from 'bootstrap-vue' // https://bootstrap-vue.js.org/docs
 import './assets/css/styles.css'
-import VueSession from 'vue-session'
-import moment from 'moment'
+import VueSession from 'vue-session' // https://www.npmjs.com/package/vue-session
+import moment from 'moment' // https://momentjs.com/
 import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/vue-izitoast
 
 import 'izitoast/dist/css/iziToast.min.css'

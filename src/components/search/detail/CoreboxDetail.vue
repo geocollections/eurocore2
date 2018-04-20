@@ -48,6 +48,15 @@
     </div>
 
 
+    <div class="row">
+      <div class="col">
+
+        <!--TODO: https://github.com/nicolasbeauvais/vue-social-sharing was better than goodshare-->
+
+      </div>
+    </div>
+
+
     <div class="row mt-2 mb-3" v-for="image in corebox">
       <div class="col">
         <!--TODO: Show only 1 which is choosed in preview-->
@@ -108,7 +117,8 @@
       Sample,
       Analysis,
       PlotlyChart,
-      Spinner
+      Spinner,
+      VueGoodshareFacebook
       // Reference
     },
     props: ['id'],
