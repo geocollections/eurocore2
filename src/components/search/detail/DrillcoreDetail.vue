@@ -74,8 +74,11 @@
       <div class="col-md-12 col-lg-6" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
         <detail-map :lat="drillcore[0].latitude" :lon="drillcore[0].longitude" :name="drillcore[0].name"></detail-map>
         <br>
-        <router-link :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary mb-3">Show analytical data
-        </router-link>
+        <!-- TODO: Currently depends on drillcore_summary field analysis, maybe need to change that in the future -->
+        <div v-if="drillcoreSummary !== null">
+          <router-link v-if="drillcoreSummary[0].analyses > 0" :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary mb-3">Show analytical data
+          </router-link>
+        </div>
       </div>
     </div>
 

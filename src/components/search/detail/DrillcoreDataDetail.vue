@@ -99,7 +99,13 @@
                         </th>
 
                         <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION -->
-                        <!--<th v-for="parameter in currentlyShownParameters"><span  v-b-tooltip.hover.bottom :title="'Order by ' + parameter" @click="changeOrder(formatParameterForTableData(parameter))">{{parameter}}</span></th>-->
+                        <!--<th v-for="parameter in currentlyShownParameters">-->
+                          <!--<span @click="changeOrder(formatParameterForTableData(parameter))">-->
+                            <!--<font-awesome-icon v-if="searchParameters.orderBy !== 'xxxxx' && searchParameters.orderBy !== '-xxxxx'" :icon="icon"/>-->
+                            <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
+                            <!--{{parameter}}-->
+                          <!--</span>-->
+                        <!--</th>-->
                         <th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>
                       </tr>
                     </thead>

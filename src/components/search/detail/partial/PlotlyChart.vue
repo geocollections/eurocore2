@@ -87,6 +87,8 @@
       },
 
       drawChart(results, parameters, boxName) {
+        console.log(results)
+
         let data = [];
 
         for (const parameter in parameters) {
