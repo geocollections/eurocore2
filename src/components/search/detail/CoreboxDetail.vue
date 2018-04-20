@@ -118,7 +118,6 @@
       Analysis,
       PlotlyChart,
       Spinner,
-      VueGoodshareFacebook
       // Reference
     },
     props: ['id'],
