@@ -53,13 +53,31 @@
 
     created: function () {
       if (this.isDepthEligibleForImage(this.xAxis.min, this.xAxis.max, 5)) {
-        this.getImages(this.xAxis.min, this.xAxis.max);
+        let diff = this.xAxis.max - this.xAxis.min;
+
+        if (diff > 1) {
+          this.getImages(this.xAxis.min, this.xAxis.max);
+        }
       }
     },
 
     updated: function () {
       if (this.isDepthEligibleForImage(this.xAxis.min, this.xAxis.max, 5)) {
-        this.moveScrollbar()
+        let diff = this.xAxis.max - this.xAxis.min;
+
+        if (diff <= 1) {
+          this.changeHeight(250)
+        } else if (diff <= 2) {
+          this.changeHeight(200)
+        } else if (diff <= 3) {
+          this.changeHeight(150)
+        } else if (diff <= 4) {
+          this.changeHeight(100)
+        } else {
+          this.changeHeight(50)
+        }
+
+        this.moveScroll(this)
       }
     },
 
@@ -67,9 +85,14 @@
       'xAxis': {
         handler: function (newVal) {
           if (typeof (this.drillcoreId) !== 'undefined') {
+            let diff = newVal.max - newVal.min;
+
             if (this.isDepthEligibleForImage(newVal.min, newVal.max, 5)) {
-              this.getImages(newVal.min, newVal.max);
+              if (diff > 1 && diff <= 5) { // Won't let picture disappear if graph is smaller than 1 meter.
+                this.getImages(newVal.min, newVal.max);
+              }
             }
+
           }
         },
         deep: true
@@ -119,18 +142,26 @@
         }
       },
 
+      moveScroll(myComponent) {
+        setTimeout(function () {
+          myComponent.moveScrollbar()
+        }, 500);
+      },
+
       moveScrollbar() {
         const imageWidth = $('#image-container').width();
         const div = $('#scroll-container');
 
         console.log('IMAGE WIDTH: ' + imageWidth)
         console.log('DIV WIDTH: ' + div.width())
+        
+        // div.scrollLeft((imageWidth - div.width()) / 2)
+        div.animate({scrollLeft: (imageWidth - div.width()) / 2}, 550);
+      },
 
-
-        // TODO: Got to make it better somehow
-
-        div.scrollLeft((imageWidth - div.width()) / 2)
-      }
+      changeHeight(height) {
+        $('.corebox-image').animate({ height: height }, 500);
+      },
 
     },
   }
@@ -167,11 +198,16 @@
     color: #004393;
   }
 
-  .corebox-image {
-    /* I want to use height 20%, because then pictures won't break their dimensions
-     TODO: Pictures should be in the same format (imo), also currently I can't use 150 pictures because some are missing
-     */
-    /*max-height: 120px;*/
-    height: 15%;
-  }
+  /*.corebox-image {*/
+    /*!* I want to use height 20%, because then pictures won't break their dimensions*/
+     /*TODO: Pictures should be in the same format (imo), also currently I can't use 150 pictures because some are missing*/
+     /**!*/
+    /*!*max-height: 50px;*!*/
+    /*!*height: 15%;*!*/
+    /*height: 50px;*/
+  /*}*/
+
+
+
+
 </style>
