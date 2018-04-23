@@ -154,7 +154,7 @@
 
         console.log('IMAGE WIDTH: ' + imageWidth)
         console.log('DIV WIDTH: ' + div.width())
-        
+
         // div.scrollLeft((imageWidth - div.width()) / 2)
         div.animate({scrollLeft: (imageWidth - div.width()) / 2}, 550);
       },

@@ -252,6 +252,8 @@
 
         this.$refs.coreboxChart.on('plotly_relayout', this.getPlotlyRanges)
 
+        this.$refs.coreboxChart.on('plotly_click', this.getClickLocation)
+
       },
 
       getPlotlyRanges(eventData) {
@@ -270,6 +272,11 @@
             this.getFirstAndLastDepth(this.results);
           }
         }
+      },
+
+      getClickLocation(eventData) {
+        console.log('click')
+        console.log(eventData)
       },
 
 
