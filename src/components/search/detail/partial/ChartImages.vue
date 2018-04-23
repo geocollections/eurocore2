@@ -156,7 +156,7 @@
         console.log('DIV WIDTH: ' + div.width())
 
         // div.scrollLeft((imageWidth - div.width()) / 2)
-        div.animate({scrollLeft: (imageWidth - div.width()) / 2}, 550);
+        div.animate({scrollLeft: (imageWidth - div.width()) / 2}, 0);
       },
 
       changeHeight(height) {
@@ -168,21 +168,21 @@
 </script>
 
 <style scoped>
-  ::-webkit-scrollbar {
-    width: 12px;
-    height: 10px;
-  }
+  /*::-webkit-scrollbar {*/
+    /*width: 12px;*/
+    /*height: 10px;*/
+  /*}*/
 
-  ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,67,147,0.3);
-    border-radius: 10px;
-  }
+  /*::-webkit-scrollbar-track {*/
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,67,147,0.3);*/
+    /*border-radius: 10px;*/
+  /*}*/
 
-  ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
-    background: rgba(0,67,147,0.7);
-  }
+  /*::-webkit-scrollbar-thumb {*/
+    /*border-radius: 10px;*/
+    /*-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);*/
+    /*background: rgba(0,67,147,0.7);*/
+  /*}*/
 
   .draggable:hover {
     cursor: grab;
