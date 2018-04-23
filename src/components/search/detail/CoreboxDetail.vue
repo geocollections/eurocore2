@@ -51,8 +51,26 @@
     <div class="row">
       <div class="col">
 
-        <!--TODO: https://github.com/nicolasbeauvais/vue-social-sharing was better than goodshare-->
+        <social-sharing :url="'https://eurocore.rocks/#/corebox/' + id"
+                        :title="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
+                        :quote="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
+                        inline-template>
+          <div>
 
+            <network class="btn btn-primary btn-sm mr-2" network="facebook">
+              <span class="share facebook">
+                <i class="fab fa-facebook-f"></i> Share
+              </span>
+            </network>
+
+            <network class="btn btn-info btn-sm"  network="twitter">
+              <span id="twitter">
+                <i class="fab fa-twitter"></i> Tweet
+              </span>
+            </network>
+
+          </div>
+        </social-sharing>
       </div>
     </div>
 
@@ -149,7 +167,16 @@
     },
     metaInfo () {
       return {
-        title: 'EUROCORE Data Portal: Corebox ' + this.id
+        title: 'EUROCORE Data Portal: Corebox ' + this.id,
+        link: [
+          { rel: 'stylesheet',
+            href: 'https://use.fontawesome.com/releases/v5.0.10/css/all.css',
+            integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
+            crossorigin: 'anonymous'}
+        ],
+        meta: [
+          { 'property': 'og:image', 'content': 'https://eurocore.rocks/files/88/88a530d3-6f6e-47de-824a-b04373aa2e67.jpg.JPG', 'vmid': 'og:image' }
+        ]
       }
     },
     created: function () {
@@ -411,5 +438,9 @@
 
   .pull-right {
     float: right;
+  }
+
+  #twitter {
+    cursor: pointer;
   }
 </style>

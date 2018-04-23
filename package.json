@@ -26,7 +26,8 @@
     "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1",
     "vue-session": "^1.0.0",
-    "vue-simple-spinner": "^1.2.8"
+    "vue-simple-spinner": "^1.2.8",
+    "vue-social-sharing": "^2.3.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

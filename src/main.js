@@ -9,6 +9,7 @@ import './assets/css/styles.css'
 import VueSession from 'vue-session' // https://www.npmjs.com/package/vue-session
 import moment from 'moment' // https://momentjs.com/
 import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/vue-izitoast
+import SocialSharing from 'vue-social-sharing'
 
 import 'izitoast/dist/css/iziToast.min.css'
 
@@ -16,6 +17,7 @@ Vue.use(VueResource);
 Vue.use(BootstrapVue);
 Vue.use(VueSession);
 Vue.use(VueIziToast);
+Vue.use(SocialSharing);
 
 Vue.config.productionTip = false;
 
