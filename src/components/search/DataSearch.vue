@@ -274,6 +274,7 @@
               page: 1,
               paginateBy: 100,
               orderBy: 'id',
+              // orderBy: 'drillcore_name,depth',
             },
             currentlyShownParameters: [],
             numOfComparableParameters: 2,
@@ -387,6 +388,7 @@
       },
 
       methods: {
+
 
         searchEntities(params) {
           let url = this.buildSearchUrl(params);
@@ -786,6 +788,7 @@
                 page: 1,
                 paginateBy: 100,
                 orderBy: 'id',
+                // orderBy: 'drillcore_name,depth',
               },
               currentlyShownParameters: [],
               numOfComparableParameters: 2,

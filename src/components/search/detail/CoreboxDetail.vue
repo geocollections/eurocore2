@@ -58,17 +58,17 @@
                         inline-template>
           <div>
 
-            <network class="btn btn-primary btn-sm mr-2" network="facebook">
-              <span class="share facebook">
-                <i class="fab fa-facebook-f"></i> Share
-              </span>
+            <network v-b-tooltip.hover.bottom title="LinkedIn" class="btn-share btn btn-primary btn-sm linkedin mr-2" network="linkedin">
+              <i class="fab fa-linkedin-in"></i>
             </network>
 
-            <network class="btn btn-info btn-sm"  network="twitter">
-              <span id="twitter">
-                <i class="fab fa-twitter"></i> Tweet
-              </span>
+            <network class="btn-share btn btn-primary btn-sm facebook mr-2" network="facebook">
+              <i class="fab fa-facebook-f"></i>
             </network>
+
+              <network class="btn-share btn btn-primary btn-sm twitter" network="twitter">
+                <i class="fab fa-twitter"></i>
+              </network>
 
           </div>
         </social-sharing>
@@ -463,7 +463,7 @@
     float: right;
   }
 
-  #twitter {
-    cursor: pointer;
+  .btn:hover {
+    opacity: 0.7 !important;
   }
 </style>
