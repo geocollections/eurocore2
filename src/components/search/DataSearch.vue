@@ -9,6 +9,7 @@
       </div>
     </div>
 
+
     <div class="row">
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
@@ -144,7 +145,11 @@
             <thead class="thead-light">
               <tr class="th-sort">
                 <th>
+                  <!--TODO: Some cases should check each array element arr(0) or arr(1) === and !== 'value' -->
                   <span @click="changeOrder('drillcore_name')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('drillcore_name') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('drillcore_name') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('drillcore_name') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Drillcore
@@ -153,6 +158,9 @@
 
                 <th>
                   <span @click="changeOrder('depth')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('depth') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('depth') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('depth') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Depth from (m)
@@ -161,6 +169,9 @@
 
                 <th>
                   <span @click="changeOrder('end_depth')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('end_depth') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('end_depth') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('end_depth') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Depth to (m)
@@ -169,6 +180,9 @@
 
                 <th>
                   <span @click="changeOrder('sample_number')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('sample_number') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('sample_number') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('sample_number') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Sample
@@ -177,6 +191,9 @@
 
                 <th>
                   <span @click="changeOrder('analysis_id')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('analysis_id') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('analysis_id') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('analysis_id') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Analysis ID
@@ -185,6 +202,9 @@
 
                 <th>
                   <span @click="changeOrder('analysis_method')">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('analysis_method') === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('analysis_method') === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('analysis_method') === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     Method
@@ -193,6 +213,9 @@
 
                 <th v-for="parameter in searchParameters.currentlyShownParameters">
                   <span @click="changeOrder(parameter.formattedValue)">
+                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy(parameter.formattedValue) === 0"></i>-->
+                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy(parameter.formattedValue) === 1"></i>-->
+                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy(parameter.formattedValue) === -1"></i>-->
                     <font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>
                     <font-awesome-icon v-else :icon="sortingDirection" />
                     {{parameter.analysisresult__parameter__parameter + ' ' + parameter.analysisresult__unit__unit}}
@@ -273,8 +296,8 @@
               dataset: [],
               page: 1,
               paginateBy: 100,
+              // orderBy: ['drillcore_name', 'depth'],
               orderBy: 'drillcore_name',
-              // orderBy: 'drillcore_name,depth',
             },
             currentlyShownParameters: [],
             numOfComparableParameters: 2,
@@ -305,7 +328,13 @@
       },
 
       metaInfo: {
-        title: 'EUROCORE Data Portal: Data Search'
+        title: 'EUROCORE Data Portal: Data Search',
+        link: [
+          { rel: 'stylesheet',
+            href: 'https://use.fontawesome.com/releases/v5.0.10/css/all.css',
+            integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
+            crossorigin: 'anonymous'}
+        ],
       },
 
       computed: {
@@ -415,6 +444,7 @@
 
           for (const key in params) {
             if (params.hasOwnProperty(key)) {
+              console.log(key + ' ' + params[key])
 
               if (key === 'drillcoreNames') {
                 url = this.addFieldToUrl(params[key], url, 'drillcore_name__in=', 'drillcore_name=', 'drillcore__name');
@@ -435,6 +465,16 @@
                   }
                 }
               }
+
+              //TODO: Enable if multi order is done
+              // if (key === 'orderBy') {
+              //   url += 'order_by=';
+              //   for (const field in params[key]) {
+              //     url += params[key][field] + ','
+              //   }
+              //
+              //   url = this.removeCommaAndAddAmpersand(url);
+              // }
 
             }
           }
@@ -673,8 +713,16 @@
           return `${option.analysisresult__parameter__parameter} ${option.analysisresult__unit__unit}`
         },
 
+
+
+        /***************************
+         *** ORDERING CODE START ***
+         ***************************/
+
         changeOrder(orderValue) {
+
           orderValue = orderValue.toLowerCase();
+
           if (this.searchParameters.watched.orderBy === orderValue) {
             if (orderValue.charAt(0) !== '-') {
               orderValue = '-' + orderValue;
@@ -685,6 +733,47 @@
           this.searchParameters.watched.page = 1;
           this.searchParameters.watched.orderBy = orderValue;
         },
+
+        // changeOrder_new(orderValue) {
+        //
+        //   orderValue = orderValue.toLowerCase();
+        //
+        //   for (const field in this.searchParameters.watched.orderBy) {
+        //     console.log('current' + this.searchParameters.watched.orderBy[field])
+        //     console.log('val' + orderValue)
+        //     if (this.searchParameters.watched.orderBy[field] === orderValue) {
+        //       if (this.searchParameters.watched.orderBy[field].charAt(0) !== '-') {
+        //         this.searchParameters.watched.orderBy[field] = '-' + orderValue
+        //         console.log(this.searchParameters.watched.orderBy[field])
+        //       } else {
+        //         this.searchParameters.watched.orderBy[field] = this.searchParameters.watched.orderBy[field].substring(1);
+        //         console.log(this.searchParameters.watched.orderBy[field])
+        //       }
+        //     }
+        //   }
+        //
+        //   this.searchParameters.watched.page = 1;
+        //   // this.searchParameters.watched.orderBy = orderValue;
+        // },
+
+        // Returns 1 for ascending, -1 for descending and 0 if not in orderBy
+        isFieldInOrderBy(field) {
+          for (const i in this.searchParameters.watched.orderBy) {
+            if (this.searchParameters.watched.orderBy[i] === field) {
+              return 1;
+            }
+            if (this.searchParameters.watched.orderBy[i] === '-' + field) {
+              return -1
+            }
+          }
+          return 0;
+        },
+
+        /***************************
+         ***  ORDERING CODE END  ***
+         ***************************/
+
+
 
         addParameterField() {
           if (this.searchParameters.numOfComparableParameters < (this.showParameters.length * 2)) {
@@ -787,8 +876,8 @@
                 dataset: [],
                 page: 1,
                 paginateBy: 100,
+                // orderBy: ['drillcore_name', 'depth'],
                 orderBy: 'drillcore_name',
-                // orderBy: 'drillcore_name,depth',
               },
               currentlyShownParameters: [],
               numOfComparableParameters: 2,
