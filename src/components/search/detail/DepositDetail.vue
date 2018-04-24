@@ -313,30 +313,26 @@
     methods: {
 
       getDepositById(id) {
-        this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
+        this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.deposit = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getResultsByDepositId(table, depositId, orderBy) {
         if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
-          this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {params: {deposit__id: depositId, order_by: orderBy, format: 'jsonp'}}).then(response => {
+          this.$http.get('https://api.eurocore.rocks/' + table + '/', {params: {deposit__id: depositId, order_by: orderBy, format: 'json'}}).then(response => {
             console.log(response.body.results);
             if (response.status === 200) {
               this.response[table].count = response.body.count;
               this.response[table].results = response.body.results;
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         }
       },

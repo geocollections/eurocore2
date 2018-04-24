@@ -285,28 +285,24 @@
 
     methods: {
       getDrillcoreById(id) {
-        this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
+        this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.drillcore = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getDrillcoreSummary(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/drillcore_summary/' + id, {params: {format: 'jsonp'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/drillcore_summary/' + id, {params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.drillcoreSummary = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
@@ -314,11 +310,11 @@
         this.addTabToUrl('ct_scans')
 
         if (!(this.response.ctscans.count > 0 && this.response.ctscans.results.length > 0 && typeof(this.response.ctscans.results !== 'undefined'))) {
-          this.$http.jsonp('https://api.eurocore.rocks/analysis/', {
+          this.$http.get('https://api.eurocore.rocks/analysis/', {
             params: {
               drillcore__id: id,
               analysis_method__method: 'CT',
-              format: 'jsonp'
+              format: 'json'
             }
           }).then(response => {
             console.log(response.body.results);
@@ -327,9 +323,7 @@
               this.response.ctscans.results = response.body.results;
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         }
       },
@@ -338,11 +332,11 @@
         this.addTabToUrl(table);
 
         if (!(this.response[table].count > 0 && this.response[table].results.length > 0 && typeof(this.response[table].results !== 'undefined'))) {
-          this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {
+          this.$http.get('https://api.eurocore.rocks/' + table + '/', {
             params: {
               drillcore__id: drillcoreId,
               order_by: orderBy,
-              format: 'jsonp'
+              format: 'json'
             }
           }).then(response => {
             console.log(response);
@@ -351,9 +345,7 @@
               this.response[table].results = response.body.results;
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         }
       },
@@ -361,13 +353,13 @@
       infiniteHandler($state) {
         if (this.response.drillcore_box.results.length < this.drillcoreSummary[0].boxes) {
           this.response.drillcore_box.page += 1;
-          this.$http.jsonp('https://api.eurocore.rocks/drillcore_box/', {
+          this.$http.get('https://api.eurocore.rocks/drillcore_box/', {
             params: {
               drillcore__id: this.id,
               page: this.response.drillcore_box.page,
               paginate_by: this.response.drillcore_box.paginateBy,
               order_by: 'start_depth',
-              format: 'jsonp'
+              format: 'json'
             }
           }).then(response => {
             console.log(response);
@@ -380,9 +372,7 @@
               $state.loaded();
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         } else {
           $state.complete();

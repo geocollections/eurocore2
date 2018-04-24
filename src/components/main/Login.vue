@@ -134,14 +134,15 @@
 
         //TODO: user and password should be sent through headers
         console.log(window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password))
-        this.$http.jsonp('https://api.eurocore.rocks/login/', {
+        // TODO: Should be POST after fix
+        this.$http.get('https://api.eurocore.rocks/login/', {
           params: {
             user: this.user.passwordCredentials.username,
             pwd: this.user.passwordCredentials.password,
-            format: 'jsonp'
+            format: 'json'
           },
           headers: {
-            'Authorization': 'Basic ' + window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password)
+            'Authorization': 'Basic ' + window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password),
           }
         }).then(response => {
           if (response.status === 200) {
@@ -166,6 +167,7 @@
           console.log('ERROR: ');
           console.log(errResponse);
           console.log(errResponse.status);
+          this.loggingIn = false;
         })
       },
       logOut() {
@@ -180,12 +182,13 @@
         };
 
 
-        this.$http.jsonp('https://api.eurocore.rocks/logout/', {
+        this.$http.get('https://api.eurocore.rocks/logout/', {
           params: {
-            format: 'jsonp'
+            format: 'json'
           }
         }).then(response => {
           if (response.status === 200) {
+            console.log(response)
             this.loginMessage = response.body.message;
             this.toastSuccess(response.body.message);
             this.isAuthenticated = false;

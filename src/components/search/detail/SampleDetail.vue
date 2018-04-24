@@ -152,28 +152,24 @@
       },
       methods: {
         getSampleById(id) {
-          this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
+          this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.sample = response.body.results;
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         },
 
         getAnalysisBySampleId(sampleId) {
-          this.$http.jsonp('https://api.eurocore.rocks/analysis/', {params: {sample__id: sampleId, format: 'jsonp'}}).then(response => {
+          this.$http.get('https://api.eurocore.rocks/analysis/', {params: {sample__id: sampleId, format: 'json'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.analysis = response.body.results;
             }
           }, errResponse => {
-            console.log('ERROR: ');
-            console.log(errResponse);
-            console.log(errResponse.status);
+            console.log('ERROR: ' + JSON.stringify(errResponse));
           })
         },
 

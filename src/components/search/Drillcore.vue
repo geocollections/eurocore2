@@ -470,7 +470,7 @@
         if (drillcoreIds.includes(',')) {
           ids = 'id__in=';
         }
-        this.$http.jsonp(this.API_URL + 'drillcore/?' + ids + drillcoreIds, {params: {format: 'jsonp', page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
+        this.$http.get(this.API_URL + 'drillcore/?' + ids + drillcoreIds, {params: {format: 'json', page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -484,7 +484,7 @@
       searchEntities(searchParameters) {
         let url = this.buildSearchUrl(searchParameters);
 
-        this.$http.jsonp(url, {params: {format: 'jsonp', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
+        this.$http.get(url, {params: {format: 'json', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -500,7 +500,7 @@
       searchEntitiesForMap(searchParameters) {
         let url = this.buildSearchUrl(searchParameters);
 
-        this.$http.jsonp(url, {params: {format: 'jsonp', paginate_by: 100}}).then(response => {
+        this.$http.get(url, {params: {format: 'json', paginate_by: 100}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.responseForMap = response.body.results;
@@ -510,7 +510,7 @@
       },
 
       fastSearch(drillcoreName) {
-        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', name__icontains: drillcoreName, page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
+        this.$http.get(this.API_URL + 'drillcore/', {params: {format: 'json', name__icontains: drillcoreName, page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -523,7 +523,7 @@
 
       //TEST ONLY
       fastSearchForMap(drillcoreName) {
-        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', name__icontains: drillcoreName, paginate_by: 100}}).then(response => {
+        this.$http.get(this.API_URL + 'drillcore/', {params: {format: 'json', name__icontains: drillcoreName, paginate_by: 100}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.responseForMap = response.body.results;
@@ -717,7 +717,7 @@
 
         let url = this.buildSearchUrl(params);
         console.log(url);
-        this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'name'}}).then(response => {
+        this.$http.get(url, {params: {distinct: 'true', format: 'json', fields: 'name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.count > 0) {
@@ -732,7 +732,7 @@
       populateDepositNames(params) {
         let url = this.buildSearchUrl(params);
 
-        this.$http.jsonp(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__name'}}).then(response => {
+        this.$http.get(url, {params: {deposit__name__isnull: 'false', distinct: 'true', format: 'json', fields: 'deposit__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.count > 0) {
@@ -747,7 +747,7 @@
       populateOreTypes(params) {
         let url = this.buildSearchUrl(params);
 
-        this.$http.jsonp(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__genetic_type__name'}}).then(response => {
+        this.$http.get(url, {params: {deposit__genetic_type__name__isnull: 'false', distinct: 'true', format: 'json', fields: 'deposit__genetic_type__name'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.count > 0) {
@@ -762,7 +762,7 @@
       populateCommodities(params) {
         let url = this.buildSearchUrl(params);
 
-        this.$http.jsonp(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'jsonp', fields: 'deposit__main_commodity'}}).then(response => {
+        this.$http.get(url, {params: {deposit__main_commodity__isnull: 'false', distinct: 'true', format: 'json', fields: 'deposit__main_commodity'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.count > 0) {
@@ -777,7 +777,7 @@
       populateCoreDepositors(params) {
         let url = this.buildSearchUrl(params);
 
-        this.$http.jsonp(url, {params: {distinct: 'true', format: 'jsonp', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
+        this.$http.get(url, {params: {distinct: 'true', format: 'json', fields: 'core_depositor__name,core_depositor__acronym'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             if (response.body.count > 0) {
@@ -879,13 +879,12 @@
 
 
 
-
       /*****************************
        *****  MAP CODE START  ******
        *****************************/
 
       getMapData() {
-        this.$http.jsonp(this.API_URL + 'drillcore/', {params: {format: 'jsonp', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
+        this.$http.get(this.API_URL + 'drillcore/', {params: {format: 'json', paginate_by: 1000, fields: 'id,name,longitude,latitude'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.mapResponse.count = response.body.count;

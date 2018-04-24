@@ -269,7 +269,7 @@
     methods: {
 
       getCoreboxById(id) {
-        this.$http.jsonp(this.API_URL + id, {
+        this.$http.get(this.API_URL + id, {
           before(request) {
 
             // abort previous request, if exists
@@ -280,7 +280,7 @@
             // set previous request on Vue instance
             this.previousRequest = request;
           },
-          params: {format: 'jsonp'}}).then(response => {
+          params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.corebox = response.body.results;
@@ -291,7 +291,7 @@
       },
 
       getAvailableCoreboxes(id) {
-        this.$http.jsonp(this.API_URL, {params: {drillcore__id: id, fields: 'id,number', format: 'jsonp'}}).then(response => {
+        this.$http.get(this.API_URL, {params: {drillcore__id: id, fields: 'id,number', format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.availableBoxes.count = response.body.count;
@@ -303,7 +303,7 @@
       },
 
       getCoreboxDataByDepth(table, drillcoreId, startDepth, endDepth) {
-        this.$http.jsonp('https://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response[table].count = response.body.count;
@@ -315,7 +315,7 @@
       },
 
       getAnalysisSummary(drillcoreId, startDepth, endDepth) {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_summary/', { params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'jsonp'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/analysis_summary/', { params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.analysis_summary.count = response.body.count;
@@ -327,7 +327,7 @@
       },
 
       getAllParameters() {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/', {params: {format: 'jsonp', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/analysis_result/', {params: {format: 'json', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.parameters = []; // BUG FIX FOR DUPLICATES

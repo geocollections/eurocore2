@@ -273,7 +273,7 @@
               dataset: [],
               page: 1,
               paginateBy: 100,
-              orderBy: 'id',
+              orderBy: 'drillcore_name',
               // orderBy: 'drillcore_name,depth',
             },
             currentlyShownParameters: [],
@@ -393,7 +393,7 @@
         searchEntities(params) {
           let url = this.buildSearchUrl(params);
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+          this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.response.count = response.body.count;
@@ -551,7 +551,7 @@
         populateDrillcoreNames(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, false, true, true, true);
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', fields: 'drillcore__name'}}).then(response => {
+          this.$http.get(url , {params: {format: 'json', distinct: 'true', fields: 'drillcore__name'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -568,7 +568,7 @@
         populateAnalyticalMethods(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, false, true, true);
 
-          this.$http.jsonp(url , {params: {distinct: 'true', format: 'jsonp', fields: 'analysis_method__method'}}).then(response => {
+          this.$http.get(url , {params: {distinct: 'true', format: 'json', fields: 'analysis_method__method'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -592,7 +592,7 @@
         populateShowParameters(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, false, true);
 
-          this.$http.jsonp(url , {params: {format: 'jsonp', distinct: 'true', order_by: 'analysisresult__parameter__parameter', fields: 'analysisresult__parameter__parameter,analysisresult__unit__unit'}}).then(response => {
+          this.$http.get(url , {params: {format: 'json', distinct: 'true', order_by: 'analysisresult__parameter__parameter', fields: 'analysisresult__parameter__parameter,analysisresult__unit__unit'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -621,7 +621,7 @@
         populateDataset(params, currentlyShownParams) {
           let url = this.buildSearchUrlForPopulate(params, currentlyShownParams, true, true, true, false)
 
-          this.$http.jsonp(url , {params: {dataset__id__isnull: 'false' ,format: 'jsonp', distinct: 'true', fields: 'dataset__name,dataset__id'}}).then(response => {
+          this.$http.get(url , {params: {dataset__id__isnull: 'false' ,format: 'json', distinct: 'true', fields: 'dataset__name,dataset__id'}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               if (response.body.count > 0) {
@@ -787,7 +787,7 @@
                 dataset: [],
                 page: 1,
                 paginateBy: 100,
-                orderBy: 'id',
+                orderBy: 'drillcore_name',
                 // orderBy: 'drillcore_name,depth',
               },
               currentlyShownParameters: [],

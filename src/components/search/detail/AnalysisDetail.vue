@@ -222,24 +222,22 @@
     },
     methods: {
       getAnalysisById(id) {
-        this.$http.jsonp(this.API_URL + id, {params: {format: 'jsonp'}}).then(response => {
+        this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.analysis = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getAnalysisResultById(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/analysis_result/', {
+        this.$http.get('https://api.eurocore.rocks/analysis_result/', {
           params: {
             analysis__id: id,
             order_by: this.analysisResultsOrder,
-            format: 'jsonp'
+            format: 'json'
           }
         }).then(response => {
           console.log(response);
@@ -247,18 +245,16 @@
             this.analysisResults = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getSpectraCount(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/spectrum/', {
+        this.$http.get('https://api.eurocore.rocks/spectrum/', {
           params: {
             analysis__id: id,
             fields: 'id',
-            format: 'jsonp'
+            format: 'json'
           }
         }).then(response => {
           console.log(response);
@@ -266,9 +262,7 @@
             this.spectraCount = response.body.count;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 

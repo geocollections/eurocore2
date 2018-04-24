@@ -81,16 +81,14 @@
       },
 
       getSpectrumResultsById(id) {
-        this.$http.jsonp('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'jsonp'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.spectrumData.count = response.body.count;
             this.spectrumData.results = response.body.results;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 

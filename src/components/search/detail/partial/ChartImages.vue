@@ -102,13 +102,13 @@
     methods: {
 
       getImages(minDepth, maxDepth) {
-        this.$http.jsonp(this.API_URL, {
+        this.$http.get(this.API_URL, {
           params:
             {
               drillcore__id: this.drillcoreId,
               or_search: 'start_depth__range:' + minDepth + ',' + maxDepth + ';' + 'end_depth__range:' + minDepth + ',' + maxDepth,
               order_by: 'start_depth',
-              format: 'jsonp'
+              format: 'json'
             }
         }).then(response => {
           console.log(response);
