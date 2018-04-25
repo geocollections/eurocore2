@@ -145,84 +145,98 @@
             <thead class="thead-light">
               <tr class="th-sort">
                 <th>
-                  <!--TODO: Some cases should check each array element arr(0) or arr(1) === and !== 'value' -->
                   <span @click="changeOrder('drillcore_name')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('drillcore_name') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('drillcore_name') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('drillcore_name') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('drillcore_name') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('drillcore_name') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('drillcore_name') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Drillcore
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('drillcore_name')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('drillcore_name') === 1 || isFieldInOrderBy('drillcore_name') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th>
                   <span @click="changeOrder('depth')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('depth') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('depth') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('depth') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('depth') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('depth') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('depth') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth from (m)
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('depth')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('depth') === 1 || isFieldInOrderBy('depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th>
                   <span @click="changeOrder('end_depth')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('end_depth') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('end_depth') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('end_depth') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('end_depth') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('end_depth') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('end_depth') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth to (m)
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('end_depth')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('end_depth') === 1 || isFieldInOrderBy('end_depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th>
                   <span @click="changeOrder('sample_number')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('sample_number') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('sample_number') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('sample_number') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('sample_number') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('sample_number') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('sample_number') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Sample
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('sample_number')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('sample_number') === 1 || isFieldInOrderBy('sample_number') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th>
                   <span @click="changeOrder('analysis_id')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('analysis_id') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('analysis_id') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('analysis_id') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_id') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_id') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_id') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Analysis ID
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('analysis_id')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_id') === 1 || isFieldInOrderBy('analysis_id') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th>
                   <span @click="changeOrder('analysis_method')">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy('analysis_method') === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy('analysis_method') === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy('analysis_method') === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_method') === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_method') === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_method') === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Method
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder('analysis_method')">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_method') === 1 || isFieldInOrderBy('analysis_method') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
 
                 <th v-for="parameter in searchParameters.currentlyShownParameters">
                   <span @click="changeOrder(parameter.formattedValue)">
-                    <!--<i class="fas fa-sort" v-if="this.isFieldInOrderBy(parameter.formattedValue) === 0"></i>-->
-                    <!--<i class="fas fa-sort-up" v-if="this.isFieldInOrderBy(parameter.formattedValue) === 1"></i>-->
-                    <!--<i class="fas fa-sort-down" v-if="this.isFieldInOrderBy(parameter.formattedValue) === -1"></i>-->
-                    <font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>
-                    <font-awesome-icon v-else :icon="sortingDirection" />
+                    <i class="fas fa-sort" v-if="isFieldInOrderBy(parameter.formattedValue) === 0"></i>
+                    <i class="fas fa-sort-up" v-if="isFieldInOrderBy(parameter.formattedValue) === 1"></i>
+                    <i class="fas fa-sort-down" v-if="isFieldInOrderBy(parameter.formattedValue) === -1"></i>
+                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>-->
+                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     {{parameter.analysisresult__parameter__parameter + ' ' + parameter.analysisresult__unit__unit}}
+                  </span>&nbsp;<span class="remove-order" @click="removeOrder(parameter.formattedValue)">
+                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy(parameter.formattedValue) === 1 || isFieldInOrderBy(parameter.formattedValue) === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
                 </th>
               </tr>
             </thead>
+
             <tbody>
               <tr v-if="response.count === 0 || response.count === undefined"><br></tr> <!-- Adds empty line so title can fit -->
               <tr v-for="entity in response.results">
@@ -296,8 +310,8 @@
               dataset: [],
               page: 1,
               paginateBy: 100,
-              // orderBy: ['drillcore_name', 'depth'],
-              orderBy: 'drillcore_name',
+              orderBy: ['drillcore_name', '-depth'],
+              // orderBy: 'drillcore_name',
             },
             currentlyShownParameters: [],
             numOfComparableParameters: 2,
@@ -422,7 +436,8 @@
         searchEntities(params) {
           let url = this.buildSearchUrl(params);
 
-          this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+          // this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
+          this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy}}).then(response => {
             console.log(response);
             if (response.status === 200) {
               this.response.count = response.body.count;
@@ -466,15 +481,14 @@
                 }
               }
 
-              //TODO: Enable if multi order is done
-              // if (key === 'orderBy') {
-              //   url += 'order_by=';
-              //   for (const field in params[key]) {
-              //     url += params[key][field] + ','
-              //   }
-              //
-              //   url = this.removeCommaAndAddAmpersand(url);
-              // }
+              if (key === 'orderBy') {
+                url += 'order_by=';
+                for (const field in params[key]) {
+                  url += params[key][field] + ','
+                }
+
+                url = this.removeCommaAndAddAmpersand(url);
+              }
 
             }
           }
@@ -719,42 +733,30 @@
          *** ORDERING CODE START ***
          ***************************/
 
-        changeOrder(orderValue) {
+        changeOrder(field) {
+          if (this.searchParameters.watched.orderBy.includes(field)) {
+            // Ascending
+            this.$set(this.searchParameters.watched.orderBy, this.searchParameters.watched.orderBy.indexOf(field), '-' + field);
 
-          orderValue = orderValue.toLowerCase();
+          } else if (this.searchParameters.watched.orderBy.includes('-' + field)) {
+            // Descending
+            this.$set(this.searchParameters.watched.orderBy, this.searchParameters.watched.orderBy.indexOf('-' + field), field);
 
-          if (this.searchParameters.watched.orderBy === orderValue) {
-            if (orderValue.charAt(0) !== '-') {
-              orderValue = '-' + orderValue;
+          } else {
+
+            if (this.searchParameters.watched.orderBy.length > 1) {
+              // Removes first and adds field
+              this.searchParameters.watched.orderBy.shift();
+              this.searchParameters.watched.orderBy.push(field);
             } else {
-              orderValue = orderValue.substring(1);
+              // Just adds field
+              this.searchParameters.watched.orderBy.push(field)
             }
           }
-          this.searchParameters.watched.page = 1;
-          this.searchParameters.watched.orderBy = orderValue;
-        },
 
-        // changeOrder_new(orderValue) {
-        //
-        //   orderValue = orderValue.toLowerCase();
-        //
-        //   for (const field in this.searchParameters.watched.orderBy) {
-        //     console.log('current' + this.searchParameters.watched.orderBy[field])
-        //     console.log('val' + orderValue)
-        //     if (this.searchParameters.watched.orderBy[field] === orderValue) {
-        //       if (this.searchParameters.watched.orderBy[field].charAt(0) !== '-') {
-        //         this.searchParameters.watched.orderBy[field] = '-' + orderValue
-        //         console.log(this.searchParameters.watched.orderBy[field])
-        //       } else {
-        //         this.searchParameters.watched.orderBy[field] = this.searchParameters.watched.orderBy[field].substring(1);
-        //         console.log(this.searchParameters.watched.orderBy[field])
-        //       }
-        //     }
-        //   }
-        //
-        //   this.searchParameters.watched.page = 1;
-        //   // this.searchParameters.watched.orderBy = orderValue;
-        // },
+          // Move it up if it starts to trigger multiple requests
+          this.searchParameters.watched.page = 1;
+        },
 
         // Returns 1 for ascending, -1 for descending and 0 if not in orderBy
         isFieldInOrderBy(field) {
@@ -767,6 +769,14 @@
             }
           }
           return 0;
+        },
+
+        removeOrder(field) {
+          if (this.searchParameters.watched.orderBy.includes(field)) {
+            this.searchParameters.watched.orderBy.splice(this.searchParameters.watched.orderBy.indexOf(field), 1)
+          } else if (this.searchParameters.watched.orderBy.includes('-' + field)) {
+            this.searchParameters.watched.orderBy.splice(this.searchParameters.watched.orderBy.indexOf('-' + field), 1)
+          }
         },
 
         /***************************
@@ -876,8 +886,8 @@
                 dataset: [],
                 page: 1,
                 paginateBy: 100,
-                // orderBy: ['drillcore_name', 'depth'],
-                orderBy: 'drillcore_name',
+                orderBy: ['drillcore_name', 'depth'],
+                // orderBy: 'drillcore_name',
               },
               currentlyShownParameters: [],
               numOfComparableParameters: 2,
@@ -910,4 +920,18 @@
     border-top-right-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
   }
+
+  .remove-order {
+    color: #dc3545;
+    font-size: 1.1rem;
+    /* Removed transition because if I want to hold table head on one line */
+    /*transition: all 500ms;*/
+  }
+
+  .remove-order:hover {
+    color: #9a2530;
+    /*opacity: 0.7;*/
+    /*font-size: 1.35rem;*/
+  }
+
 </style>
