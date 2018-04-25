@@ -76,11 +76,11 @@
       <div class="col">
 
         <label>Parameter filter</label>
-        <div class="row mb-3">
-          <div class="col">
-            <button class="btn btn-outline-primary btn-sm" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>
-          </div>
-        </div>
+        <!--<div class="row mb-3">-->
+          <!--<div class="col">-->
+            <!--<button class="btn btn-outline-primary btn-sm" title="Adds parameter field" @click="addParameterField()" >Add Parameter</button>-->
+          <!--</div>-->
+        <!--</div>-->
 
         <div class="row">
           <div class="form-group col-sm-12 col-md-6" v-for="(item, key) in searchParameters.numOfComparableParameters">
@@ -91,7 +91,14 @@
               </b-form-select>
               <b-form-select v-model="searchParameters.watched.comparableParameterOperator[key]" :options="parameterOptions"></b-form-select>
               <b-form-input id="custom-border-radius" v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
-              <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">X</button>
+
+              <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">
+                <i class="fas fa-minus"></i>
+              </button>
+
+              <button class="btn btn-outline-primary ml-2" @click="addParameterField()">
+                <i class="fas fa-plus"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -103,11 +110,11 @@
     <div class="row">
       <div class="col">
         <span>
-          <button class="btn btn-primary btn-sm mr-2 mb-2" title="Sends request with inserted data" @click="searchEntities(searchParameters.watched)">SEARCH</button>
+          <button class="btn btn-primary mr-2 mb-2" title="Sends request with inserted data" @click="searchEntities(searchParameters.watched)">SEARCH</button>
         </span>
 
         <span>
-          <button class="btn btn-danger btn-sm mr-2 mb-2" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
+          <button class="btn btn-danger mr-2 mb-2" title="Clears search fields" @click="resetSearchParameters()">RESET FORM</button>
         </span>
       </div>
     </div>
@@ -145,94 +152,101 @@
             <thead class="thead-light">
               <tr class="th-sort">
                 <th>
-                  <span @click="changeOrder('drillcore_name')">
+                  <span @click="changeOrder('drillcore_name')" v-on:dblclick="removeOrder('drillcore_name')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('drillcore_name') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('drillcore_name') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('drillcore_name') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Drillcore
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('drillcore_name')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('drillcore_name') === 1 || isFieldInOrderBy('drillcore_name') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('drillcore_name')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('drillcore_name') === 1 || isFieldInOrderBy('drillcore_name') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th>
-                  <span @click="changeOrder('depth')">
+                  <span @click="changeOrder('depth')" v-on:dblclick="removeOrder('depth')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('depth') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('depth') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('depth') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth from (m)
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('depth')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('depth') === 1 || isFieldInOrderBy('depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('depth')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('depth') === 1 || isFieldInOrderBy('depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th>
-                  <span @click="changeOrder('end_depth')">
+                  <span @click="changeOrder('end_depth')" v-on:dblclick="removeOrder('end_depth')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('end_depth') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('end_depth') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('end_depth') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth to (m)
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('end_depth')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('end_depth') === 1 || isFieldInOrderBy('end_depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('end_depth')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('end_depth') === 1 || isFieldInOrderBy('end_depth') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th>
-                  <span @click="changeOrder('sample_number')">
+                  <span @click="changeOrder('sample_number')" v-on:dblclick="removeOrder('sample_number')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('sample_number') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('sample_number') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('sample_number') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Sample
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('sample_number')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('sample_number') === 1 || isFieldInOrderBy('sample_number') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('sample_number')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('sample_number') === 1 || isFieldInOrderBy('sample_number') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th>
-                  <span @click="changeOrder('analysis_id')">
+                  <span @click="changeOrder('analysis_id')" v-on:dblclick="removeOrder('analysis_id')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_id') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_id') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_id') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Analysis ID
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('analysis_id')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_id') === 1 || isFieldInOrderBy('analysis_id') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('analysis_id')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_id') === 1 || isFieldInOrderBy('analysis_id') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th>
-                  <span @click="changeOrder('analysis_method')">
+                  <span @click="changeOrder('analysis_method')" v-on:dblclick="removeOrder('analysis_method')">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_method') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_method') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_method') === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Method
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder('analysis_method')">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_method') === 1 || isFieldInOrderBy('analysis_method') === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder('analysis_method')">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy('analysis_method') === 1 || isFieldInOrderBy('analysis_method') === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
 
                 <th v-for="parameter in searchParameters.currentlyShownParameters">
-                  <span @click="changeOrder(parameter.formattedValue)">
+                  <span @click="changeOrder(parameter.formattedValue)" v-on:dblclick="removeOrder(parameter.formattedValue)">
                     <i class="fas fa-sort" v-if="isFieldInOrderBy(parameter.formattedValue) === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy(parameter.formattedValue) === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy(parameter.formattedValue) === -1"></i>
                     <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>-->
                     <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     {{parameter.analysisresult__parameter__parameter + ' ' + parameter.analysisresult__unit__unit}}
-                  </span>&nbsp;<span class="remove-order" @click="removeOrder(parameter.formattedValue)">
-                    <i class="far fa-times-circle" v-if="(isFieldInOrderBy(parameter.formattedValue) === 1 || isFieldInOrderBy(parameter.formattedValue) === -1) && searchParameters.watched.orderBy.length > 1"></i>
                   </span>
+                  <!--&nbsp;<span class="remove-order" @click="removeOrder(parameter.formattedValue)">-->
+                    <!--<i class="far fa-times-circle" v-if="(isFieldInOrderBy(parameter.formattedValue) === 1 || isFieldInOrderBy(parameter.formattedValue) === -1) && searchParameters.watched.orderBy.length > 1"></i>-->
+                  <!--</span>-->
                 </th>
               </tr>
             </thead>
@@ -482,12 +496,14 @@
               }
 
               if (key === 'orderBy') {
-                url += 'order_by=';
-                for (const field in params[key]) {
-                  url += params[key][field] + ','
-                }
+                if (params[key].length > 0) {
+                  url += 'order_by=';
+                  for (const field in params[key]) {
+                    url += params[key][field] + ','
+                  }
 
-                url = this.removeCommaAndAddAmpersand(url);
+                  url = this.removeCommaAndAddAmpersand(url);
+                }
               }
 
             }
@@ -921,17 +937,22 @@
     border-bottom-right-radius: 0.25rem;
   }
 
-  .remove-order {
-    color: #dc3545;
-    font-size: 1.1rem;
-    /* Removed transition because if I want to hold table head on one line */
-    /*transition: all 500ms;*/
+  .fa-sort-up, .fa-sort-down {
+    color: #6bb745;
   }
 
-  .remove-order:hover {
-    color: #9a2530;
-    /*opacity: 0.7;*/
-    /*font-size: 1.35rem;*/
-  }
+  /* They went together with circle-x remove ordering button */
+  /*.remove-order {*/
+    /*color: #dc3545;*/
+    /*font-size: 1.1rem;*/
+    /*!* Removed transition because if I want to hold table head on one line *!*/
+    /*!*transition: all 500ms;*!*/
+  /*}*/
+
+  /*.remove-order:hover {*/
+    /*color: #9a2530;*/
+    /*!*opacity: 0.7;*!*/
+    /*!*font-size: 1.35rem;*!*/
+  /*}*/
 
 </style>
