@@ -75,38 +75,51 @@
                   <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
-                        <th><span @click="changeOrder('depth')">
-                            <font-awesome-icon v-if="searchParameters.orderBy !== 'depth' && searchParameters.orderBy !== '-depth'" :icon="icon"/>
-                            <font-awesome-icon v-else :icon="sortingDirection" />
-                            Depth from (m)</span>
+                        <th>
+                          <span @click="changeOrder('depth')" v-on:dblclick="removeOrder('depth')">
+                            <i class="fas fa-sort" v-if="isFieldInOrderBy('depth') === 0"></i>
+                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy('depth') === 1"></i>
+                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy('depth') === -1"></i>
+                            Depth from (m)
+                          </span>
                         </th>
 
-                        <th><span @click="changeOrder('end_depth')">
-                            <font-awesome-icon v-if="searchParameters.orderBy !== 'end_depth' && searchParameters.orderBy !== '-end_depth'" :icon="icon"/>
-                            <font-awesome-icon v-else :icon="sortingDirection" />
-                            Depth to (m)</span>
+                        <th>
+                          <span @click="changeOrder('end_depth')" v-on:dblclick="removeOrder('end_depth')">
+                            <i class="fas fa-sort" v-if="isFieldInOrderBy('end_depth') === 0"></i>
+                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy('end_depth') === 1"></i>
+                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy('end_depth') === -1"></i>
+                            Depth to (m)
+                          </span>
                         </th>
 
-                        <th><span @click="changeOrder('sample_number')">
-                          <font-awesome-icon v-if="searchParameters.orderBy !== 'sample_number' && searchParameters.orderBy !== '-sample_number'" :icon="icon"/>
-                          <font-awesome-icon v-else :icon="sortingDirection" />
-                          Sample</span></th>
-
-                        <th><span @click="changeOrder('analysis_id')">
-                          <font-awesome-icon v-if="searchParameters.orderBy !== 'analysis_id' && searchParameters.orderBy !== '-analysis_id'" :icon="icon"/>
-                          <font-awesome-icon v-else :icon="sortingDirection" />
-                          Analysis</span>
+                        <th>
+                          <span @click="changeOrder('sample_number')" v-on:dblclick="removeOrder('sample_number')">
+                            <i class="fas fa-sort" v-if="isFieldInOrderBy('sample_number') === 0"></i>
+                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy('sample_number') === 1"></i>
+                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy('sample_number') === -1"></i>
+                            Sample
+                          </span>
                         </th>
 
-                        <!-- REMOVED ORDERING BECAUSE OF GRAPH MALFUNCTION -->
-                        <!--<th v-for="parameter in currentlyShownParameters">-->
-                          <!--<span @click="changeOrder(formatParameterForTableData(parameter))">-->
-                            <!--<font-awesome-icon v-if="searchParameters.orderBy !== 'xxxxx' && searchParameters.orderBy !== '-xxxxx'" :icon="icon"/>-->
-                            <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
-                            <!--{{parameter}}-->
-                          <!--</span>-->
-                        <!--</th>-->
-                        <th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>
+                        <th>
+                          <span @click="changeOrder('analysis_id')" v-on:dblclick="removeOrder('analysis_id')">
+                            <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_id') === 0"></i>
+                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_id') === 1"></i>
+                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_id') === -1"></i>
+                            Analysis
+                          </span>
+                        </th>
+
+                        <th v-for="parameter in currentlyShownParameters">
+                          <span @click="changeOrder(formatParameterForTableData(parameter))" v-on:dblclick="removeOrder(formatParameterForTableData(parameter))">
+                            <i class="fas fa-sort" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 0"></i>
+                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 1"></i>
+                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === -1"></i>
+                            {{parameter}}
+                          </span>
+                        </th>
+                        <!--<th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>-->
                       </tr>
                     </thead>
 
@@ -179,10 +192,6 @@
   import ExportButtons from './partial/ExportButtons';
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
-  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-  import faSort from '@fortawesome/fontawesome-free-solid/faSort'
-  import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
-  import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
   // import * as helper from "../../../assets/js/helper";
 
   export default {
@@ -190,7 +199,6 @@
       ExportButtons,
       PlotlyChart,
       Spinner,
-      FontAwesomeIcon
     },
     props: ['drillcoreId'],
     name: "drillcore-data-detail",
@@ -201,7 +209,7 @@
         searchParameters: {
           page: 1,
           paginateBy: 250,
-          orderBy: 'depth'
+          orderBy: ['depth']
         },
         response: {
           count: 0,
@@ -239,17 +247,13 @@
     },
     metaInfo() {
       return {
-        title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId
-      }
-    },
-
-    computed: {
-      icon() {
-        return faSort;
-      },
-
-      sortingDirection() {
-        return this.searchParameters.orderBy.includes('-') ? faSortDown : faSortUp
+        title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId,
+        link: [
+          { rel: 'stylesheet',
+            href: 'https://use.fontawesome.com/releases/v5.0.10/css/all.css',
+            integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
+            crossorigin: 'anonymous'}
+        ],
       }
     },
 
@@ -351,14 +355,32 @@
       const dataToExport = {
         searchParameters: this.searchParameters,
         currentlyShownParameters: this.currentlyShownParameters
-      }
+      };
       this.$session.set('drillcore_data/' + this.drillcoreId, dataToExport);
     },
 
     methods: {
 
+      buildOrderBy(orderBy) {
+        if (orderBy.length > 1) {
+          let ordering = '';
+          for (const field in orderBy) {
+            ordering += orderBy[field] + ',';
+          }
+          ordering = ordering.slice(0, -1);
+          return ordering;
+        } else if (orderBy.length > 0) {
+          return orderBy[0]
+        } else {
+          return 'id';
+        }
+
+      },
+
       getAnalysisSummary(id, searchParams) {
-        this.$http.get('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: searchParams.orderBy, format: 'json'}}).then(response => {
+        const orderBy = this.buildOrderBy(searchParams.orderBy);
+
+        this.$http.get('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: orderBy, format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
@@ -451,18 +473,6 @@
 
       toggleAllParameters(checked) {
         this.currentlyShownParameters = checked ? this.parameters.slice() : [];
-      },
-
-      changeOrder(orderValue) {
-        if (this.searchParameters.orderBy === orderValue) {
-          if (orderValue.charAt(0) !== '-') {
-            orderValue = '-' + orderValue;
-          } else {
-            orderValue = orderValue.substring(1);
-          }
-        }
-        this.searchParameters.page = 1;
-        this.searchParameters.orderBy = orderValue;
       },
 
       formatParameterForTableData(param) {
@@ -565,10 +575,68 @@
           this.tabIndex = 1;
           this.isChartOpen = true;
         } else {
-          this.tabIndex = 0
+          this.tabIndex = 0;
           this.isChartOpen = false;
         }
       },
+
+
+
+      /***************************
+       *** ORDERING CODE START ***
+       ***************************/
+
+      changeOrder(field) {
+        if (this.searchParameters.orderBy.includes(field)) {
+          // Ascending
+          this.$set(this.searchParameters.orderBy, this.searchParameters.orderBy.indexOf(field), '-' + field);
+
+        } else if (this.searchParameters.orderBy.includes('-' + field)) {
+          // Descending
+          this.$set(this.searchParameters.orderBy, this.searchParameters.orderBy.indexOf('-' + field), field);
+
+        } else {
+
+          if (this.searchParameters.orderBy.length > 1) {
+            // Removes first and adds field
+            this.searchParameters.orderBy.shift();
+            this.searchParameters.orderBy.push(field);
+          } else {
+            // Just adds field
+            this.searchParameters.orderBy.push(field)
+          }
+        }
+
+        // Move it up if it starts to trigger multiple requests
+        this.searchParameters.page = 1;
+      },
+
+      // Returns 1 for ascending, -1 for descending and 0 if not in orderBy
+      isFieldInOrderBy(field) {
+        for (const i in this.searchParameters.orderBy) {
+          if (this.searchParameters.orderBy[i] === field) {
+            return 1;
+          }
+          if (this.searchParameters.orderBy[i] === '-' + field) {
+            return -1
+          }
+        }
+        return 0;
+      },
+
+      removeOrder(field) {
+        if (this.searchParameters.orderBy.includes(field)) {
+          this.searchParameters.orderBy.splice(this.searchParameters.orderBy.indexOf(field), 1)
+        } else if (this.searchParameters.orderBy.includes('-' + field)) {
+          this.searchParameters.orderBy.splice(this.searchParameters.orderBy.indexOf('-' + field), 1)
+        }
+      },
+
+      /***************************
+       ***  ORDERING CODE END  ***
+       ***************************/
+
+
 
       toastInfo(text) {
         this.$toast.info(text, 'Info', {
@@ -584,7 +652,7 @@
         this.searchParameters = {
           page: 1,
           paginateBy: 250,
-          orderBy: 'depth'
+          orderBy: ['depth']
         };
         this.response = {
           count: 0,

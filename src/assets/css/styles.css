@@ -50,6 +50,11 @@ a:hover {
   /*opacity: 0.6;*/
 }
 
+/* Ordering in table head */
+.fa-sort-up, .fa-sort-down {
+  color: #6bb745;
+}
+
 /************************
  ***  TABLE HEAD END  ***
  ************************/

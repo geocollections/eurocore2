@@ -32,7 +32,7 @@
           <td>{{entity.instrument__instrument}}</td>
           <td>{{entity.agent__name}}</td>
           <td>{{entity.date}}</td>
-          <td>
+          <td class="tableexport-ignore">
             <b>
               <a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks/3D'})">Show 3D data</a>
               <!--<a href="http://eurocore.rocks/3D" target="_blank">Show 3D data</a>-->

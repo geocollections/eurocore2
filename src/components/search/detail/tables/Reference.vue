@@ -27,7 +27,7 @@
           <td>{{entity.publisher}} - {{entity.author}}</td>
           <td>{{entity.title}}</td>
           <td>{{entity.year}}</td>
-          <td class="text-center">
+          <td class="text-center tableexport-ignore">
             <a :href="entity.url" target="_blank" title="Download">
               <font-awesome-icon :icon="icon" size="2x"></font-awesome-icon>
             </a>

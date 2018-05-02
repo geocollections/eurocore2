@@ -156,8 +156,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('drillcore_name') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('drillcore_name') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('drillcore_name') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'drillcore_name' && searchParameters.watched.orderBy !== '-drillcore_name'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Drillcore
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('drillcore_name')">-->
@@ -170,8 +168,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('depth') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('depth') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('depth') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'depth' && searchParameters.watched.orderBy !== '-depth'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth from (m)
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('depth')">-->
@@ -184,8 +180,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('end_depth') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('end_depth') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('end_depth') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'end_depth' && searchParameters.watched.orderBy !== '-end_depth'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Depth to (m)
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('end_depth')">-->
@@ -198,8 +192,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('sample_number') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('sample_number') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('sample_number') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'sample_number' && searchParameters.watched.orderBy !== '-sample_number'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Sample
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('sample_number')">-->
@@ -212,8 +204,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_id') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_id') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_id') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_id' && searchParameters.watched.orderBy !== '-analysis_id'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Analysis ID
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('analysis_id')">-->
@@ -226,8 +216,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy('analysis_method') === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy('analysis_method') === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy('analysis_method') === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== 'analysis_method' && searchParameters.watched.orderBy !== '-analysis_method'" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     Method
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder('analysis_method')">-->
@@ -240,8 +228,6 @@
                     <i class="fas fa-sort" v-if="isFieldInOrderBy(parameter.formattedValue) === 0"></i>
                     <i class="fas fa-sort-up" v-if="isFieldInOrderBy(parameter.formattedValue) === 1"></i>
                     <i class="fas fa-sort-down" v-if="isFieldInOrderBy(parameter.formattedValue) === -1"></i>
-                    <!--<font-awesome-icon v-if="searchParameters.watched.orderBy !== parameter.formattedValue && searchParameters.watched.orderBy !== '-' + parameter.formattedValue" :icon="icon"/>-->
-                    <!--<font-awesome-icon v-else :icon="sortingDirection" />-->
                     {{parameter.analysisresult__parameter__parameter + ' ' + parameter.analysisresult__unit__unit}}
                   </span>
                   <!--&nbsp;<span class="remove-order" @click="removeOrder(parameter.formattedValue)">-->
@@ -294,17 +280,12 @@
 <script>
     import VueMultiselect from "vue-multiselect/src/Multiselect"
     import ExportButtons from './detail/partial/ExportButtons'
-    import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-    import faSort from '@fortawesome/fontawesome-free-solid/faSort'
-    import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
-    import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
     import Spinner from 'vue-simple-spinner'
 
     export default {
       components: {
         VueMultiselect,
         ExportButtons,
-        FontAwesomeIcon,
         Spinner
       },
 
@@ -363,16 +344,6 @@
             integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
             crossorigin: 'anonymous'}
         ],
-      },
-
-      computed: {
-        icon() {
-          return faSort;
-        },
-
-        sortingDirection() {
-          return this.searchParameters.watched.orderBy.includes('-') ? faSortDown : faSortUp
-        }
       },
 
       watch: {
@@ -935,10 +906,6 @@
   #custom-border-radius {
     border-top-right-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
-  }
-
-  .fa-sort-up, .fa-sort-down {
-    color: #6bb745;
   }
 
   /* They went together with circle-x remove ordering button */

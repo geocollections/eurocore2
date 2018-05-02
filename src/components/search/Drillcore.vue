@@ -196,7 +196,7 @@
                   <td>{{drillcore.hole_length}}</td>
                   <td>{{drillcore.hole_dip}}</td>
                   <td>{{drillcore.hole_azimuth}}</td>
-                  <td>
+                  <td class="tableexport-ignore">
                     <router-link :to="{ path: '/drillcore_data/' + drillcore.id }">Show data</router-link>
                   </td>
                 </tr>

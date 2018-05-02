@@ -42,12 +42,28 @@
       }
     },
 
+    computed: {
+      sortedResults: function () {
+        function compare(a, b) {
+          if (a.depth < b.depth) {
+            return -1;
+          }
+          if (a.depth > b.depth) {
+            return 1;
+          }
+          return 0;
+        }
+
+        return this.results.sort(compare);
+      }
+    },
+
     watch: {
       'parameters': function () {
-        this.drawChart(this.results, this.parameters, this.name);
+        this.drawChart(this.sortedResults, this.parameters, this.name);
       },
       'results': function () {
-        this.drawChart(this.results, this.parameters, this.name);
+        this.drawChart(this.sortedResults, this.parameters, this.name);
         this.getFirstAndLastDepth(this.results);
       },
     },
@@ -59,7 +75,7 @@
     mounted: function () {
       window.addEventListener('resize', this.onResize);
       if (this.parameters.length > 0) {
-        this.drawChart(this.results, this.parameters, this.name);
+        this.drawChart(this.sortedResults, this.parameters, this.name);
       }
     },
 
