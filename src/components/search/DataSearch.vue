@@ -93,11 +93,11 @@
               <b-form-input id="custom-border-radius" v-model="searchParameters.watched.comparableParameterValue[key]" type="number" placeholder="0"></b-form-input>
 
               <button class="btn btn-outline-danger ml-2" :disabled="searchParameters.numOfComparableParameters < 2" @click="deleteParameterField(key)">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus fa-xs"></i>
               </button>
 
               <button class="btn btn-outline-primary ml-2" @click="addParameterField()">
-                <i class="fas fa-plus"></i>
+                <i class="fas fa-plus fa-xs"></i>
               </button>
             </div>
           </div>
