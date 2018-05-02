@@ -134,7 +134,7 @@
 
         //TODO: user and password should be sent through headers
         console.log(window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password))
-        // TODO: Should be POST after fix
+        // TODO: Should be POST after fix, if i change that then app wants restarting idk why
         this.$http.get('https://api.eurocore.rocks/login/', {
           params: {
             user: this.user.passwordCredentials.username,
