@@ -177,25 +177,25 @@
               crossorigin: 'anonymous'}
           ],
           meta: [
-            { 'vmid': 'og:url',
-              'property': 'og:url',
-              'content': 'https://eurocore.rocks/#/corebox/' + this.id
+            { 'property': 'og:url',
+              'content': 'https://eurocore.rocks/#/corebox/' + this.id,
+              'vmid': 'og:url'
             },
-            { 'vmid': 'og:type',
-              'property': 'og:type',
-              'content': 'website'
+            { 'property': 'og:type',
+              'content': 'website',
+              'vmid': 'og:type'
             },
-            { 'vmid': 'og:title',
-              'property': 'og:title',
-              'content': 'EUROCORE Data Portal: Corebox ' + this.id
+            { 'property': 'og:title',
+              'content': 'EUROCORE Data Portal: Corebox ' + this.id,
+              'vmid': 'og:title'
             },
-            { 'vmid': 'og:description',
-              'property': 'og:description',
-              'content': 'Corebox from ' + this.corebox[0].drillcore__name + ' drillcore starting at ' + this.corebox[0].start_depth + ' m - ' + this.corebox[0].end_depth + ' m'
+            { 'property': 'og:description',
+              'content': 'Corebox from ' + this.corebox[0].drillcore__name + ' drillcore starting at ' + this.corebox[0].start_depth + ' m - ' + this.corebox[0].end_depth + ' m',
+              'vmid': 'og:description'
             },
-            { 'vmid': 'og:image',
-              'property': 'og:image',
-              'content': 'https://eurocore.rocks' + this.corebox[0].image__url
+            { 'property': 'og:image',
+              'content': 'https://eurocore.rocks' + this.corebox[0].image__url,
+              'vmid': 'og:image'
             },
           ]
         }
