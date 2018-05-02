@@ -77,6 +77,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // new PrerenderSpaPlugin(
     //   // Required - The path to the webpack-outputted app to prerender.
+    //   // ../dist is wrong should change
     //   path.join(__dirname, '../dist'),
     //   // Required - Routes to render.
     //   [ '/', '/corebox/20' ],
