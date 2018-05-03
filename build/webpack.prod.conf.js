@@ -11,6 +11,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 // const PrerenderSpaPlugin = require('prerender-spa-plugin')
+// const Renderer = PrerenderSpaPlugin.PuppeteerRenderer
 
 const env = require('../config/prod.env')
 
@@ -75,13 +76,17 @@ const webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
-    // new PrerenderSpaPlugin(
+    // Prerenders pages
+    // new PrerenderSpaPlugin({
     //   // Required - The path to the webpack-outputted app to prerender.
     //   // ../dist is wrong should change
-    //   path.join(__dirname, '../dist'),
+    //   staticDir: path.join(__dirname, '../dist'),
     //   // Required - Routes to render.
-    //   [ '/', '/corebox/20' ],
-    // ),
+    //   routes: ['/', '/corebox/20'],
+    //   renderer: new Renderer({
+    //     renderAfterTime: 5000
+    //   })
+    // }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // enable scope hoisting
