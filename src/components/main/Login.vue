@@ -132,36 +132,31 @@
       logIn() {
         this.loggingIn = true;
 
-        //TODO: user and password should be sent through headers
-        console.log(window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password))
-        // TODO: Should be POST after fix, if i change that then app wants restarting idk why
-
         this.$http.post('https://api.eurocore.rocks/login/',
           {
             user: this.user.passwordCredentials.username,
             pwd: this.user.passwordCredentials.password
           },
-          {
-            emulateJSON: true
+          { emulateJSON: true
           }).then(response => {
-          if (response.status === 200) {
-            console.log(response);
-            if (response.body.user != null) {
-              this.user.passwordCredentials.username = response.body.user;
-              this.isAuthenticated = true;
-              this.loginMessage = response.body.message;
-              this.toastSuccess(response.body.message)
-              this.success = true;
-              this.error = false;
-              this.$session.set('userData', this.user.passwordCredentials.username)
-            } else {
-              this.loginMessage = response.body.message;
-              this.toastError(response.body.message)
-              this.error = true;
-              this.success = false;
+            if (response.status === 200) {
+              console.log(response);
+              if (response.body.user != null) {
+                this.user.passwordCredentials.username = response.body.user;
+                this.isAuthenticated = true;
+                this.loginMessage = response.body.message;
+                this.toastSuccess(response.body.message)
+                this.success = true;
+                this.error = false;
+                this.$session.set('userData', this.user.passwordCredentials.username)
+              } else {
+                this.loginMessage = response.body.message;
+                this.toastError(response.body.message)
+                this.error = true;
+                this.success = false;
+              }
+              this.loggingIn = false;
             }
-            this.loggingIn = false;
-          }
         }, errResponse => {
           console.log('ERROR: ');
           console.log(errResponse);

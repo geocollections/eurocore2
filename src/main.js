@@ -29,6 +29,9 @@ new Vue({
   template: '<App/>'
 });
 
+// This adds session id and csrf to request
+Vue.http.options.credentials = true;
+
 Vue.filter('formatDate', function (value) {
   if (value) {
     return moment(String(value)).format('ddd, MMMM Do YYYY, HH:mm')
