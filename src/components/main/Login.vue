@@ -135,16 +135,15 @@
         //TODO: user and password should be sent through headers
         console.log(window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password))
         // TODO: Should be POST after fix, if i change that then app wants restarting idk why
-        this.$http.get('https://api.eurocore.rocks/login/', {
-          params: {
+
+        this.$http.post('https://api.eurocore.rocks/login/',
+          {
             user: this.user.passwordCredentials.username,
-            pwd: this.user.passwordCredentials.password,
-            format: 'json'
+            pwd: this.user.passwordCredentials.password
           },
-          headers: {
-            'Authorization': 'Basic ' + window.btoa(this.user.passwordCredentials.username + ':' + this.user.passwordCredentials.password),
-          }
-        }).then(response => {
+          {
+            emulateJSON: true
+          }).then(response => {
           if (response.status === 200) {
             console.log(response);
             if (response.body.user != null) {
@@ -170,6 +169,7 @@
           this.loggingIn = false;
         })
       },
+
       logOut() {
         if (this.$session.exists() && this.$session.get('userData') != null) {
           this.$session.remove('userData');
@@ -182,11 +182,7 @@
         };
 
 
-        this.$http.get('https://api.eurocore.rocks/logout/', {
-          params: {
-            format: 'json'
-          }
-        }).then(response => {
+        this.$http.get('https://api.eurocore.rocks/logout/').then(response => {
           if (response.status === 200) {
             console.log(response)
             this.loginMessage = response.body.message;
