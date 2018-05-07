@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div>
-      <a target="_blank" href="https://eitrawmaterials.eu">
+      <a target="_blank" href="https://eitrawmaterials.eu" title="EIT RawMaterials">
         <img id="eitrawLogo" src="https://eurocore.rocks/images/EITRM_flag_logo_web.png"/>
       </a>
     </div>
