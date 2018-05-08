@@ -4,7 +4,7 @@
  * Size can be either small, medium or large.
  * @returns file's url
  */
-function getDownloadLink(params) {
+function getFileLink(params) {
   if (params.size) {
     return 'https://files.eurocore.rocks/' + params.size
       + '/' + params.filename.substring(0,2)
@@ -17,4 +17,4 @@ function getDownloadLink(params) {
   }
 }
 
-export {getDownloadLink}
+export {getFileLink}
