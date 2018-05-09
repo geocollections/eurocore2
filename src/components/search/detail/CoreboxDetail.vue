@@ -81,8 +81,8 @@
         <!--TODO: Show only 1 which is choosed in preview-->
 
         <!--<a :href="'https://eurocore.rocks/' + image.image__url" :title="'https://eurocore.rocks/' + image.image__url" target="_blank">-->
-        <a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks' + image.image__url })" :title="'https://eurocore.rocks' + image.image__url">
-          <img width="100%" :src="buildCoreboxUrl('2000', image.image__url)" />
+        <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })" :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
+          <img width="100%" :src="helper.getFileLink({size: 'large', filename: image.image__filename})" />
         </a>
       </div>
     </div>
@@ -129,6 +129,7 @@
   import Analysis from './tables/Analysis'
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
+  import helper from './../../../assets/js/helper'
   // import Reference from './tables/Reference'
 
   export default {
@@ -144,6 +145,7 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore_box/',
+        helper: helper,
         showLabel: true,
         corebox: null,
         parameters: [],
@@ -353,12 +355,6 @@
             return param.parameter__parameter + ' ' + param.unit__unit + ' (' + param.analysis__analysis_method__method + ')';
           }
           return param.parameter__parameter + ' ' + param.unit__unit;
-        }
-      },
-
-      buildCoreboxUrl(size, url) {
-        if (url != null) {
-          return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
         }
       },
 

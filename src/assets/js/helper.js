@@ -6,15 +6,15 @@
  */
 function getFileLink(params) {
   if (params.size) {
-    return 'https://files.eurocore.rocks/' + params.size
+    return 'https://eurocore.rocks/files/' + params.size
       + '/' + params.filename.substring(0,2)
       + '/' + params.filename.substring(2,4)
       + '/' + params.filename;
   } else {
-    return 'https://files.eurocore.rocks/' + params.filename.substring(0,2)
+    return 'https://eurocore.rocks/files' + params.filename.substring(0,2)
       + '/' + params.filename.substring(2,4)
       + '/' + params.filename;
   }
 }
 
-export {getFileLink}
+export default {getFileLink}

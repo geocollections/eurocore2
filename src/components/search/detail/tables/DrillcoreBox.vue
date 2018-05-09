@@ -48,7 +48,8 @@
       <div class="col-8">
         <!--<router-link :to="{ path: '/corebox/' + entity.id }">-->
         <a href="javascript:void(0)" class="corebox-header" @click="openInNewWindow({object: 'corebox', id: entity.id})">
-          <img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" alt="Drillcore box" />
+          <!--<img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" alt="Drillcore box" />-->
+          <img :src="helper.getFileLink({size: 'medium', filename: entity.image__filename})" width="100%" title="Click for box details" alt="Drillcore box" />
         </a>
         <!--</router-link>-->
       </div>
@@ -59,6 +60,7 @@
 
 <script>
   import ExportButtons from '../partial/ExportButtons';
+  import helper from './../../../../assets/js/helper'
 
   export default {
     components: {
@@ -66,13 +68,14 @@
     },
     props: ['results'],
     name: "drillcore-box",
-    methods: {
-      buildDrillcoreBoxUrl(size, url) {
-        if (url != null) {
-          return 'https://eurocore.rocks' + url.substring(0, 10) + size + url.substring(9);
-        }
-      },
 
+    data() {
+      return {
+        helper: helper
+      }
+    },
+
+    methods: {
       openInNewWindow(params) {
         if (typeof (params.width) === 'undefined') {
           params.width = 800;

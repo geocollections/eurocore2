@@ -26,16 +26,17 @@
                     </div>
 
                     <div class="form-group">
-                      <input type="text" @keyup.enter="logIn()" class="form-control" placeholder="Username" v-model="user.passwordCredentials.username" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
+                      <input type="text" @keyup.enter="logIn()" class="form-control" placeholder="Username" v-model="user.username" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
                     </div>
 
                     <div class="form-group">
-                      <input type="password" @keyup.enter="logIn()" class="form-control" placeholder="Password" v-model="user.passwordCredentials.password" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
+                      <input type="password" @keyup.enter="logIn()" class="form-control" placeholder="Password" v-model="user.password" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
                     </div>
 
                     <button class="btn btn-primary" @click="logIn()" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated">
                       LOGIN &nbsp;<font-awesome-icon :icon="icon"/>
                     </button>
+
                     <button class="btn btn-danger" @click="logOut()" v-if="isAuthenticated" v-bind:disabled="!isAuthenticated">
                       LOGOUT &nbsp;<font-awesome-icon :icon="icon"/>
                     </button>
@@ -50,27 +51,19 @@
                     <p>Currently works with Estonian national ID-card. If you haven't one, check the <a href="https://e-resident.gov.ee/" target="_blank" style="font-size: 1rem">E-Residency</a> website. Other smartcards may work in future.</p>
 
                     <div class="alert" v-bind:class="{ 'alert-danger': error, 'alert-success': success }">
-                      <span v-if="!loginMessage"><b>Please enter your username and personal code</b></span>
+                      <span v-if="!loginMessage"><b>Make sure that ID-card is connected to computer</b></span>
                       <b>{{loginMessage}}</b>
                     </div>
 
-                    <div class="form-group">
-                      <input type="text" @keyup.enter="logInId()" class="form-control" placeholder="Username" v-model="user.idCardCredentials.username" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
+                    <div class="idcard-wrapper text-center">
+                      <button class="btn btn-primary" @click="logInId()" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated">
+                        LOGIN &nbsp;<font-awesome-icon :icon="idCard"/>
+                      </button>
+
+                      <button class="btn btn-danger" @click="logOut()" v-if="isAuthenticated" v-bind:disabled="!isAuthenticated">
+                        LOGOUT &nbsp;<font-awesome-icon :icon="icon"/>
+                      </button>
                     </div>
-
-                    <div class="form-group">
-                      <input type="text" @keyup.enter="logInId()" class="form-control" placeholder="Personal code" v-model="user.idCardCredentials.personalCode" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated"/>
-                    </div>
-
-                    <button class="btn btn-primary" @click="logInId()" v-if="!isAuthenticated" v-bind:disabled="isAuthenticated">
-                      LOGIN &nbsp;<font-awesome-icon :icon="icon"/>
-                    </button>
-                    <button class="btn btn-danger" @click="logOut()" v-if="isAuthenticated" v-bind:disabled="!isAuthenticated">
-                      LOGOUT &nbsp;<font-awesome-icon :icon="icon"/>
-                    </button>
-
-                    <button class="btn btn-success" @click="testButton()">TEST BUTTON</button>
-
 
                   </div>
                 </div>
@@ -107,9 +100,7 @@
   import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
   import faSignInAlt from '@fortawesome/fontawesome-free-solid/faSignInAlt'
   import faSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt'
-  import hwcrypto from './../../assets/js/hwcrypto'
-  const esteid = require('esteid')
-  const webeid = require('web-eid')
+  import faIdCard from '@fortawesome/fontawesome-free-solid/faIdCard'
 
   export default {
     components: {
@@ -120,9 +111,8 @@
     data() {
       return {
         user: {
-          passwordCredentials: { username: '', password: '' },
-          idCardCredentials: { username: '', personalCode: '' },
-          mobileIdCredentials: { personalCode: '', phoneNumber: '' },
+          username: '',
+          password: '',
         },
         loggingIn: false,
         error: false,
@@ -137,16 +127,20 @@
     computed: {
       icon() {
         return (this.isAuthenticated ? faSignOutAlt : faSignInAlt);
+      },
+
+      idCard() {
+        return faIdCard
       }
     },
     created: function () {
       window.addEventListener('keyup', this.handleKeyup);
 
       if (this.$session.exists() && this.$session.get('userData') != null) {
-        this.user.passwordCredentials.username = this.$session.get('userData')
+        this.user.username = this.$session.get('userData');
         this.isAuthenticated = true;
         this.success = true;
-        this.loginMessage = 'You are logged in as ' + this.user.passwordCredentials.username;
+        this.loginMessage = 'You are logged in as ' + this.user.username;
       }
     },
     beforeDestroy: function() {
@@ -158,71 +152,26 @@
 
         this.$http.post('https://api.eurocore.rocks/login/',
           {
-            user: this.user.passwordCredentials.username,
-            pwd: this.user.passwordCredentials.password
-          },
-          { emulateJSON: true
-          }).then(response => {
-            if (response.status === 200) {
-              console.log(response);
-              if (response.body.user != null) {
-                this.user.passwordCredentials.username = response.body.user;
-                this.isAuthenticated = true;
-                this.loginMessage = response.body.message;
-                this.toastSuccess(response.body.message)
-                this.success = true;
-                this.error = false;
-                this.$session.set('userData', this.user.passwordCredentials.username)
-              } else {
-                this.loginMessage = response.body.message;
-                this.toastError(response.body.message)
-                this.error = true;
-                this.success = false;
-              }
-              this.loggingIn = false;
-            }
-        }, errResponse => {
-          console.log('ERROR: ' + JSON.stringify(errResponse));
-          this.loggingIn = false;
-        })
-      },
-
-      testButton() {
-        // let EstEID = esteid.connect(this.transmit)
-
-        // console.log(EstEID.getPersonalData('PERSONAL_ID'))
-        // hwcrypto.getCertificate({lang: 'en'})
-        console.log(esteid)
-        console.log(webeid)
-      },
-
-      transmit(apdu) {
-        return new Promise((resolve, reject) => resolve(SCardTransmit(apdu)))
-      },
-
-      logInId() {
-        this.$http.post('https://api.eurocore.rocks/loginid/',
-          {
-            user: this.user.idCardCredentials.username,
-            code: this.user.idCardCredentials.personalCode
+            user: this.user.username,
+            pwd: this.user.password
           },
           {
-            emulateJSON:true
+            emulateJSON: true
           }
         ).then(response => {
           if (response.status === 200) {
             console.log(response);
             if (response.body.user != null) {
-              this.user.idCardCredentials.username = response.body.user;
+              this.user.username = response.body.user;
               this.isAuthenticated = true;
               this.loginMessage = response.body.message;
-              this.toastSuccess(response.body.message)
+              this.toastSuccess(response.body.message);
               this.success = true;
               this.error = false;
-              this.$session.set('userData', this.user.idCardCredentials.username)
+              this.$session.set('userData', this.user.username)
             } else {
               this.loginMessage = response.body.message;
-              this.toastError(response.body.message)
+              this.toastError(response.body.message);
               this.error = true;
               this.success = false;
             }
@@ -230,6 +179,42 @@
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
+          this.loginMessage = 'Something went wrong!';
+          this.toastError('Something went wrong!');
+          this.error = true;
+          this.success = false;
+          this.loggingIn = false;
+        })
+      },
+
+      logInId() {
+        this.loggingIn = true;
+
+        this.$http.get('https://api.eurocore.rocks/loginid/').then(response => {
+          if (response.status === 200) {
+            console.log(response);
+            if (response.body.user != null) {
+              this.isAuthenticated = true;
+              this.loginMessage = response.body.message;
+              this.toastSuccess(response.body.message);
+              this.success = true;
+              this.error = false;
+              this.$session.set('userData', response.body.user)
+            } else {
+              this.loginMessage = response.body.message;
+              this.toastError(response.body.message);
+              this.error = true;
+              this.success = false;
+            }
+            this.loggingIn = false;
+          }
+        }, errResponse => {
+          console.log('ERROR: ' + JSON.stringify(errResponse));
+          this.loginMessage = 'Something went wrong!';
+          this.toastError('Something went wrong!');
+          this.error = true;
+          this.success = false;
+          this.loggingIn = false;
         })
       },
 
@@ -240,11 +225,9 @@
         }
 
         this.user = {
-          passwordCredentials: { username: '', password: '' },
-          idCardCredentials: { username: '', password: '' },
-          mobileIdCredentials: { personalCode: '', phoneNumber: '' },
+          username: '',
+          password: ''
         };
-
 
         this.$http.get('https://api.eurocore.rocks/logout/').then(response => {
           if (response.status === 200) {
@@ -255,9 +238,7 @@
             this.success = true;
           }
         }, errResponse => {
-          console.log('ERROR: ');
-          console.log(errResponse);
-          console.log(errResponse.status);
+          console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
