@@ -81,9 +81,11 @@
         <!--TODO: Show only 1 which is choosed in preview-->
 
         <!--<a :href="'https://eurocore.rocks/' + image.image__url" :title="'https://eurocore.rocks/' + image.image__url" target="_blank">-->
-        <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })" :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
+        <a href="javascript:void(0)" v-if="image.image__filename !== null" @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })" :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
           <img width="100%" :src="helper.getFileLink({size: 'large', filename: image.image__filename})" />
         </a>
+        <font-awesome-icon v-if="image.image__filename === null" size="6x" :icon="icon" />
+
       </div>
     </div>
 
@@ -129,6 +131,8 @@
   import Analysis from './tables/Analysis'
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faImage from '@fortawesome/fontawesome-free-regular/faImage'
   import helper from './../../../assets/js/helper'
   // import Reference from './tables/Reference'
 
@@ -138,6 +142,7 @@
       Analysis,
       PlotlyChart,
       Spinner,
+      FontAwesomeIcon
       // Reference
     },
     props: ['id'],
@@ -203,6 +208,13 @@
         }
       }
     },
+
+    computed: {
+      icon() {
+        return faImage
+      }
+    },
+
     created: function () {
       this.resetData();
       this.getCoreboxById(this.id);

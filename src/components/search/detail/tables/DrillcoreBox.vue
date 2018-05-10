@@ -49,7 +49,8 @@
         <!--<router-link :to="{ path: '/corebox/' + entity.id }">-->
         <a href="javascript:void(0)" class="corebox-header" @click="openInNewWindow({object: 'corebox', id: entity.id})">
           <!--<img :src="buildDrillcoreBoxUrl('1000', entity.image__url)" width="100%" title="Click for box details" alt="Drillcore box" />-->
-          <img :src="helper.getFileLink({size: 'medium', filename: entity.image__filename})" width="100%" title="Click for box details" alt="Drillcore box" />
+          <img v-if="entity.image__filename !== null" :src="helper.getFileLink({size: 'medium', filename: entity.image__filename})" width="100%" title="Click for box details" alt="Drillcore box" />
+          <font-awesome-icon v-if="entity.image__filename === null" size="4x" :icon="icon" style="width: 100%;" />
         </a>
         <!--</router-link>-->
       </div>
@@ -60,11 +61,14 @@
 
 <script>
   import ExportButtons from '../partial/ExportButtons';
+  import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+  import faImage from '@fortawesome/fontawesome-free-regular/faImage'
   import helper from './../../../../assets/js/helper'
 
   export default {
     components: {
-      ExportButtons
+      ExportButtons,
+      FontAwesomeIcon
     },
     props: ['results'],
     name: "drillcore-box",
@@ -72,6 +76,12 @@
     data() {
       return {
         helper: helper
+      }
+    },
+
+    computed: {
+      icon() {
+        return faImage
       }
     },
 

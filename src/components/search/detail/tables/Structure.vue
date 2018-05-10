@@ -1,22 +1,24 @@
 <template>
-  <div>
+  <div class="structures">
     <div class="row">
       <div class="col">
 
         <div class="col pl-0 mt-3 mb-3">
-          <export-buttons filename="rqd" table-id="rqd-table"></export-buttons>
+          <export-buttons filename="structure" table-id="structure-table"></export-buttons>
         </div>
 
       </div>
     </div>
     <div class="table-responsive">
-      <table id="rqd-table" class="table table-hover table-bordered">
+      <table id="structure-table" class="table table-hover table-bordered">
         <thead class="thead-light">
         <tr>
-          <th>Depth from (m)</th>
-          <th>Depth to (m)</th>
-          <th>RQD %</th>
-          <th>Fractures</th>
+          <th>Depth (m)</th>
+          <th>Depth (m, interval)</th>
+          <th>Structure type</th>
+          <th>Dip angle</th>
+          <th>Dip direction</th>
+          <th>Description</th>
           <th>Person/Institution</th>
           <th>Date</th>
         </tr>
@@ -24,12 +26,14 @@
 
         <tbody>
         <tr v-for="entity in results">
-          <td>{{entity.depth}}</td>
+          <td>{{entity.depth_actual}}</td>
           <td>{{entity.end_depth}}</td>
-          <td>{{entity.rqd}}</td>
-          <td>{{entity.fractures}}</td>
-          <td></td>
-          <td></td>
+          <td>{{entity.structure_type__name}}</td>
+          <td>{{entity.dip}}</td>
+          <td>{{entity.direction}}</td>
+          <td>{{entity.comments}}</td>
+          <td>{{entity.agent_described__name}}</td>
+          <td>{{entity.date_described}}</td>
         </tr>
         </tbody>
       </table>
@@ -45,19 +49,19 @@
       ExportButtons
     },
     props: ['results'],
-    name: "rqd",
+    name: "structure",
 
     mounted: function () {
       this.addFloatingTableHeaders();
     },
 
     updated: function () {
-      $('#rqd-table').floatThead('reflow');
+      $('#structure-table').floatThead('reflow');
     },
 
     methods: {
       addFloatingTableHeaders() {
-        $('#rqd-table').floatThead({
+        $('#structure-table').floatThead({
           position: 'absolute',
           zIndex: 1025,
           top: function () {

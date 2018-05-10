@@ -124,9 +124,12 @@
             <rqd :results="response.rqd.results"></rqd>
           </b-tab>
 
-          <b-tab v-if="drillcoreSummary[0].structures > 0"
-                 :title="'Structures' + ' (' + drillcoreSummary[0].structures + ')'">
-            <br>I'm the first fading tab
+          <b-tab v-show="drillcoreSummary[0].structures > 0"
+                 :disabled="drillcoreSummary[0].structures === 0"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].structures === 0 }"
+                 :title="'Structures' + ' (' + drillcoreSummary[0].structures + ')'"
+                 @click="getResultsByDrillcoreId('structure', id, 'depth_actual')">
+            <structure :results="response.structure.results" ></structure>
           </b-tab>
 
           <b-tab v-if="drillcoreSummary[0].stratigraphies > 0"
@@ -191,6 +194,7 @@
   import Lithology from './tables/Lithology';
   import Dip from './tables/Dip';
   import Rqd from './tables/Rqd';
+  import Structure from './tables/Structure';
   import Sample from './tables/Sample';
   import Analysis from './tables/Analysis';
   import CtScans from './tables/CtScans';
@@ -204,6 +208,7 @@
       Lithology,
       Dip,
       Rqd,
+      Structure,
       Sample,
       Analysis,
       CtScans,
@@ -223,7 +228,7 @@
           lithology: {count: 0, results: []},
           dip: {count: 0, results: []},
           rqd: {count: 0, results: []},
-          structures: {count: 0, results: []},
+          structure: {count: 0, results: []},
           stratigraphy: {count: 0, results: []},
           sample: {count: 0, results: []},
           analysis: {count: 0, results: []},
@@ -247,12 +252,14 @@
         this.tabIndex = 2;
       } else if (to.query.tab === 'rqd') {
         this.tabIndex = 3;
-      } else if (to.query.tab === 'sample') {
+      } else if (to.query.tab === 'structure') {
         this.tabIndex = 4;
-      } else if (to.query.tab === 'analysis') {
+      } else if (to.query.tab === 'sample') {
         this.tabIndex = 5;
-      } else if (to.query.tab === 'ct_scans') {
+      } else if (to.query.tab === 'analysis') {
         this.tabIndex = 6;
+      } else if (to.query.tab === 'ct_scans') {
+        this.tabIndex = 7;
       } else {
         this.tabIndex = 0;
       }
@@ -389,15 +396,18 @@
         } else if (this.$route.query.tab === 'rqd') {
           this.getResultsByDrillcoreId('rqd', drillcoreId, 'depth')
           this.tabIndex = 3;
+        } else if (this.$route.query.tab === 'structure') {
+          this.getResultsByDrillcoreId('structure', drillcoreId, 'depth_actual')
+          this.tabIndex = 4;
         } else if (this.$route.query.tab === 'sample') {
           this.getResultsByDrillcoreId('sample', drillcoreId, 'depth')
-          this.tabIndex = 4;
+          this.tabIndex = 5;
         } else if (this.$route.query.tab === 'analysis') {
           this.getResultsByDrillcoreId('analysis', drillcoreId, 'depth')
-          this.tabIndex = 5;
+          this.tabIndex = 6;
         } else if (this.$route.query.tab === 'ct_scans') {
           this.getCTscansByDrillcoreId(drillcoreId)
-          this.tabIndex = 6;
+          this.tabIndex = 7;
         } else {
           this.tabIndex = 0;
         }
