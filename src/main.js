@@ -21,6 +21,12 @@ Vue.use(SocialSharing);
 
 Vue.config.productionTip = false;
 
+// This adds session id and csrf to request | MUST BE BEFORE new Vue()
+Vue.http.interceptors.push((request, next) => {
+  request.credentials = true;
+  next();
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -28,9 +34,6 @@ new Vue({
   components: { App },
   template: '<App/>'
 });
-
-// This adds session id and csrf to request
-Vue.http.options.credentials = true;
 
 Vue.filter('formatDate', function (value) {
   if (value) {

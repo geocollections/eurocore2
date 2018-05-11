@@ -87,8 +87,6 @@
       <div class="col">
         <b-tabs v-if="drillcoreSummary != null" v-model="tabIndex">
 
-          <!-- TODO: Hide disabled tabs from user view -->
-
           <b-tab v-show="drillcoreSummary[0].boxes > 0"
                  @click="addTabToUrl('core_boxes')"
                  :disabled="drillcoreSummary[0].boxes === 0"
@@ -154,8 +152,8 @@
           </b-tab>
 
           <b-tab v-show="drillcoreSummary[0].ctscans > 0"
-                 :disabled="drillcoreSummary[0].ctscans === null"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].ctscans === null }"
+                 :disabled="drillcoreSummary[0].ctscans === 0"
+                 :title-item-class="{ 'd-none' : drillcoreSummary[0].ctscans === 0 }"
                  :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
                  @click="getCTscansByDrillcoreId(id)">
             <ct-scans :results="response.ctscans.results"></ct-scans>
@@ -429,7 +427,7 @@
           lithology: {count: 0, results: []},
           dip: {count: 0, results: []},
           rqd: {count: 0, results: []},
-          structures: {count: 0, results: []},
+          structure: {count: 0, results: []},
           stratigraphy: {count: 0, results: []},
           sample: {count: 0, results: []},
           analysis: {count: 0, results: []},
