@@ -178,7 +178,7 @@
 
           </div>
 
-          <div id="test" class="col-12" v-if="attachments.length > 0">
+          <div class="col-12" v-if="attachments.length > 0">
             <h3>Videos</h3>
 
             <!-- TODO: Info about videos -->
@@ -262,25 +262,23 @@
       this.getAnalysisAttachments(this.id)
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
-    mounted: function () {
-      $(document).ready(function () {
-        $('[data-fancybox="slices"]').fancybox({
-          buttons : [
-            'slideShow',
-            'fullScreen',
-            'thumbs',
-            'share',
-            'download',
-            'arrowLeft',
-            'arrowRight',
-            'close'
-          ],
-          thumbs : {
-            autoStart : true
-          },
-          transitionEffect : "slide",
-        });
-      })
+    updated: function () {
+      $('[data-fancybox="slices"]').fancybox({
+        buttons : [
+          'slideShow',
+          'fullScreen',
+          'thumbs',
+          'share',
+          'download',
+          'arrowLeft',
+          'arrowRight',
+          'close'
+        ],
+        thumbs : {
+          autoStart : true
+        },
+        transitionEffect : "slide",
+      });
     },
     watch: {
       'id': function () {
