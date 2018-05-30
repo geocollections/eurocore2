@@ -157,31 +157,39 @@
         </div>
       </div>
 
+      <!-- TODO: Maybe get certain requests for image and videos because of title showing -->
       <div class="col-md-6">
 
         <div class="row">
           <div class="col-12" v-if="attachments.length > 0">
             <h3>Slices</h3>
 
-            <div v-for="entity in attachments" v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg') || entity.filename.endsWith('tif')">
+            <!-- TODO: Needs some testing with multiple images + info about images -->
+            <div class="row">
+              <div class="col-6 text-center" v-for="entity in attachments" v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg') || entity.filename.endsWith('tif')">
 
-              <a data-fancybox="slices" :href="helper.getFileLink({size: 'large', filename: entity.filename})">
-                <img :src="helper.getFileLink({size: 'small', filename: entity.filename})" class="img-responsive"/>
-              </a>
+                <a data-fancybox="slices" :href="helper.getFileLink({size: 'large', filename: entity.filename})">
+                  <img :src="helper.getFileLink({size: 'small', filename: entity.filename})" class="img-responsive"/>
+                </a>
 
+              </div>
             </div>
+
 
           </div>
 
           <div class="col-12" v-if="attachments.length > 0">
             <h3>Videos</h3>
 
-            <div v-for="entity in attachments" v-if="entity.filename.endsWith('mp4') | entity.filename.endsWith('webm') || entity.filename.endsWith('gif')">
+            <!-- TODO: Info about videos -->
+            <div class="row">
+              <div class="col-12 mt-3" v-for="entity in attachments" v-if="entity.filename.endsWith('mp4') | entity.filename.endsWith('webm') || entity.filename.endsWith('gif')">
 
-              <video width="100%" controls loop>
-                <source :src="helper.getFileLink({filename: entity.filename})" type="video/mp4">
-              </video>
+                <video width="100%" controls loop>
+                  <source :src="helper.getFileLink({filename: entity.filename})" type="video/mp4">
+                </video>
 
+              </div>
             </div>
 
           </div>
@@ -244,7 +252,7 @@
 
       sortingDirection() {
         return this.analysisResultsOrder.includes('-') ? faSortDown : faSortUp
-      }
+      },
     },
     created: function () {
       this.resetData();
@@ -395,5 +403,10 @@
 
   .th-sort > th > span:hover {
     color: #000;
+  }
+
+  .img-responsive {
+    max-width: 200px;
+    max-height: 200px;
   }
 </style>
