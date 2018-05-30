@@ -178,7 +178,7 @@
 
           </div>
 
-          <div class="col-12" v-if="attachments.length > 0">
+          <div id="test" class="col-12" v-if="attachments.length > 0">
             <h3>Videos</h3>
 
             <!-- TODO: Info about videos -->
@@ -263,22 +263,24 @@
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
     mounted: function () {
-      $("[data-fancybox]").fancybox({
-        buttons : [
-          'slideShow',
-          'fullScreen',
-          'thumbs',
-          'share',
-          'download',
-          'arrowLeft',
-          'arrowRight',
-          'close'
-        ],
-        thumbs : {
-          autoStart : true
-        },
-        transitionEffect : "slide",
-      });
+      $(document).ready(function () {
+        $('[data-fancybox="slices"]').fancybox({
+          buttons : [
+            'slideShow',
+            'fullScreen',
+            'thumbs',
+            'share',
+            'download',
+            'arrowLeft',
+            'arrowRight',
+            'close'
+          ],
+          thumbs : {
+            autoStart : true
+          },
+          transitionEffect : "slide",
+        });
+      })
     },
     watch: {
       'id': function () {
