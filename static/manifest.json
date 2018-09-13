@@ -3,12 +3,12 @@
   "name": "Eurocore Data Portal",
   "icons": [
     {
-      "src": "images/logo_Eurocore_very_small_no_text.png",
+      "src": "images/web_hi_res_512.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "images/logo_Eurocore.png",
+      "src": "images/web_hi_res_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

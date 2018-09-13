@@ -19,7 +19,7 @@
             <span class="icon" @click="doFastSearch()">
               <font-awesome-icon :icon="icon" />
             </span>
-            <input class="form-control" placeholder="Drillcore search" v-model="fastSearch" @keyup.enter="doFastSearch()"/>
+            <input class="form-control" placeholder="Drillcore search" aria-label="Drillcore search" v-model="fastSearch" @keyup.enter="doFastSearch()"/>
           </li>
 
           <li class="nav-item">
