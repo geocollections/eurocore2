@@ -131,8 +131,9 @@
               }
             } else {
               const name = this.formatParameterForTableData(parameters[parameter]);
+              console.log(results[result][name] != null)
 
-              if (results[result][name] !== null) {
+              if (results[result][name] != null) {
                 if (results[result].depth != null && results[result].end_depth != null) {
                   const medianDepth = (results[result].depth + results[result].end_depth) / 2;
                   x.push(medianDepth);
