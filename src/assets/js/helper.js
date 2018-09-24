@@ -11,7 +11,7 @@ function getFileLink(params) {
       + '/' + params.filename.substring(2,4)
       + '/' + params.filename;
   } else {
-    return 'https://eurocore.rocks/files' + params.filename.substring(0,2)
+    return 'https://eurocore.rocks/files/' + params.filename.substring(0,2)
       + '/' + params.filename.substring(2,4)
       + '/' + params.filename;
   }

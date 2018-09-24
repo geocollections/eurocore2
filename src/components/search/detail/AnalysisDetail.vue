@@ -109,7 +109,28 @@
             </div>
 
           </div>
+        </div>
 
+        <!-- RAW DATA -->
+        <!-- TODO: Complete it -->
+        <div class="row" v-if="attachmentDataFiles.length > 0">
+          <div class="col">
+
+            <h3>Raw data</h3>
+
+            <table class="table table-bordered table-hover th-styles">
+              <tr v-for="entity in attachmentDataFiles">
+                <td>File</td>
+                <td>
+                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.original_filename}}</a>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col" v-if="analysisResults != null">
             <h3>Analysis results</h3>
 
@@ -153,7 +174,6 @@
               </tbody>
             </table>
           </div>
-
         </div>
       </div>
 
@@ -242,6 +262,7 @@
         spectraCount: 0,
         attachmentImages: [],
         attachmentVideos: [],
+        attachmentDataFiles: [],
       }
     },
     metaInfo() {
@@ -265,6 +286,7 @@
       this.getSpectraCount(this.id);
       this.getAnalysisAttachments(this.id, 'image')
       this.getAnalysisAttachments(this.id, 'video')
+      this.getAnalysisAttachments(this.id, 'data file')
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
     updated: function () {
@@ -292,6 +314,7 @@
         this.getSpectraCount(this.id);
         this.getAnalysisAttachments(this.id, 'image')
         this.getAnalysisAttachments(this.id, 'video')
+        this.getAnalysisAttachments(this.id, 'data file')
         setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'analysisResultsOrder': function () {
@@ -355,6 +378,7 @@
         let url = 'https://api.eurocore.rocks/attachment/?analysis__id=' + id + '&format=json'
         if (type === 'image') url += '&mime_type__mime__icontains=image'
         else if (type === 'video') url += '&mime_type__mime__icontains=video'
+        else if (type === 'data file') url += '&attachment_type__value__icontains=data file'
 
         this.$http.get(url).then(response => {
           console.log(response)
@@ -362,9 +386,11 @@
             if (response.body.count > 0) {
               if (type === 'image') this.attachmentImages = response.body.results
               else if (type === 'video') this.attachmentVideos = response.body.results
+              else if (type === 'data file') this.attachmentDataFiles = response.body.results
             } else {
               if (type === 'image') this.attachmentImages = []
               else if (type === 'video') this.attachmentVideos = []
+              else if (type === 'data file') this.attachmentDataFiles = []
             }
           }
         }, errResponse => {
@@ -399,6 +425,13 @@
           params.width = 800;
         }
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+      },
+
+      openUrlInNewWindow(params) {
+        if (typeof (params.width) === 'undefined') {
+          params.width = 800;
+        }
+        window.open(params.url,'', 'width=' + params.width + ', height=750');
       },
 
       resetData() {
