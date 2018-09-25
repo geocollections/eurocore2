@@ -84,6 +84,15 @@
         <a href="javascript:void(0)" v-if="image.image__filename !== null" @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })" :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
           <img width="100%" :src="helper.getFileLink({size: 'large', filename: image.image__filename})" />
         </a>
+
+        <div class="text-center mt-2" v-if="image.image__filename !== null">
+          Image size:
+          <a :href="helper.getFileLink({size: 'small', filename: image.image__filename})" target="_blank">small</a> |
+          <a :href="helper.getFileLink({size: 'medium', filename: image.image__filename})" target="_blank">medium</a> |
+          <a :href="helper.getFileLink({size: 'large', filename: image.image__filename})" target="_blank">large</a> |
+          <a :href="helper.getFileLink({filename: image.image__filename})" target="_blank">original</a>
+        </div>
+
         <font-awesome-icon v-if="image.image__filename === null" size="6x" :icon="icon" />
 
       </div>
