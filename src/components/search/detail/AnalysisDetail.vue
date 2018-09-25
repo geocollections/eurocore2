@@ -111,25 +111,6 @@
           </div>
         </div>
 
-        <!-- RAW DATA -->
-        <!-- TODO: Complete it -->
-        <div class="row" v-if="attachmentDataFiles.length > 0">
-          <div class="col">
-
-            <h3>Raw data</h3>
-
-            <table class="table table-bordered table-hover th-styles">
-              <tr v-for="entity in attachmentDataFiles">
-                <td>File</td>
-                <td>
-                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.original_filename}}</a>
-                </td>
-              </tr>
-            </table>
-
-          </div>
-        </div>
-
         <div class="row">
           <div class="col" v-if="analysisResults != null">
             <h3>Analysis results</h3>
@@ -177,7 +158,7 @@
         </div>
       </div>
 
-      <!-- IMAGES and VIDEOS -->
+      <!-- IMAGES, VIDEOS and DATA FILES -->
       <div class="col-md-6">
 
         <div class="row">
@@ -214,6 +195,19 @@
               </div>
             </div>
 
+          </div>
+
+          <div class="col-12 mt-2" v-if="attachmentDataFiles.length > 0">
+            <h3>Raw data</h3>
+
+            <table class="table table-bordered table-hover th-styles">
+              <tr v-for="entity in attachmentDataFiles">
+                <td>File</td>
+                <td>
+                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.original_filename}}</a>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
 
