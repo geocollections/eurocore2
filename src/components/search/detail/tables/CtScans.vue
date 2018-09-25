@@ -17,7 +17,8 @@
           <th>Instrument</th>
           <th>Person/Institution</th>
           <th>Date</th>
-          <th></th>
+          <!-- ISSUE #44 -->
+          <!--<th></th>-->
         </tr>
         </thead>
 
@@ -31,13 +32,14 @@
           <td>{{entity.end_depth}}</td>
           <td>{{entity.instrument__instrument}}</td>
           <td>{{entity.agent__name}}</td>
-          <td>{{entity.date}}</td>
-          <td class="tableexport-ignore">
-            <b>
-              <a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks/3D'})">Show 3D data</a>
-              <!--<a href="http://eurocore.rocks/3D" target="_blank">Show 3D data</a>-->
-            </b>
-          </td>
+          <td>{{entity.date | formatDate}}</td>
+          <!-- ISSUE #44 -->
+          <!--<td class="tableexport-ignore">-->
+            <!--<b>-->
+              <!--<a href="javascript:void(0)" @click="openUrlInNewWindow({url: 'https://eurocore.rocks/3D'})">Show 3D data</a>-->
+              <!--&lt;!&ndash;<a href="http://eurocore.rocks/3D" target="_blank">Show 3D data</a>&ndash;&gt;-->
+            <!--</b>-->
+          <!--</td>-->
         </tr>
         </tbody>
       </table>
