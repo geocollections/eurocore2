@@ -94,6 +94,15 @@
                 <td>{{analysis[0].date | formatDate}}</td>
               </tr>
 
+              <tr v-if="analysis[0].drillcore__name">
+                <td>Drillcore</td>
+                <td>
+                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'drillcore', id: analysis[0].drillcore__id})">
+                    {{analysis[0].drillcore__name}}
+                  </a>
+                </td>
+              </tr>
+
               <!-- TODO: Icon with link + file size -->
               <!--<tr>-->
                 <!--<td>Raw data</td>-->
@@ -198,13 +207,13 @@
           </div>
 
           <div class="col-12 mt-2" v-if="attachmentDataFiles.length > 0">
-            <h3>Raw data</h3>
+            <h3>Stacked images</h3>
 
             <table class="table table-bordered table-hover th-styles">
               <tr v-for="entity in attachmentDataFiles">
                 <td>File</td>
                 <td>
-                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.original_filename}}</a>
+                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.title}}</a>
                 </td>
               </tr>
             </table>
@@ -370,8 +379,8 @@
 
       getAnalysisAttachments(id, type) {
         let url = 'https://api.eurocore.rocks/attachment/?analysis__id=' + id + '&format=json'
-        if (type === 'image') url += '&mime_type__mime__icontains=image'
-        else if (type === 'video') url += '&mime_type__mime__icontains=video'
+        if (type === 'image') url += '&attachment_type__value__icontains=image'
+        else if (type === 'video') url += '&attachment_type__value__icontains=video'
         else if (type === 'data file') url += '&attachment_type__value__icontains=data file'
 
         this.$http.get(url).then(response => {
