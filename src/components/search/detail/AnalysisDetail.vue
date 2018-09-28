@@ -24,10 +24,13 @@
                 <td>{{analysis[0].id}}</td>
               </tr>
 
-              <tr v-if="analysis[0].sample__drillcore__name">
+              <tr v-if="analysis[0].drillcore__name">
                 <td>Drillcore</td>
                 <td>
-                  <router-link :to="{ path: '/drillcore/' + analysis[0].sample__drillcore__id }">{{analysis[0].sample__drillcore__name}}</router-link>
+                  <!--<router-link :to="{ path: '/drillcore/' + analysis[0].drillcore__id }">{{analysis[0].drillcore__name}}</router-link>-->
+                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'drillcore', id: analysis[0].drillcore__id})">
+                    {{analysis[0].drillcore__name}}
+                  </a>
                 </td>
               </tr>
 
@@ -92,15 +95,6 @@
               <tr v-if="analysis[0].date">
                 <td>Date</td>
                 <td>{{analysis[0].date | formatDate}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].drillcore__name">
-                <td>Drillcore</td>
-                <td>
-                  <a href="javascript:void(0)" @click="openInNewWindow({object: 'drillcore', id: analysis[0].drillcore__id})">
-                    {{analysis[0].drillcore__name}}
-                  </a>
-                </td>
               </tr>
 
               <!-- TODO: Icon with link + file size -->
@@ -215,6 +209,7 @@
                 <td>
                   <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.title}}</a>
                 </td>
+                <!-- TODO: Add download button -->
               </tr>
             </table>
           </div>
