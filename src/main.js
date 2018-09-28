@@ -12,18 +12,24 @@ import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/v
 import SocialSharing from 'vue-social-sharing'
 
 import 'izitoast/dist/css/iziToast.min.css'
+import VueCookie from 'vue-cookie'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
 Vue.use(VueSession);
 Vue.use(VueIziToast);
 Vue.use(SocialSharing);
+Vue.use(VueCookie);
 
 Vue.config.productionTip = false;
 
 // This adds session id and csrf to request | MUST BE BEFORE new Vue()
 Vue.http.interceptors.push((request, next) => {
+  let csrftoken = Vue.cookie.get('csrftoken')
+
   request.credentials = true;
+  request.headers.set('X-CSRFTOKEN', csrftoken)
+
   next();
 })
 
