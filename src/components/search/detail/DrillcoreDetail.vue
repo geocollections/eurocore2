@@ -64,6 +64,11 @@
             <td>{{drillcore[0].number_boxes}}</td>
           </tr>
 
+          <tr v-if="drillcore[0].diameter">
+            <td>Core diameter</td>
+            <td>{{drillcore[0].diameter}}</td>
+          </tr>
+
           <tr v-if="drillcore[0].core_depositor__name">
             <td>Deposited by</td>
             <td>{{drillcore[0].core_depositor__name}}</td>
