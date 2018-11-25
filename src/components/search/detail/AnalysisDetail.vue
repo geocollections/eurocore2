@@ -52,6 +52,11 @@
                 <td>{{analysis[0].end_depth}}</td>
               </tr>
 
+              <tr v-if="analysis[0].drillcore__diameter && analysis[0].analysis_method__method === 'CT'">
+                <td>Diameter</td>
+                <td>{{analysis[0].drillcore__diameter}}</td>
+              </tr>
+
               <tr v-if="analysis[0].analysis_method__method">
                 <td>Method</td>
                 <td>{{analysis[0].analysis_method__method}}</td>
@@ -206,8 +211,10 @@
             <table class="table table-bordered table-hover th-styles">
               <tr v-for="entity in attachmentDataFiles">
                 <td>File</td>
-                <td>
-                  <a href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">{{entity.title}}</a>
+                <td class="text-center">
+                  <a :title="entity.title" href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
+                    <font-awesome-icon :icon="faFile" size="2x" />
+                  </a>
                 </td>
                 <!-- TODO: Add download button -->
               </tr>
@@ -238,6 +245,7 @@
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
   import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
   import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
+  import faFile from '@fortawesome/fontawesome-free-regular/faFile'
   import ExportButtons from './partial/ExportButtons'
   import helper from '@/assets/js/helper'
 
@@ -271,6 +279,10 @@
     computed: {
       icon() {
         return faSort;
+      },
+
+      faFile() {
+        return faFile
       },
 
       sortingDirection() {
