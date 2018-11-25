@@ -37,6 +37,14 @@
                              v-model="xrfCheckbox">{{ xrfCheckbox ? 'Deselect XRF' : 'Select XRF' }}
             </b-form-checkbox>
 
+            <b-form-checkbox v-if="icpMsExists"
+                             v-model="icpMsCheckbox">{{ icpMsCheckbox ? 'Deselect ICP-MS' : 'Select ICP-MS' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="gfAasExists"
+                             v-model="gfAasCheckbox">{{ gfAasCheckbox ? 'Deselect GF-AAS' : 'Select GF-AAS' }}
+            </b-form-checkbox>
+
             <b-form-checkbox-group v-model="currentlyShownParameters"
                                    :options="parameters"
                                    class="row ml-4"
@@ -229,11 +237,15 @@
         icpOesExists: false,
         lecoExists: false,
         xrfExists: false,
+        icpMsExists: false,
+        gfAasExists: false,
         ctCheckbox: false,
         faAasCheckbox: false,
         icpOesCheckbox: false,
         lecoCheckbox: false,
         xrfCheckbox: false,
+        icpMsCheckbox: false,
+        gfAasCheckbox: false,
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -307,10 +319,15 @@
       },
       'lecoCheckbox': function (newVal, oldVal) {
         newVal ? this.addParametersUsingMethod('Leco') : this.deleteParametersUsingMethod('Leco');
-
       },
       'xrfCheckbox': function (newVal, oldVal) {
         newVal ? this.addParametersUsingMethod('XRF') : this.deleteParametersUsingMethod('XRF');
+      },
+      'icpMsCheckbox': function (newVal, oldVal) {
+        newVal ? this.addParametersUsingMethod('ICP-MS') : this.deleteParametersUsingMethod('ICP-MS');
+      },
+      'gfAasCheckbox': function (newVal, oldVal) {
+        newVal ? this.addParametersUsingMethod('GF-AAS') : this.deleteParametersUsingMethod('GF-AAS');
       }
     },
 
@@ -554,6 +571,10 @@
                 this.lecoExists = true
               } else if (method === 'XRF') {
                 this.xrfExists = true
+              } else if (method === 'ICP-MS') {
+                this.icpMsExists = true
+              } else if (method === 'GF-AAS') {
+                this.gfAasExists = true
               }
 
 
@@ -679,11 +700,15 @@
         this.icpOesExists = false;
         this.lecoExists = false;
         this.xrfExists = false;
+        this.icpMsExists = false;
+        this.gfAasExists = false;
         this.ctCheckbox = false;
         this.faAasCheckbox = false;
         this.icpOesCheckbox = false;
         this.lecoCheckbox = false;
         this.xrfCheckbox = false;
+        this.icpMsCheckbox = false;
+        this.gfAasCheckbox = false;
       },
 
     }
