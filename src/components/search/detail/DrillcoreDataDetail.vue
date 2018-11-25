@@ -406,7 +406,12 @@
       },
 
       populateParameters(id) {
-        this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method', distinct: 'true', format: 'json'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {
+          params: {
+            fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method',
+            distinct: 'true',
+            format: 'json'}
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             const allParameters = response.body.results;
@@ -417,8 +422,8 @@
               if (this.areParametersEligible(allParameters[i])) {
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
 
-
-                if (this.currentlyShownParameters.length === 0) { // Only if no params are chosen at start
+                // Only if no params are chosen at start
+                // if (this.currentlyShownParameters.length === 0) {
                   if (this.drillcoreName[0].deposit__main_commodity !== null || this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
                     const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
                     if (defaultCommodities.length > 0) {
@@ -431,7 +436,7 @@
                   } else if (i < 10) { // Populates 10 first params
                     this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
                   }
-                }
+                // }
 
 
               }
@@ -458,6 +463,12 @@
       showMainCommoditiesByDefault(commodities) {
         if (commodities && commodities != null) {
           let defaultCommodities = [];
+
+          // https://github.com/geocollections/eurocore-db-ui/issues/11
+          if (commodities.includes('PGE')) {
+            commodities = commodities.replace('PGE', 'Pt, Pd')
+          }
+
           if (commodities.includes(',')) {
             commodities = commodities.replace(/,/g , '');
             commodities = commodities.split(' ');
