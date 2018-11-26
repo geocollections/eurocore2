@@ -308,11 +308,13 @@
           $('body')[0].removeAttribute('class')
         }
       },
+      // Updated on 26.11.2018, Issue #54
       'ctCheckbox': function (newVal, oldVal) {
         newVal ? this.addParametersUsingMethod('CT') : this.deleteParametersUsingMethod('CT');
       },
       'faAasCheckbox': function (newVal, oldVal) {
         newVal ? this.addParametersUsingMethod('FA-AAS') : this.deleteParametersUsingMethod('FA-AAS');
+
       },
       'icpOesCheckbox': function (newVal, oldVal) {
         newVal ? this.addParametersUsingMethod('ICP-OES') : this.deleteParametersUsingMethod('ICP-OES');
@@ -584,6 +586,9 @@
       },
 
       addParametersUsingMethod(methodName) {
+        // This deselects currently set parameters
+        // this.removeAllSelectedParameters()
+
         for (const param in this.parameters) {
           if (this.parameters[param].includes(methodName)) {
             if (!this.currentlyShownParameters.includes(this.parameters[param])) {
@@ -593,6 +598,7 @@
         }
       },
 
+      // Currently not used because of different logic #54
       deleteParametersUsingMethod(methodName) {
         let i = this.currentlyShownParameters.length;
         while (i--) {
@@ -600,6 +606,11 @@
             this.currentlyShownParameters.splice(i, 1);
           }
         }
+      },
+
+      // Is used before user selects parameter by method #54
+      removeAllSelectedParameters() {
+        this.currentlyShownParameters = []
       },
 
       setTabFromUrl() {
