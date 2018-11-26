@@ -52,9 +52,9 @@
                 <td>{{analysis[0].end_depth}}</td>
               </tr>
 
-              <tr v-if="analysis[0].drillcore__diameter && analysis[0].analysis_method__method === 'CT'">
+              <tr v-if="this.drillcoreDiameter && analysis[0].analysis_method__method === 'CT'">
                 <td>Diameter</td>
-                <td>{{analysis[0].drillcore__diameter}}</td>
+                <td>{{this.drillcoreDiameter[0].diameter}}</td>
               </tr>
 
               <tr v-if="analysis[0].analysis_method__method">
@@ -269,6 +269,7 @@
         attachmentImages: [],
         attachmentVideos: [],
         attachmentDataFiles: [],
+        drillcoreDiameter: null,
       }
     },
     metaInfo() {
@@ -344,6 +345,7 @@
           console.log(response);
           if (response.status === 200) {
             this.analysis = response.body.results;
+            this.getDrillcoreDiameter(this.analysis[0])
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
@@ -408,6 +410,28 @@
         })
       },
 
+      getDrillcoreDiameter(params) {
+        console.log(params)
+        this.$http.get('https://api.eurocore.rocks/drillcore_diameter/', {
+          params: {
+            drillcore__id: params.drillcore__id,
+            start_depth__lte: params.depth,
+            end_depth__gte: params.end_depth,
+            fields: 'diameter',
+            format: 'json'
+          }
+        }).then(response => {
+          console.log(response)
+          if (response.status === 200) {
+            if (response.body.count > 0) {
+              this.drillcoreDiameter = response.body.results
+            }
+          }
+        }, errResponse => {
+          console.log('ERROR: ' + JSON.stringify(errResponse));
+        })
+      },
+
       changeOrder(orderValue) {
         if (this.analysisResultsOrder === orderValue) {
           if (orderValue.charAt(0) !== '-') {
@@ -450,6 +474,7 @@
         this.analysisResults = null;
         this.analysisResultsOrder = 'parameter__parameter';
         this.spectraCount = 0;
+        this.drillcoreDiameter = null;
       }
     }
   }
