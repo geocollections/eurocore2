@@ -27,6 +27,18 @@ a:hover {
   text-decoration: none;
 }
 
+/* LOADING SPINNER */
+.loading-overlay {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1020;
+  background: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  padding: 50% 0;
+}
+
 
 
 /************************

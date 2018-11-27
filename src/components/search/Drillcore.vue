@@ -1,6 +1,8 @@
 <template>
   <div id="search-component">
 
+    <spinner v-show="isSearching" class="loading-overlay" size="huge" message="Searching..."></spinner>
+
     <div class="row">
       <div class="col">
         <h2>Drillcore search</h2>
@@ -76,8 +78,8 @@
 
     <div class="row mt-3">
       <div class="col">
-        <p v-if="response.results != ''">Found <b>{{response.count}}</b> result(s). </p>
-        <p v-else>No results found. Please try again. </p>
+        <p v-if="noResults">No results found. Please try again.</p>
+        <p v-else>Found <b>{{response.count}}</b> result(s). </p>
       </div>
     </div>
 
@@ -228,6 +230,7 @@
   import faSort from '@fortawesome/fontawesome-free-solid/faSort'
   import faSortUp from '@fortawesome/fontawesome-free-solid/faSortUp'
   import faSortDown from '@fortawesome/fontawesome-free-solid/faSortDown'
+  import Spinner from 'vue-simple-spinner'
   // import DrillcoreMap from "../main/partial/DrillcoreMap";
 
   /* MAP IMPORTS START */
@@ -265,6 +268,7 @@
       VueMultiselect,
       ExportButtons,
       FontAwesomeIcon,
+      Spinner
     },
 
     name: "drillcore",
@@ -273,6 +277,8 @@
       return {
         API_URL: 'https://api.eurocore.rocks/',
         isAuthenticated: false,
+        isSearching: false,
+        noResults: null,
         searchParameters: {
           drillcoreName: { name: '', field: 'name' },
           depositName: { name: '', field: 'deposit__name' },
@@ -333,6 +339,7 @@
       'searchParameters': {
         handler: function () {
           console.log(this.searchParameters)
+          this.isSearching = true
           this.searchEntitiesAndPopulate(this.searchParameters, this.drillcoreIdsFromMap)
         },
         deep: true
@@ -472,12 +479,15 @@
         }
         this.$http.get(this.API_URL + 'drillcore/?' + ids + drillcoreIds, {params: {format: 'json', page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
+          this.isSearching = false
           if (response.status === 200) {
+            this.noResults = (response.body.count === 0) ? true : false
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
+          this.isSearching = false
         })
       },
 
@@ -486,12 +496,15 @@
 
         this.$http.get(url, {params: {format: 'json', page: searchParameters.page, paginate_by: searchParameters.paginateBy, order_by: searchParameters.orderBy}}).then(response => {
           console.log(response);
+          this.isSearching = false
           if (response.status === 200) {
+            this.noResults = (response.body.count === 0) ? true : false
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
+          this.isSearching = false
         })
 
       },
@@ -502,6 +515,7 @@
 
         this.$http.get(url, {params: {format: 'json', paginate_by: 100}}).then(response => {
           console.log(response);
+          this.isSearching = false
           if (response.status === 200) {
             this.responseForMap = response.body.results;
           }
@@ -512,12 +526,15 @@
       fastSearch(drillcoreName) {
         this.$http.get(this.API_URL + 'drillcore/', {params: {format: 'json', name__icontains: drillcoreName, page: this.searchParameters.page, paginate_by: this.searchParameters.paginateBy, order_by: this.searchParameters.orderBy}}).then(response => {
           console.log(response);
+          this.isSearching = false
           if (response.status === 200) {
+            this.noResults = (response.body.count === 0) ? true : false
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
+          this.isSearching = false
         })
       },
 
@@ -525,6 +542,7 @@
       fastSearchForMap(drillcoreName) {
         this.$http.get(this.API_URL + 'drillcore/', {params: {format: 'json', name__icontains: drillcoreName, paginate_by: 100}}).then(response => {
           console.log(response);
+          this.isSearching = false
           if (response.status === 200) {
             this.responseForMap = response.body.results;
           }

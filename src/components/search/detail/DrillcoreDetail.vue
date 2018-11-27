@@ -273,7 +273,7 @@
       this.setTabFromUrl(this.id);
       this.getDrillcoreById(this.id);
       this.getDrillcoreSummary(this.id);
-      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+      setTimeout(function () { this.showLabel = false }.bind(this), 10000);
     },
 
     watch: {
@@ -282,7 +282,7 @@
         this.setTabFromUrl(this.id)
         this.getDrillcoreById(this.id);
         this.getDrillcoreSummary(this.id);
-        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
+        setTimeout(function () { this.showLabel = false }.bind(this), 10000);
       },
       'drillcore': function (newVal, oldVal) {
         if (newVal == null) {

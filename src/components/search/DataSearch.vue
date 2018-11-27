@@ -424,13 +424,14 @@
           // this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy, order_by: params.orderBy}}).then(response => {
           this.$http.get(url , {params: {format: 'json', page: params.page, paginate_by: params.paginateBy}}).then(response => {
             console.log(response);
+            this.isSearching = false;
             if (response.status === 200) {
               this.response.count = response.body.count;
               this.response.results = response.body.results;
-              this.isSearching = false;
             }
           }, errResponse => {
             console.log('ERROR: ' + JSON.stringify(errResponse));
+            this.isSearching = false;
           })
         },
 
@@ -887,17 +888,6 @@
 </script>
 
 <style scoped>
-  .loading-overlay {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1020;
-    background: rgba(255, 255, 255, 0.5);
-    width: 100%;
-    padding: 50% 0;
-  }
-
   span {
     white-space: nowrap;
   }
