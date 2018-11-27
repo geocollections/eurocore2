@@ -345,6 +345,17 @@
       next()
     },
 
+    computed: {
+      // TODO: Fix it
+      sortedParameters(params) {
+        params.sort(function(a, b) {
+          let textA = a.params.toUpperCase();
+          let textB = b.params.toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+      }
+    },
+
     created: function () {
       this.getDrillcoreName(this.drillcoreId);
 
