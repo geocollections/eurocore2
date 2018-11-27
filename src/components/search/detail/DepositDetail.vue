@@ -40,7 +40,7 @@
 
               <tr v-if="deposit[0].genetic_type__name">
                 <td>Ore genetic type</td>
-                <td>{{deposit[0].genetic_type__name}} m</td>
+                <td>{{deposit[0].genetic_type__name}}</td>
               </tr>
 
               <tr v-if="deposit[0].metal_group__name">
