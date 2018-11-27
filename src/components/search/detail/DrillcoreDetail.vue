@@ -180,12 +180,12 @@
 
   </div>
   <div v-else>
-    <div v-if="showLabel">
-      <spinner size="large" message="Loading data..."></spinner>
-    </div>
-    <div v-else>
+    <div v-if="noResults">
       Sorry but we didn't find any results!
       Check your id <b>{{id}}</b>
+    </div>
+    <div v-else>
+      <spinner class="loading-overlay" size="huge" message="Searching..."></spinner>
     </div>
   </div>
 </template>
@@ -223,6 +223,7 @@
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore/',
         showLabel: true,
+        noResults: null,
         drillcore: null,
         drillcoreSummary: null,
         tabIndex: 0,
@@ -298,6 +299,7 @@
         this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
           console.log(response);
           if (response.status === 200) {
+            this.noResults = response.bodyText === '{}'
             this.drillcore = response.body.results;
           }
         }, errResponse => {

@@ -481,7 +481,7 @@
           console.log(response);
           this.isSearching = false
           if (response.status === 200) {
-            this.noResults = (response.body.count === 0) ? true : false
+            this.noResults = response.body.count === 0
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
@@ -498,7 +498,7 @@
           console.log(response);
           this.isSearching = false
           if (response.status === 200) {
-            this.noResults = (response.body.count === 0) ? true : false
+            this.noResults = response.body.count === 0
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
@@ -528,7 +528,7 @@
           console.log(response);
           this.isSearching = false
           if (response.status === 200) {
-            this.noResults = (response.body.count === 0) ? true : false
+            this.noResults = response.body.count === 0
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
