@@ -25,6 +25,14 @@
                              v-model="faAasCheckbox">{{ faAasCheckbox ? 'Deselect FA-AAS' : 'Select FA-AAS' }}
             </b-form-checkbox>
 
+            <b-form-checkbox v-if="gfAasExists"
+                             v-model="gfAasCheckbox">{{ gfAasCheckbox ? 'Deselect GF-AAS' : 'Select GF-AAS' }}
+            </b-form-checkbox>
+
+            <b-form-checkbox v-if="icpMsExists"
+                             v-model="icpMsCheckbox">{{ icpMsCheckbox ? 'Deselect ICP-MS' : 'Select ICP-MS' }}
+            </b-form-checkbox>
+
             <b-form-checkbox v-if="icpOesExists"
                              v-model="icpOesCheckbox">{{ icpOesCheckbox ? 'Deselect ICP-OES' : 'Select ICP-OES' }}
             </b-form-checkbox>
@@ -35,14 +43,6 @@
 
             <b-form-checkbox v-if="xrfExists"
                              v-model="xrfCheckbox">{{ xrfCheckbox ? 'Deselect XRF' : 'Select XRF' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="icpMsExists"
-                             v-model="icpMsCheckbox">{{ icpMsCheckbox ? 'Deselect ICP-MS' : 'Select ICP-MS' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="gfAasExists"
-                             v-model="gfAasCheckbox">{{ gfAasCheckbox ? 'Deselect GF-AAS' : 'Select GF-AAS' }}
             </b-form-checkbox>
 
             <b-form-checkbox-group v-model="currentlyShownParameters"
@@ -440,7 +440,9 @@
           params: {
             fields: 'name,analysis__analysisresult__parameter__parameter,analysis__analysisresult__unit__unit,analysis__analysis_method__method',
             distinct: 'true',
-            format: 'json'}
+            format: 'json',
+            order_by: 'analysis__analysisresult__parameter__parameter'
+          }
         }).then(response => {
           console.log(response);
           if (response.status === 200) {
