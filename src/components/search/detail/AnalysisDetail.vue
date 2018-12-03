@@ -101,50 +101,19 @@
 
           <b-tab v-if="analysis[0].acquisition_params" title="Acquisition parameters">
             <table class="table table-bordered table-hover th-styles mt-2">
-              <tr v-if="analysis[0].acquisition_params['Sequence']">
-                <td>Sequence</td>
-                <td>{{analysis[0].acquisition_params['Sequence']}}</td>
+
+              <tr v-for="(value, key) in analysis[0].acquisition_params">
+                <td>{{key}}</td>
+                <td>{{value}}</td>
               </tr>
 
-              <tr v-if="analysis[0].acquisition_params['Surface state']">
-                <td>Surface state</td>
-                <td>{{analysis[0].acquisition_params['Surface state']}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].acquisition_params['Sigma value']">
-                <td>Sigma value</td>
-                <td>{{analysis[0].acquisition_params['Sigma value']}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].acquisition_params['Analytical mode']">
-                <td>Analytical mode</td>
-                <td>{{analysis[0].acquisition_params['Analytical mode']}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].acquisition_params['Sample type']">
-                <td>Sample type</td>
-                <td>{{analysis[0].acquisition_params['Sample type']}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].acquisition_params['Program name']">
-                <td>Program name</td>
-                <td>{{analysis[0].acquisition_params['Program name']}}</td>
-              </tr>
-
-              <tr v-if="analysis[0].acquisition_params['Duration']">
-                <td>Duration</td>
-                <td>{{analysis[0].acquisition_params['Duration']}}</td>
-              </tr>
             </table>
           </b-tab>
         </b-tabs>
 
+        
         <div class="row">
           <div class="col">
-
-
-
-
 
             <div class="row" v-if="spectraCount > 0">
               <div class="col">

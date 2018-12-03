@@ -270,14 +270,5 @@
 </script>
 
 <style scoped>
-  .loading-overlay {
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.5);
-    height: 50%;
-  }
+
 </style>
