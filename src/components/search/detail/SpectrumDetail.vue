@@ -98,6 +98,12 @@
       },
 
       filterSpectrumData(results) {
+        const obj = Object.keys(results[0].data[0])
+        let xAxisLable = ''
+        for (let entity in obj) {
+          if (obj[entity] !== 'count') xAxisLable = obj[entity]
+        }
+
         let data = [];
         for (let k = 0; k < results.length; k++) {
           let x = [];
@@ -110,7 +116,7 @@
           };
 
           for (let i = 0; i < results[k]['data'].length; i++) {
-            x.push(results[k]['data'][i].keV);
+            x.push(results[k]['data'][i][xAxisLable]);
             y.push(results[k]['data'][i].count);
           }
           data.push(t);
@@ -137,7 +143,7 @@
             "orientation": "h",
           },
           xaxis: {
-            title: 'keV',
+            title: xAxisLable,
             domain: [0.05, 0.95],
             linecolor: 'black',
             linewidth: 1,

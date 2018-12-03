@@ -111,7 +111,7 @@
           </b-tab>
         </b-tabs>
 
-        
+
         <div class="row">
           <div class="col">
 
