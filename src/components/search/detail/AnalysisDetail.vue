@@ -87,9 +87,9 @@
                 <td>{{analysis[0].postProccessing}}</td>
               </tr>
 
-              <tr v-if="analysis[0].agent__name">
+              <tr v-if="analysis[0].agent__acronym && analysis[0].agent__parent__acronym">
                 <td>Analyzed by</td>
-                <td>{{analysis[0].agent__name}}</td>
+                <td>{{analysis[0].agent__acronym}}, {{analysis[0].agent__parent__acronym}}</td>
               </tr>
 
               <tr v-if="analysis[0].date">
