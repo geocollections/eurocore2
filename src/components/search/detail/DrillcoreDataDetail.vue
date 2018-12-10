@@ -456,7 +456,7 @@
 
                 // Only if no params are chosen at start
                 // if (this.currentlyShownParameters.length === 0) {
-                  if (this.drillcoreName[0].deposit__main_commodity !== null || this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
+                  if (this.drillcoreName[0].deposit__main_commodity !== null && this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
                     const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
                     if (defaultCommodities.length > 0) {
                       for (const commodity in defaultCommodities) {

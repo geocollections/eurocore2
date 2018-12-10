@@ -17,6 +17,7 @@
           <th>Depth (m, interval)</th>
           <th>Method</th>
           <th>Person/Institution</th>
+          <th>Analyzed by</th>
           <th>Date</th>
         </tr>
         </thead>
@@ -35,6 +36,10 @@
           <td>{{entity.end_depth}}</td>
           <td>{{entity.analysis_method__method}}</td>
           <td>{{entity.agent__name}}</td>
+          <td>{{entity.agent__acronym}}
+            <span v-if="entity.agent__acronym && entity.agent__parent__acronym">,</span>
+            {{entity.agent__parent__acronym}}
+          </td>
           <td>{{entity.date | formatDate}}</td>
         </tr>
         </tbody>
