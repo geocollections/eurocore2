@@ -10,6 +10,8 @@
     <div class="row mt-3">
       <div class="col">
         <div>
+
+          <!-- CHECKBOXES (soon to be deprecated in this project) -->
           <b-form-group>
             <b>Parameters:</b><br>
             <b-form-checkbox v-model="allSelected"
@@ -51,6 +53,19 @@
                                    id="checkboxGroup"
             ></b-form-checkbox-group>
           </b-form-group>
+
+          <!-- RADIO BUTTONS -->
+          <b-form-group>
+            <b>Parameters:</b><br>
+            <b-form-radio-group id="radio-buttons"
+                                v-model="selectedParameter"
+                                :options="availableParameters">
+            </b-form-radio-group>
+          </b-form-group>
+
+          <div class="mt-3">
+            Selected parameter: <strong>{{ selectedParameter }}</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -231,6 +246,14 @@
         indeterminate: false,
         isChartOpen: false,
 
+        //TODO: Dynamic parameters here:
+        selectedParameter: null,
+        //TODO: Populate this with parameters
+        availableParameters: [
+          { text: 'test Parameter 1', value: 'test Value 1' },
+          { text: 'test Parameter 2', value: 'test Value 2' },
+        ],
+
         //TODO: Parameters shouldn't be hardcoded.
         ctExists: false,
         faAasExists: false,
@@ -300,6 +323,7 @@
       },
       'dcName': function () {
         this.populateParameters(this.drillcoreId);
+        this.getParameterMethods(this.drillcoreId);
       },
       'response.results': function (newVal, oldVal) {
         if (newVal == null && oldVal.length === 0) {
@@ -429,6 +453,29 @@
               this.drillcoreName = response.body.results;
               this.dcName = response.body.results[0].name;
             }
+          }
+        }, errResponse => {
+          console.log('ERROR: ' + JSON.stringify(errResponse));
+        })
+      },
+
+      getParameterMethods(id) {
+        this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {
+          params: {
+            fields: 'analysis__analysis_method__method',
+            distinct: 'true',
+            format: 'json'
+          }
+        }).then(response => {
+          console.log(response)
+          if (response.status === 200) {
+            for (let method in response.body.results) {
+              let methodName = response.body.results[method].analysis__analysis_method__method
+              this.availableParameters[method].text = 'Select ' + methodName
+              this.availableParameters[method].value = methodName
+              console.log(methodName)
+            }
+            console.log(this.availableParameters)
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
