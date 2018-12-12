@@ -59,10 +59,10 @@
               </div>
             </div>
 
-
             <div class="row">
               <div class="col">
                 <div class="table-responsive">
+
                   <table id="table-search" class="table table-hover table-bordered">
                     <thead class="thead-light">
                       <tr class="th-sort">
@@ -190,7 +190,7 @@
     components: {
       ExportButtons,
       PlotlyChart,
-      Spinner,
+      Spinner
     },
     props: ['drillcoreId'],
     name: "drillcore-data-detail",

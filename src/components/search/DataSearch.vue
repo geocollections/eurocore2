@@ -144,7 +144,7 @@
       </div>
     </div>
 
-
+    <!-- TODO: Double click to remove doesn't work because of overlay loading screen -->
     <div class="row" v-show="response.count > 0">
       <div class="col">
         <div class="table-responsive">
