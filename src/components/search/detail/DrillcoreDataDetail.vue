@@ -11,40 +11,21 @@
       <div class="col">
         <div>
 
-          <!-- CHECKBOXES (soon to be deprecated in this project) -->
+          <b>Parameters:</b><br>
+
+          <!-- RADIO BUTTONS -->
+          <b-form-group v-if="availableParameters.length > 0">
+            <b-form-radio-group id="radio-buttons"
+                                v-model="selectedParameter"
+                                :options="availableParameters">
+            </b-form-radio-group>
+          </b-form-group>
+
+          <!-- CHECKBOXES -->
           <b-form-group>
-            <b>Parameters:</b><br>
             <b-form-checkbox v-model="allSelected"
                              :indeterminate="indeterminate"
                              @change="toggleAllParameters">{{ allSelected ? 'Deselect All' : 'Select All' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="ctExists"
-                             v-model="ctCheckbox">{{ ctCheckbox ? 'Deselect CT' : 'SelectCT' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="faAasExists"
-                             v-model="faAasCheckbox">{{ faAasCheckbox ? 'Deselect FA-AAS' : 'Select FA-AAS' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="gfAasExists"
-                             v-model="gfAasCheckbox">{{ gfAasCheckbox ? 'Deselect GF-AAS' : 'Select GF-AAS' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="icpMsExists"
-                             v-model="icpMsCheckbox">{{ icpMsCheckbox ? 'Deselect ICP-MS' : 'Select ICP-MS' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="icpOesExists"
-                             v-model="icpOesCheckbox">{{ icpOesCheckbox ? 'Deselect ICP-OES' : 'Select ICP-OES' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="lecoExists"
-                             v-model="lecoCheckbox">{{ lecoCheckbox ? 'Deselect Leco' : 'Select Leco' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox v-if="xrfExists"
-                             v-model="xrfCheckbox">{{ xrfCheckbox ? 'Deselect XRF' : 'Select XRF' }}
             </b-form-checkbox>
 
             <b-form-checkbox-group v-model="currentlyShownParameters"
@@ -53,19 +34,6 @@
                                    id="checkboxGroup"
             ></b-form-checkbox-group>
           </b-form-group>
-
-          <!-- RADIO BUTTONS -->
-          <b-form-group>
-            <b>Parameters:</b><br>
-            <b-form-radio-group id="radio-buttons"
-                                v-model="selectedParameter"
-                                :options="availableParameters">
-            </b-form-radio-group>
-          </b-form-group>
-
-          <div class="mt-3">
-            Selected parameter: <strong>{{ selectedParameter }}</strong>
-          </div>
         </div>
       </div>
     </div>
@@ -215,6 +183,7 @@
   import ExportButtons from './partial/ExportButtons';
   import PlotlyChart from './partial/PlotlyChart'
   import Spinner from 'vue-simple-spinner'
+  import uniqBy from 'lodash/uniqBy'
   // import * as helper from "../../../assets/js/helper";
 
   export default {
@@ -246,26 +215,9 @@
         indeterminate: false,
         isChartOpen: false,
 
-        //TODO: Dynamic parameters here:
         selectedParameter: null,
-        //TODO: Populate this with parameters
         availableParameters: [],
 
-        //TODO: Parameters shouldn't be hardcoded.
-        ctExists: false,
-        faAasExists: false,
-        icpOesExists: false,
-        lecoExists: false,
-        xrfExists: false,
-        icpMsExists: false,
-        gfAasExists: false,
-        ctCheckbox: false,
-        faAasCheckbox: false,
-        icpOesCheckbox: false,
-        lecoCheckbox: false,
-        xrfCheckbox: false,
-        icpMsCheckbox: false,
-        gfAasCheckbox: false,
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
           { value: 25, text: 'Show 25 results per page' },
@@ -329,29 +281,10 @@
           $('body')[0].removeAttribute('class')
         }
       },
-      // Updated on 26.11.2018, Issue #54
-      'ctCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('CT') : this.deleteParametersUsingMethod('CT');
+      'selectedParameter': function (newVal, oldVal) {
+        this.currentlyShownParameters = [];
+        if (newVal != null) this.addParametersUsingMethod(newVal)
       },
-      'faAasCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('FA-AAS') : this.deleteParametersUsingMethod('FA-AAS');
-
-      },
-      'icpOesCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('ICP-OES') : this.deleteParametersUsingMethod('ICP-OES');
-      },
-      'lecoCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('Leco') : this.deleteParametersUsingMethod('Leco');
-      },
-      'xrfCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('XRF') : this.deleteParametersUsingMethod('XRF');
-      },
-      'icpMsCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('ICP-MS') : this.deleteParametersUsingMethod('ICP-MS');
-      },
-      'gfAasCheckbox': function (newVal, oldVal) {
-        newVal ? this.addParametersUsingMethod('GF-AAS') : this.deleteParametersUsingMethod('GF-AAS');
-      }
     },
 
     beforeRouteUpdate: function (to, from, next) {
@@ -364,17 +297,6 @@
       }
 
       next()
-    },
-
-    computed: {
-      // TODO: Fix it
-      sortedParameters(params) {
-        params.sort(function(a, b) {
-          let textA = a.params.toUpperCase();
-          let textB = b.params.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-        });
-      }
     },
 
     created: function () {
@@ -456,41 +378,56 @@
         })
       },
 
-      // TODO: Add analysis__analysisresults__parameter__parameter because sometimes method exists but parameter doesnt
       getParameterMethods(id) {
         this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {
           params: {
-            fields: 'analysis__analysis_method__method',
+            fields: 'analysis__analysis_method__method,analysis__analysisresult__parameter__parameter',
             distinct: 'true',
             format: 'json'
           }
         }).then(response => {
           console.log(response)
           if (response.status === 200) {
-            this.buildParametersDynamically(response.body.results)
+            this.buildParameterMethods(response.body.results)
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
-      // TODO: Add if clause for analysis__analysisresults__parameter__parameter because sometimes method exists but parameter doesnt
-      buildParametersDynamically(parameters) {
+      /**
+       * Populates radio buttons with methods from get request
+       */
+      buildParameterMethods(parameters) {
         if (parameters != null) {
           if (parameters.length > 0) {
+
+            // Locally pushing parameter objects here because of duplicates
+            let methodOptions = []
+
             for (let method in parameters) {
-              let methodName = parameters[method].analysis__analysis_method__method
 
-              if (methodName != null) {
-                let parameterToAdd = {}
-                parameterToAdd.text = 'Select <b>' + methodName + '</b>'
-                parameterToAdd.value = methodName
+              // Sometimes method exists but parameter doesn't
+              if (parameters[method].analysis__analysisresult__parameter__parameter != null) {
 
-                this.$set(this.availableParameters, method, parameterToAdd)
+                let methodName = parameters[method].analysis__analysis_method__method
+
+                if (methodName != null) {
+
+                  // Parameter object
+                  let parameterToAdd = {}
+                  parameterToAdd.text = 'Select <b>' + methodName + '</b>'
+                  parameterToAdd.value = methodName
+
+                  methodOptions.push(parameterToAdd)
+                }
               }
-
             }
-            console.log(this.availableParameters)
+
+            // Removing duplicates
+            if (methodOptions.length > 0) {
+              this.availableParameters = uniqBy(methodOptions, 'value')
+            }
           }
         }
       },
@@ -507,8 +444,6 @@
           console.log(response);
           if (response.status === 200) {
             const allParameters = response.body.results;
-
-            this.addMethodCheckboxes(allParameters);
 
             for (const i in allParameters) {
               if (this.areParametersEligible(allParameters[i])) {
@@ -625,43 +560,7 @@
         $('#checkboxGroup').find('div').addClass('mr-0 col-6 col-sm-4 col-md-3 col-lg-2 text-center')
       },
 
-      addMethodCheckboxes(parameters) {
-        for (const param in parameters) {
-          if (parameters[param].analysis__analysisresult__parameter__parameter !== null
-            && parameters[param].analysis__analysisresult__unit__unit !== null
-            && parameters[param].analysis__analysis_method__method !== null
-            && parameters[param].analysis__analysis_method__method) {
-
-            let method = parameters[param].analysis__analysis_method__method;
-            // if (!this.listOfAvailableMethods.includes(method)) {
-              // this.listOfAvailableMethods.push(method);
-
-              if (method === 'CT') {
-                this.ctExists = true
-              } else if (method === 'FA-AAS') {
-                this.faAasExists = true
-              } else if (method === 'ICP-OES') {
-                this.icpOesExists = true
-              } else if (method === 'Leco') {
-                this.lecoExists = true
-              } else if (method === 'XRF') {
-                this.xrfExists = true
-              } else if (method === 'ICP-MS') {
-                this.icpMsExists = true
-              } else if (method === 'GF-AAS') {
-                this.gfAasExists = true
-              }
-
-
-            // }
-          }
-        }
-      },
-
       addParametersUsingMethod(methodName) {
-        // This deselects currently set parameters
-        // this.removeAllSelectedParameters()
-
         for (const param in this.parameters) {
           if (this.parameters[param].includes(methodName)) {
             if (!this.currentlyShownParameters.includes(this.parameters[param])) {
@@ -679,11 +578,6 @@
             this.currentlyShownParameters.splice(i, 1);
           }
         }
-      },
-
-      // Is used before user selects parameter by method #54
-      removeAllSelectedParameters() {
-        this.currentlyShownParameters = []
       },
 
       setTabFromUrl() {
@@ -781,20 +675,6 @@
         this.parameters = [];
         this.allSelected = false;
         this.indeterminate = false;
-        this.ctExists =  false;
-        this.faAasExists = false;
-        this.icpOesExists = false;
-        this.lecoExists = false;
-        this.xrfExists = false;
-        this.icpMsExists = false;
-        this.gfAasExists = false;
-        this.ctCheckbox = false;
-        this.faAasCheckbox = false;
-        this.icpOesCheckbox = false;
-        this.lecoCheckbox = false;
-        this.xrfCheckbox = false;
-        this.icpMsCheckbox = false;
-        this.gfAasCheckbox = false;
       },
 
     }
