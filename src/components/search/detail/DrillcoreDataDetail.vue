@@ -249,10 +249,7 @@
         //TODO: Dynamic parameters here:
         selectedParameter: null,
         //TODO: Populate this with parameters
-        availableParameters: [
-          { text: 'test Parameter 1', value: 'test Value 1' },
-          { text: 'test Parameter 2', value: 'test Value 2' },
-        ],
+        availableParameters: [],
 
         //TODO: Parameters shouldn't be hardcoded.
         ctExists: false,
@@ -459,6 +456,7 @@
         })
       },
 
+      // TODO: Add analysis__analysisresults__parameter__parameter because sometimes method exists but parameter doesnt
       getParameterMethods(id) {
         this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {
           params: {
@@ -469,17 +467,32 @@
         }).then(response => {
           console.log(response)
           if (response.status === 200) {
-            for (let method in response.body.results) {
-              let methodName = response.body.results[method].analysis__analysis_method__method
-              this.availableParameters[method].text = 'Select ' + methodName
-              this.availableParameters[method].value = methodName
-              console.log(methodName)
-            }
-            console.log(this.availableParameters)
+            this.buildParametersDynamically(response.body.results)
           }
         }, errResponse => {
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
+      },
+
+      // TODO: Add if clause for analysis__analysisresults__parameter__parameter because sometimes method exists but parameter doesnt
+      buildParametersDynamically(parameters) {
+        if (parameters != null) {
+          if (parameters.length > 0) {
+            for (let method in parameters) {
+              let methodName = parameters[method].analysis__analysis_method__method
+
+              if (methodName != null) {
+                let parameterToAdd = {}
+                parameterToAdd.text = 'Select <b>' + methodName + '</b>'
+                parameterToAdd.value = methodName
+
+                this.$set(this.availableParameters, method, parameterToAdd)
+              }
+
+            }
+            console.log(this.availableParameters)
+          }
+        }
       },
 
       populateParameters(id) {
@@ -751,6 +764,8 @@
 
       resetData() {
         this.showLabel = true;
+        this.selectedParameter = null;
+        this.availableParameters = [];
         // this.tabIndex = 0; Not Resetting it!
         this.searchParameters = {
           page: 1,
