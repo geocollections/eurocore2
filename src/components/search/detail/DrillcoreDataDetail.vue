@@ -211,6 +211,7 @@
         dcName: '',
         currentlyShownParameters: [],
         parameters: [],
+        gotParametersFromStorage: false,
         allSelected: false,
         indeterminate: false,
         isChartOpen: false,
@@ -271,8 +272,8 @@
         }
       },
       'dcName': function () {
-        this.populateParameters(this.drillcoreId);
         this.getParameterMethods(this.drillcoreId);
+        this.populateParameters(this.drillcoreId);
       },
       'response.results': function (newVal, oldVal) {
         if (newVal == null && oldVal.length === 0) {
@@ -308,6 +309,7 @@
         const dataToImport = this.$session.get('drillcore_data/' + this.drillcoreId);
         this.searchParameters = dataToImport.searchParameters;
         this.currentlyShownParameters = dataToImport.currentlyShownParameters;
+        this.gotParametersFromStorage = true;
       } else {
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
       }
@@ -449,8 +451,9 @@
               if (this.areParametersEligible(allParameters[i])) {
                 this.parameters.push(this.getCorrectParameterFormat(allParameters[i]));
 
-                // Only if no params are chosen at start
-                // if (this.currentlyShownParameters.length === 0) {
+                // Following code sets default parameters which won't run if user already has preferred parameters in session storage
+                if (!this.gotParametersFromStorage) {
+
                   if (this.drillcoreName[0].deposit__main_commodity !== null && this.drillcoreName[0].deposit__main_commodity !== '') { // Populates default commodities
                     const defaultCommodities = this.showMainCommoditiesByDefault(this.drillcoreName[0].deposit__main_commodity);
                     if (defaultCommodities.length > 0) {
@@ -463,8 +466,7 @@
                   } else if (i < 10) { // Populates 10 first params
                     this.currentlyShownParameters.push(this.getCorrectParameterFormat(allParameters[i]));
                   }
-                // }
-
+                }
 
               }
             }
@@ -658,9 +660,7 @@
 
       resetData() {
         this.showLabel = true;
-        this.selectedParameter = null;
-        this.availableParameters = [];
-        // this.tabIndex = 0; Not Resetting it!
+        // this.tabIndex = 0; DO NOT RESET!
         this.searchParameters = {
           page: 1,
           paginateBy: 250,
@@ -671,10 +671,15 @@
           results: []
         };
         this.drillcoreName = [ { name: '', deposit__main_commodity: '' } ];
+        this.dcName = '';
         this.currentlyShownParameters = [];
         this.parameters = [];
+        this.gotParametersFromStorage = false;
         this.allSelected = false;
         this.indeterminate = false;
+        // this.isChartOpen = false DO NOT RESET!
+        this.selectedParameter = null;
+        this.availableParameters = [];
       },
 
     }
