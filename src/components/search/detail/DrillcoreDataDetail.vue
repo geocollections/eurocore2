@@ -61,11 +61,13 @@
 
             <div class="row">
               <div class="col">
+
+
                 <div class="table-responsive">
 
-                  <table id="table-search" class="table table-hover table-bordered">
+                  <table id="table-search" class="table table-hover table-bordered b-table-fixed">
                     <thead class="thead-light">
-                      <tr class="th-sort">
+                      <tr class="th-sort sticky-header">
                         <th>
                           <span @click="changeOrder('depth')" v-on:dblclick="removeOrder('depth')">
                             <i class="fas fa-sort" v-if="isFieldInOrderBy('depth') === 0"></i>
@@ -141,6 +143,7 @@
                     </tbody>
                   </table>
                 </div>
+
               </div>
             </div>
 
@@ -190,7 +193,7 @@
     components: {
       ExportButtons,
       PlotlyChart,
-      Spinner
+      Spinner,
     },
     props: ['drillcoreId'],
     name: "drillcore-data-detail",
@@ -318,11 +321,11 @@
     },
 
     mounted: function () {
-      this.addFloatingTableHeaders();
+      // this.addFloatingTableHeaders();
     },
 
     updated: function () {
-      this.reflowFloatThead();
+      // this.reflowFloatThead();
       this.addResponsiveDesignToCheckboxes()
     },
 
@@ -544,19 +547,19 @@
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
       },
 
-      addFloatingTableHeaders() {
-        $('#table-search').floatThead({
-          position: 'absolute',
-          zIndex: 1025,
-          top: function () {
-            return $('#main').css('padding-top') === '22px' ? 0 : 98;
-          }
-        });
-      },
+      // addFloatingTableHeaders() {
+      //   $('#table-search').floatThead({
+      //     position: 'absolute',
+      //     zIndex: 1025,
+      //     top: function () {
+      //       return $('#main').css('padding-top') === '22px' ? 0 : 98;
+      //     }
+      //   });
+      // },
 
-      reflowFloatThead() {
-        $('#table-search').floatThead('reflow');
-      },
+      // reflowFloatThead() {
+      //   $('#table-search').floatThead('reflow');
+      // },
 
       addResponsiveDesignToCheckboxes() {
         $('#checkboxGroup').find('div').addClass('mr-0 col-6 col-sm-4 col-md-3 col-lg-2 text-center')
@@ -704,5 +707,15 @@
 
   span {
     white-space: nowrap;
+  }
+
+  .table-responsive {
+    max-height: 65vh;
+  }
+
+  .sticky-header th {
+    position: sticky;
+    position: -webkit-sticky;
+    top:0;
   }
 </style>
