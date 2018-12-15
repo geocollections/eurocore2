@@ -34,6 +34,15 @@
                                    id="checkboxGroup"
             ></b-form-checkbox-group>
           </b-form-group>
+
+
+          <b>Table settings:</b><br>
+
+          <b-form-group>
+            <b-form-checkbox v-model="freezeColumn">Freeze first column</b-form-checkbox>
+          </b-form-group>
+
+
         </div>
       </div>
     </div>
@@ -65,7 +74,7 @@
 
                 <div class="table-responsive">
 
-                  <table id="table-search" class="table table-hover table-bordered b-table-fixed">
+                  <table id="table-search" class="table table-hover table-bordered" v-bind:class="{ 'freeze-column': freezeColumn }">
                     <thead class="thead-light">
                       <tr class="th-sort sticky-header">
                         <th>
@@ -221,6 +230,7 @@
 
         selectedParameter: null,
         availableParameters: [],
+        freezeColumn: false,
 
         paginationOptions: [
           { value: 10, text: 'Show 10 results per page' },
@@ -683,6 +693,7 @@
         // this.isChartOpen = false DO NOT RESET!
         this.selectedParameter = null;
         this.availableParameters = [];
+        this.freezeColumn = false;
       },
 
     }
@@ -711,11 +722,5 @@
 
   .table-responsive {
     max-height: 65vh;
-  }
-
-  .sticky-header th {
-    position: sticky;
-    position: -webkit-sticky;
-    top:0;
   }
 </style>

@@ -67,6 +67,50 @@ a:hover {
   color: #6bb745;
 }
 
+/* Defaults:
+      TH - border-bottom: 2px solid #dee2e6;
+      TD - border: 1px solid #dee2e6;
+   New:
+      TH - #cfd5db;
+      TD - #cfd5db
+ */
+
+/* Sticky header for responsive table */
+.sticky-header th {
+  position: sticky;
+  position: -webkit-sticky;
+  top:0;
+  outline: 1px solid #dee2e6;
+  outline-offset: -1px;
+  box-shadow: 0 2px 0 #cfd5db;
+}
+
+/* Freeze first column styles */
+.freeze-column th:first-child,
+.freeze-column td:first-child {
+  position: sticky;
+  position: -webkit-sticky;
+  left:0;
+  /* Border settings for position sticky */
+  outline: 1px solid #cfd5db;
+  outline-offset: -1px;
+}
+
+/* Prevents header from going behind other headers */
+.freeze-column th:first-child {
+  z-index: 1;
+  background-color: #dadfe4;
+  /* Right and  bottom border */
+  box-shadow: 1px 2px 0 #cfd5db;
+}
+
+/* First column will stay on top of other columns */
+.freeze-column td:first-child {
+  background-color: #f2f2f2;
+  /* Right border */
+  box-shadow: 1px 0 0 #cfd5db;
+}
+
 /************************
  ***  TABLE HEAD END  ***
  ************************/
