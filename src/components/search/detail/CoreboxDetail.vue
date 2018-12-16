@@ -1,137 +1,152 @@
 <template>
-  <div v-if="corebox != null">
+  <div class="corebox-detail">
 
-    <div class="row">
-      <div class="col">
-        <h2>Box: {{corebox[0].number}}</h2>
-      </div>
-    </div>
+    <spinner v-if="isSearching" class="loading-overlay" size="huge" message="Loading data..."></spinner>
 
-    <div class="row">
-      <div class="col-6">
-        <router-link v-if="previousBoxExists" class="pull-left" :to="{ path: '/corebox/' + previousBoxId  }">Previous</router-link>
-        <router-link v-if="nextBoxExists" class="pull-right" :to="{ path: '/corebox/' + nextBoxId  }">Next</router-link>
-      </div>
-    </div>
+    <div v-if="corebox != null">
 
-    <div class="row">
-      <div class="col-6">
-        <table class="table table-bordered table-hover th-styles">
-          <tr>
-            <td>ID</td>
-            <td>{{corebox[0].id}}</td>
-          </tr>
-
-          <tr>
-            <td>Drillcore</td>
-            <td>
-              <router-link :to="{ path: '/drillcore/' + corebox[0].drillcore__id }" >{{corebox[0].drillcore__name}}</router-link>
-            </td>
-          </tr>
-
-          <tr>
-            <td>Depth from (m)</td>
-            <td>{{corebox[0].start_depth}}</td>
-          </tr>
-
-          <tr>
-            <td>Depth to (m)</td>
-            <td>{{corebox[0].end_depth}}</td>
-          </tr>
-        </table>
+      <div class="row">
+        <div class="col">
+          <h2>Box: {{corebox[0].number}}</h2>
+        </div>
       </div>
 
-      <div class="col-6">
-        <!--TODO: Wet and dry box clickable previews here-->
+
+      <div class="row">
+        <div class="col-6">
+          <router-link v-if="previousBoxExists" class="pull-left" :to="{ path: '/corebox/' + previousBoxId  }">
+            Previous
+          </router-link>
+          <router-link v-if="nextBoxExists" class="pull-right" :to="{ path: '/corebox/' + nextBoxId  }">Next
+          </router-link>
+        </div>
       </div>
 
-    </div>
+      <div class="row">
+        <div class="col-6">
+          <table class="table table-bordered table-hover th-styles">
+            <tr>
+              <td>ID</td>
+              <td>{{corebox[0].id}}</td>
+            </tr>
+
+            <tr>
+              <td>Drillcore</td>
+              <td>
+                <router-link :to="{ path: '/drillcore/' + corebox[0].drillcore__id }">{{corebox[0].drillcore__name}}
+                </router-link>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Depth from (m)</td>
+              <td>{{corebox[0].start_depth}}</td>
+            </tr>
+
+            <tr>
+              <td>Depth to (m)</td>
+              <td>{{corebox[0].end_depth}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="col-6">
+          <!--TODO: Wet and dry box clickable previews here-->
+        </div>
+
+      </div>
 
 
-    <div class="row">
-      <div class="col">
+      <div class="row">
+        <div class="col">
 
-        <social-sharing :url="'https://eurocore.rocks/#/corebox/' + id"
-                        :title="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
-                        :quote="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
-                        :hashtags="'EUROCORE,drillcore,corebox,' + corebox[0].drillcore__name "
-                        inline-template>
-          <div>
+          <social-sharing :url="'https://eurocore.rocks/#/corebox/' + id"
+                          :title="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
+                          :quote="'Corebox from ' + corebox[0].drillcore__name + ' drillcore starting at ' + corebox[0].start_depth + ' m - ' + corebox[0].end_depth + ' m'"
+                          :hashtags="'EUROCORE,drillcore,corebox,' + corebox[0].drillcore__name "
+                          inline-template>
+            <div>
 
-            <network v-b-tooltip.hover.bottom title="LinkedIn" class="btn-share btn btn-primary btn-sm linkedin mr-2" network="linkedin">
-              <i class="fab fa-linkedin-in"></i>
-            </network>
+              <network v-b-tooltip.hover.bottom title="LinkedIn" class="btn-share btn btn-primary btn-sm linkedin mr-2"
+                       network="linkedin">
+                <i class="fab fa-linkedin-in"></i>
+              </network>
 
-            <network class="btn-share btn btn-primary btn-sm facebook mr-2" network="facebook">
-              <i class="fab fa-facebook-f"></i>
-            </network>
+              <network class="btn-share btn btn-primary btn-sm facebook mr-2" network="facebook">
+                <i class="fab fa-facebook-f"></i>
+              </network>
 
               <network class="btn-share btn btn-primary btn-sm twitter" network="twitter">
                 <i class="fab fa-twitter"></i>
               </network>
 
-          </div>
-        </social-sharing>
-      </div>
-    </div>
-
-
-    <div class="row mt-2 mb-3" v-for="image in corebox">
-      <div class="col">
-        <!--TODO: Show only 1 which is choosed in preview-->
-
-        <!--<a :href="'https://eurocore.rocks/' + image.image__url" :title="'https://eurocore.rocks/' + image.image__url" target="_blank">-->
-        <a href="javascript:void(0)" v-if="image.image__filename !== null" @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })" :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
-          <img width="100%" :src="helper.getFileLink({size: 'large', filename: image.image__filename})" />
-        </a>
-
-        <div class="text-center mt-2" v-if="image.image__filename !== null">
-          Image size:
-          <a :href="helper.getFileLink({size: 'small', filename: image.image__filename})" target="_blank">small</a> |
-          <a :href="helper.getFileLink({size: 'medium', filename: image.image__filename})" target="_blank">medium</a> |
-          <a :href="helper.getFileLink({size: 'large', filename: image.image__filename})" target="_blank">large</a> |
-          <a :href="helper.getFileLink({filename: image.image__filename})" target="_blank">original</a>
+            </div>
+          </social-sharing>
         </div>
-
-        <font-awesome-icon v-if="image.image__filename === null" size="6x" :icon="icon" />
-
       </div>
-    </div>
 
 
-    <div class="row">
-      <div class="col">
-        <b-tabs>
-          <b-tab v-if="response.sample.count > 0" :title="'Samples (' + response.sample.count + ')'">
-            <sample :results="response.sample.results"></sample>
-          </b-tab>
+      <div class="row mt-2 mb-3" v-for="image in corebox">
+        <div class="col">
+          <!--TODO: Show only 1 which is choosed in preview-->
 
-          <b-tab v-if="response.analysis.count > 0" :title="'Analyses (' + response.analysis.count + ')'">
-            <!--TODO: make that into analysis_summary-->
-            <analysis :results="response.analysis.results"></analysis>
-          </b-tab>
+          <!--<a :href="'https://eurocore.rocks/' + image.image__url" :title="'https://eurocore.rocks/' + image.image__url" target="_blank">-->
+          <a href="javascript:void(0)" v-if="image.image__filename !== null"
+             @click="openUrlInNewWindow({url: helper.getFileLink({size: 'large', filename: image.image__filename}) })"
+             :title="helper.getFileLink({size: 'large', filename: image.image__filename})">
+            <img width="100%" :src="helper.getFileLink({size: 'large', filename: image.image__filename})"/>
+          </a>
 
-          <b-tab v-if="response.analysis_summary.count > 0" title="Chart" @click="openChart()">
-            <plotly-chart :results="response.analysis_summary.results" :parameters="parameters" :name="corebox[0].number" :drillcore-id="corebox[0].drillcore__id" v-if="isChartOpen"></plotly-chart>
-          </b-tab>
+          <div class="text-center mt-2" v-if="image.image__filename !== null">
+            Image size:
+            <a :href="helper.getFileLink({size: 'small', filename: image.image__filename})" target="_blank">small</a> |
+            <a :href="helper.getFileLink({size: 'medium', filename: image.image__filename})" target="_blank">medium</a>
+            |
+            <a :href="helper.getFileLink({size: 'large', filename: image.image__filename})" target="_blank">large</a> |
+            <a :href="helper.getFileLink({filename: image.image__filename})" target="_blank">original</a>
+          </div>
 
-          <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
-            <!--<reference :results="response.reference.results"></reference>-->
-          </b-tab>
+          <font-awesome-icon v-if="image.image__filename === null" size="6x" :icon="icon"/>
 
-        </b-tabs>
+        </div>
       </div>
+
+
+      <div class="row">
+        <div class="col">
+          <b-tabs>
+            <b-tab v-if="response.sample.count > 0" :title="'Samples (' + response.sample.count + ')'">
+              <sample :results="response.sample.results"></sample>
+            </b-tab>
+
+            <b-tab v-if="response.analysis.count > 0" :title="'Analyses (' + response.analysis.count + ')'">
+              <!--TODO: make that into analysis_summary-->
+              <analysis :results="response.analysis.results"></analysis>
+            </b-tab>
+
+            <b-tab v-if="response.analysis_summary.count > 0" title="Chart" @click="openChart()">
+              <plotly-chart :results="response.analysis_summary.results" :parameters="parameters"
+                            :name="corebox[0].number" :drillcore-id="corebox[0].drillcore__id"
+                            v-if="isChartOpen"></plotly-chart>
+            </b-tab>
+
+            <b-tab v-if="response.reference.count > 0" :title="'References (' + response.reference.count + ')'">
+              <!--<reference :results="response.reference.results"></reference>-->
+            </b-tab>
+
+          </b-tabs>
+        </div>
+      </div>
+
     </div>
 
-  </div>
-  <div v-else>
-    <div v-if="showLabel">
-      <spinner size="large" message="Loading data..."></spinner>
-    </div>
     <div v-else>
-      Sorry but we didn't find any results!
-      Check your id <b>{{id}}</b>
+      <div v-if="!isSearching">
+        Sorry but we didn't find any results!
+        Check your id <b>{{id}}</b>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -159,8 +174,8 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore_box/',
+        isSearching: false,
         helper: helper,
-        showLabel: true,
         corebox: null,
         parameters: [],
         isChartOpen: false,
@@ -174,42 +189,49 @@
         nextBoxId: null,
         oldDrillcoreId: null,
         response: {
-          sample: { count: 0, results: [] },
-          analysis: { count: 0, results: [] },
-          analysis_summary: { count: 0, results: [] },
-          reference: { count: 0, results: [] },
-          attachment_link: { count: 0, results: [] },
+          sample: {count: 0, results: []},
+          analysis: {count: 0, results: []},
+          analysis_summary: {count: 0, results: []},
+          reference: {count: 0, results: []},
+          attachment_link: {count: 0, results: []},
         },
       }
     },
-    metaInfo () {
+    metaInfo() {
       if (this.corebox !== null) {
         return {
           title: 'EUROCORE Data Portal: Corebox ' + this.id,
           link: [
-            { rel: 'stylesheet',
+            {
+              rel: 'stylesheet',
               href: 'https://use.fontawesome.com/releases/v5.0.10/css/all.css',
               integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
-              crossorigin: 'anonymous'}
+              crossorigin: 'anonymous'
+            }
           ],
           meta: [
-            { 'property': 'og:url',
+            {
+              'property': 'og:url',
               'content': 'https://eurocore.rocks/#/corebox/' + this.id,
               'vmid': 'og:url'
             },
-            { 'property': 'og:type',
+            {
+              'property': 'og:type',
               'content': 'website',
               'vmid': 'og:type'
             },
-            { 'property': 'og:title',
+            {
+              'property': 'og:title',
               'content': 'EUROCORE Data Portal: Corebox ' + this.id,
               'vmid': 'og:title'
             },
-            { 'property': 'og:description',
+            {
+              'property': 'og:description',
               'content': 'Corebox from ' + this.corebox[0].drillcore__name + ' drillcore starting at ' + this.corebox[0].start_depth + ' m - ' + this.corebox[0].end_depth + ' m',
               'vmid': 'og:description'
             },
-            { 'property': 'og:image',
+            {
+              'property': 'og:image',
               'content': 'https://eurocore.rocks' + this.corebox[0].image__url,
               'vmid': 'og:image'
             },
@@ -227,7 +249,6 @@
     created: function () {
       this.resetData();
       this.getCoreboxById(this.id);
-      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       window.addEventListener('keyup', this.handleKeyup)
     },
     beforeDestroy: function () {
@@ -235,10 +256,8 @@
     },
     watch: {
       'id': function () {
-
         this.resetData();
         this.getCoreboxById(this.id);
-        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'corebox': function (newVal, oldVal) {
         if (oldVal !== null && typeof (oldVal) !== 'undefined') {
@@ -292,6 +311,7 @@
     methods: {
 
       getCoreboxById(id) {
+        this.isSearching = true
         this.$http.get(this.API_URL + id, {
           before(request) {
 
@@ -303,18 +323,27 @@
             // set previous request on Vue instance
             this.previousRequest = request;
           },
-          params: {format: 'json'}}).then(response => {
+          params: {format: 'json'}
+        }).then(response => {
+          this.isSearching = false
           console.log(response);
           if (response.status === 200) {
             this.corebox = response.body.results;
           }
         }, errResponse => {
+          this.isSearching = false
           console.log('ERROR: ' + JSON.stringify(errResponse));
         });
       },
 
       getAvailableCoreboxes(id) {
-        this.$http.get(this.API_URL, {params: {drillcore__id: id, fields: 'id,number', format: 'json'}}).then(response => {
+        this.$http.get(this.API_URL, {
+          params: {
+            drillcore__id: id,
+            fields: 'id,number',
+            format: 'json'
+          }
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.availableBoxes.count = response.body.count;
@@ -326,7 +355,14 @@
       },
 
       getCoreboxDataByDepth(table, drillcoreId, startDepth, endDepth) {
-        this.$http.get('https://api.eurocore.rocks/' + table + '/', {params: {drillcore__id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'json'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/' + table + '/', {
+          params: {
+            drillcore__id: drillcoreId,
+            or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth,
+            order_by: 'depth',
+            format: 'json'
+          }
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response[table].count = response.body.count;
@@ -338,7 +374,14 @@
       },
 
       getAnalysisSummary(drillcoreId, startDepth, endDepth) {
-        this.$http.get('https://api.eurocore.rocks/analysis_summary/', { params: {drillcore_id: drillcoreId, or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth, order_by: 'depth', format: 'json'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/analysis_summary/', {
+          params: {
+            drillcore_id: drillcoreId,
+            or_search: 'depth__range:' + startDepth + ',' + endDepth + ';end_depth__range:' + startDepth + ',' + endDepth,
+            order_by: 'depth',
+            format: 'json'
+          }
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.response.analysis_summary.count = response.body.count;
@@ -350,7 +393,14 @@
       },
 
       getAllParameters() {
-        this.$http.get('https://api.eurocore.rocks/analysis_result/', {params: {format: 'json', distinct: 'true', order_by: 'parameter__parameter', fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/analysis_result/', {
+          params: {
+            format: 'json',
+            distinct: 'true',
+            order_by: 'parameter__parameter',
+            fields: 'parameter__parameter,unit__unit,analysis__analysis_method__method'
+          }
+        }).then(response => {
           console.log(response);
           if (response.status === 200) {
             this.parameters = []; // BUG FIX FOR DUPLICATES
@@ -392,14 +442,14 @@
 
       goLeft(previousBoxId) {
         if (this.corebox !== null && this.previousBoxExists) {
-          this.$router.push({ path: '/corebox/' + previousBoxId })
+          this.$router.push({path: '/corebox/' + previousBoxId})
 
         }
       },
 
       goRight(nextBoxId) {
         if (this.corebox !== null && this.nextBoxExists) {
-          this.$router.push({ path: '/corebox/' + nextBoxId })
+          this.$router.push({path: '/corebox/' + nextBoxId})
         }
       },
 
@@ -431,11 +481,10 @@
         if (typeof (params.width) === 'undefined') {
           params.width = 800;
         }
-        window.open(params.url,'', 'width=' + params.width + ', height=750');
+        window.open(params.url, '', 'width=' + params.width + ', height=750');
       },
 
       resetData() {
-        this.showLabel = true;
         this.corebox = null;
         this.parameters = [];
         this.isChartOpen = false;
@@ -445,11 +494,11 @@
         this.nextBoxId = null;
         // Do not reset oldDrillcoreId, it is needed!
         this.response = {
-          sample: { count: 0, results: [] },
-          analysis: { count: 0, results: [] },
-          analysis_summary: { count: 0, results: [] },
-          reference: { count: 0, results: [] },
-          attachment_link: { count: 0, results: [] },
+          sample: {count: 0, results: []},
+          analysis: {count: 0, results: []},
+          analysis_summary: {count: 0, results: []},
+          reference: {count: 0, results: []},
+          attachment_link: {count: 0, results: []},
         }
       },
 

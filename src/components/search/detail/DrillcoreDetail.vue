@@ -1,191 +1,194 @@
 <template>
-  <div v-if="drillcore != null">
+  <div class="drillcore-detail">
 
-    <div class="row">
-      <div class="col">
-        <h2>{{drillcore[0].name}}</h2>
-      </div>
-    </div>
+    <spinner v-if="isSearching" class="loading-overlay" size="huge" message="Loading data..."></spinner>
 
+    <div v-if="drillcore != null">
 
-    <div class="row">
-      <div class="col-md-12 col-lg-6">
-        <table class="table table-bordered table-hover th-styles">
-          <tr v-if="drillcore[0].id">
-            <td>ID</td>
-            <td>{{drillcore[0].id}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].deposit__name">
-            <td>Deposit</td>
-            <td>
-              <router-link :to="{ path: '/deposit/' + drillcore[0].deposit__id }">{{drillcore[0].deposit__name}}
-              </router-link>
-            </td>
-          </tr>
-
-          <tr v-if="drillcore[0].latitude">
-            <td>Latitude</td>
-            <td>{{drillcore[0].latitude}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].longitude">
-            <td>Longitude</td>
-            <td>{{drillcore[0].longitude}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].hole_length">
-            <td>Length</td>
-            <td>{{drillcore[0].hole_length}} m</td>
-          </tr>
-
-          <tr v-if="drillcore[0].hole_dip">
-            <td>Dip</td>
-            <td>{{drillcore[0].hole_dip}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].hole_azimuth">
-            <td>Azimuth</td>
-            <td>{{drillcore[0].hole_azimuth}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].drilling_year">
-            <td>Drilling year</td>
-            <td>{{drillcore[0].drilling_year}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].drilling_agent__name">
-            <td>Drilling company</td>
-            <td>{{drillcore[0].drilling_agent__name}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].number_boxes">
-            <td>Number of boxes</td>
-            <td>{{drillcore[0].number_boxes}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].diameter">
-            <td>Core diameter</td>
-            <td>{{drillcore[0].diameter}}</td>
-          </tr>
-
-          <tr v-if="drillcore[0].core_depositor__name">
-            <td>Deposited by</td>
-            <td>{{drillcore[0].core_depositor__name}}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="col-md-12 col-lg-6" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
-        <detail-map :lat="drillcore[0].latitude" :lon="drillcore[0].longitude" :name="drillcore[0].name"></detail-map>
-        <br>
-        <!-- TODO: Currently depends on drillcore_summary field analysis, maybe need to change that in the future -->
-        <div v-if="drillcoreSummary !== null">
-          <router-link v-if="drillcoreSummary[0].analyses > 0" :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary mb-3">Show analytical data
-          </router-link>
+      <div class="row">
+        <div class="col">
+          <h2>{{drillcore[0].name}}</h2>
         </div>
       </div>
-    </div>
 
 
-    <div class="row">
-      <div class="col">
-        <b-tabs v-if="drillcoreSummary != null" v-model="tabIndex">
+      <div class="row">
+        <div class="col-md-12 col-lg-6">
+          <table class="table table-bordered table-hover th-styles">
+            <tr v-if="drillcore[0].id">
+              <td>ID</td>
+              <td>{{drillcore[0].id}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].boxes > 0"
-                 @click="addTabToUrl('core_boxes')"
-                 :disabled="drillcoreSummary[0].boxes === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].boxes === 0 }"
-                 :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
-            <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
-            <infinite-loading @infinite="infiniteHandler">
-              <span slot="no-more"></span>
-            </infinite-loading>
-          </b-tab>
+            <tr v-if="drillcore[0].deposit__name">
+              <td>Deposit</td>
+              <td>
+                <router-link :to="{ path: '/deposit/' + drillcore[0].deposit__id }">{{drillcore[0].deposit__name}}
+                </router-link>
+              </td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].lithologies > 0"
-                 :disabled="drillcoreSummary[0].lithologies === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].lithologies === 0 }"
-                 :title="'Lithology' + ' (' + drillcoreSummary[0].lithologies + ')'"
-                 @click="getResultsByDrillcoreId('lithology', id, 'start_depth')">
-            <lithology :results="response.lithology.results"></lithology>
-          </b-tab>
+            <tr v-if="drillcore[0].latitude">
+              <td>Latitude</td>
+              <td>{{drillcore[0].latitude}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].dips > 0"
-                 :disabled="drillcoreSummary[0].dip === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].dips === 0 }"
-                 :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'"
-                 @click="getResultsByDrillcoreId('dip', id, 'depth')">
-            <dip :results="response.dip.results"></dip>
-          </b-tab>
+            <tr v-if="drillcore[0].longitude">
+              <td>Longitude</td>
+              <td>{{drillcore[0].longitude}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].rqds > 0"
-                 :disabled="drillcoreSummary[0].rqds === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].rqds === 0 }"
-                 :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'"
-                 @click="getResultsByDrillcoreId('rqd', id, 'depth')">
-            <rqd :results="response.rqd.results"></rqd>
-          </b-tab>
+            <tr v-if="drillcore[0].hole_length">
+              <td>Length</td>
+              <td>{{drillcore[0].hole_length}} m</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].structures > 0"
-                 :disabled="drillcoreSummary[0].structures === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].structures === 0 }"
-                 :title="'Structures' + ' (' + drillcoreSummary[0].structures + ')'"
-                 @click="getResultsByDrillcoreId('structure', id, 'depth_actual')">
-            <structure :results="response.structure.results" ></structure>
-          </b-tab>
+            <tr v-if="drillcore[0].hole_dip">
+              <td>Dip</td>
+              <td>{{drillcore[0].hole_dip}}</td>
+            </tr>
 
-          <b-tab v-if="drillcoreSummary[0].stratigraphies > 0"
-                 :title="'Stratigraphy' + ' (' + drillcoreSummary[0].stratigraphies + ')'">
-            <br>I'm the first fading tab
-          </b-tab>
+            <tr v-if="drillcore[0].hole_azimuth">
+              <td>Azimuth</td>
+              <td>{{drillcore[0].hole_azimuth}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].samples > 0"
-                 :disabled="drillcoreSummary[0].samples === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].samples === 0 }"
-                 :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'"
-                 @click="getResultsByDrillcoreId('sample', id, 'depth')">
-            <sample :results="response.sample.results"></sample>
-          </b-tab>
+            <tr v-if="drillcore[0].drilling_year">
+              <td>Drilling year</td>
+              <td>{{drillcore[0].drilling_year}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].analyses > 0"
-                 :disabled="drillcoreSummary[0].analyses === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].analyses === 0 }"
-                 :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'"
-                 @click="getResultsByDrillcoreId('analysis', id, 'depth')">
-            <analysis :results="response.analysis.results"></analysis>
-          </b-tab>
+            <tr v-if="drillcore[0].drilling_agent__name">
+              <td>Drilling company</td>
+              <td>{{drillcore[0].drilling_agent__name}}</td>
+            </tr>
 
-          <b-tab v-show="drillcoreSummary[0].ctscans > 0"
-                 :disabled="drillcoreSummary[0].ctscans === 0"
-                 :title-item-class="{ 'd-none' : drillcoreSummary[0].ctscans === 0 }"
-                 :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
-                 @click="getCTscansByDrillcoreId(id)">
-            <ct-scans :results="response.ctscans.results"></ct-scans>
-          </b-tab>
+            <tr v-if="drillcore[0].number_boxes">
+              <td>Number of boxes</td>
+              <td>{{drillcore[0].number_boxes}}</td>
+            </tr>
 
-          <b-tab v-if="drillcoreSummary[0].attachments > 0"
-                 :title="'Linked files' + ' (' + drillcoreSummary[0].attachments + ')'"
-                 @click="getResultsByDrillcoreId('attachment_link', id, 'depth')">
-            <br>I'm the first fading tab
-          </b-tab>
+            <tr v-if="drillcore[0].diameter">
+              <td>Core diameter</td>
+              <td>{{drillcore[0].diameter}}</td>
+            </tr>
 
-          <b-tab v-if="drillcoreSummary[0].references > 0"
-                 :title="'References' + ' (' + drillcoreSummary[0].references + ')'">
-            <br>I'm the first fading tab
-          </b-tab>
-        </b-tabs>
+            <tr v-if="drillcore[0].core_depositor__name">
+              <td>Deposited by</td>
+              <td>{{drillcore[0].core_depositor__name}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="col-md-12 col-lg-6" v-if="drillcore[0].latitude != null || drillcore[0].longitude != null">
+          <detail-map :lat="drillcore[0].latitude" :lon="drillcore[0].longitude" :name="drillcore[0].name"></detail-map>
+          <br>
+          <!-- TODO: Currently depends on drillcore_summary field analysis, maybe need to change that in the future -->
+          <div v-if="drillcoreSummary !== null">
+            <router-link v-if="drillcoreSummary[0].analyses > 0" :to="{ path: '/drillcore_data/' + drillcore[0].id }" class="btn btn-primary mb-3">Show analytical data
+            </router-link>
+          </div>
+        </div>
       </div>
+
+
+      <div class="row">
+        <div class="col">
+          <b-tabs v-if="drillcoreSummary != null" v-model="tabIndex">
+
+            <b-tab v-show="drillcoreSummary[0].boxes > 0"
+                   @click="addTabToUrl('core_boxes')"
+                   :disabled="drillcoreSummary[0].boxes === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].boxes === 0 }"
+                   :title="'Core boxes' + ' (' + drillcoreSummary[0].boxes + ')'">
+              <drillcore-box :results="response.drillcore_box.results"></drillcore-box>
+              <infinite-loading @infinite="infiniteHandler">
+                <span slot="no-more"></span>
+              </infinite-loading>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].lithologies > 0"
+                   :disabled="drillcoreSummary[0].lithologies === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].lithologies === 0 }"
+                   :title="'Lithology' + ' (' + drillcoreSummary[0].lithologies + ')'"
+                   @click="getResultsByDrillcoreId('lithology', id, 'start_depth')">
+              <lithology :results="response.lithology.results"></lithology>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].dips > 0"
+                   :disabled="drillcoreSummary[0].dip === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].dips === 0 }"
+                   :title="'Dip/Azimuth' + ' (' + drillcoreSummary[0].dips + ')'"
+                   @click="getResultsByDrillcoreId('dip', id, 'depth')">
+              <dip :results="response.dip.results"></dip>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].rqds > 0"
+                   :disabled="drillcoreSummary[0].rqds === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].rqds === 0 }"
+                   :title="'RQD' + ' (' + drillcoreSummary[0].rqds + ')'"
+                   @click="getResultsByDrillcoreId('rqd', id, 'depth')">
+              <rqd :results="response.rqd.results"></rqd>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].structures > 0"
+                   :disabled="drillcoreSummary[0].structures === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].structures === 0 }"
+                   :title="'Structures' + ' (' + drillcoreSummary[0].structures + ')'"
+                   @click="getResultsByDrillcoreId('structure', id, 'depth_actual')">
+              <structure :results="response.structure.results" ></structure>
+            </b-tab>
+
+            <b-tab v-if="drillcoreSummary[0].stratigraphies > 0"
+                   :title="'Stratigraphy' + ' (' + drillcoreSummary[0].stratigraphies + ')'">
+              <br>I'm the first fading tab
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].samples > 0"
+                   :disabled="drillcoreSummary[0].samples === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].samples === 0 }"
+                   :title="'Samples' + ' (' + drillcoreSummary[0].samples + ')'"
+                   @click="getResultsByDrillcoreId('sample', id, 'depth')">
+              <sample :results="response.sample.results"></sample>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].analyses > 0"
+                   :disabled="drillcoreSummary[0].analyses === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].analyses === 0 }"
+                   :title="'Analyses' + ' (' + drillcoreSummary[0].analyses + ')'"
+                   @click="getResultsByDrillcoreId('analysis', id, 'depth')">
+              <analysis :results="response.analysis.results"></analysis>
+            </b-tab>
+
+            <b-tab v-show="drillcoreSummary[0].ctscans > 0"
+                   :disabled="drillcoreSummary[0].ctscans === 0"
+                   :title-item-class="{ 'd-none' : drillcoreSummary[0].ctscans === 0 }"
+                   :title="'CT scans' + ' (' + drillcoreSummary[0].ctscans + ')'"
+                   @click="getCTscansByDrillcoreId(id)">
+              <ct-scans :results="response.ctscans.results"></ct-scans>
+            </b-tab>
+
+            <b-tab v-if="drillcoreSummary[0].attachments > 0"
+                   :title="'Linked files' + ' (' + drillcoreSummary[0].attachments + ')'"
+                   @click="getResultsByDrillcoreId('attachment_link', id, 'depth')">
+              <br>I'm the first fading tab
+            </b-tab>
+
+            <b-tab v-if="drillcoreSummary[0].references > 0"
+                   :title="'References' + ' (' + drillcoreSummary[0].references + ')'">
+              <br>I'm the first fading tab
+            </b-tab>
+          </b-tabs>
+        </div>
+      </div>
+
     </div>
 
-  </div>
-  <div v-else>
-    <div v-if="noResults">
-      Sorry but we didn't find any results!
-      Check your id <b>{{id}}</b>
-    </div>
     <div v-else>
-      <spinner class="loading-overlay" size="huge" message="Searching..."></spinner>
+      <div v-if="!isSearching">
+        Sorry but we didn't find any results!
+        Check your id <b>{{id}}</b>
+      </div>
     </div>
   </div>
 </template>
@@ -222,8 +225,7 @@
     data() {
       return {
         API_URL: 'https://api.eurocore.rocks/drillcore/',
-        showLabel: true,
-        noResults: null,
+        isSearching: false,
         drillcore: null,
         drillcoreSummary: null,
         tabIndex: 0,
@@ -274,7 +276,6 @@
       this.setTabFromUrl(this.id);
       this.getDrillcoreById(this.id);
       this.getDrillcoreSummary(this.id);
-      setTimeout(function () { this.showLabel = false }.bind(this), 10000);
     },
 
     watch: {
@@ -283,7 +284,6 @@
         this.setTabFromUrl(this.id)
         this.getDrillcoreById(this.id);
         this.getDrillcoreSummary(this.id);
-        setTimeout(function () { this.showLabel = false }.bind(this), 10000);
       },
       'drillcore': function (newVal, oldVal) {
         if (newVal == null) {
@@ -296,13 +296,15 @@
 
     methods: {
       getDrillcoreById(id) {
+        this.isSearching = true
         this.$http.get(this.API_URL + id, {params: {format: 'json'}}).then(response => {
+          this.isSearching = false
           console.log(response);
           if (response.status === 200) {
-            this.noResults = response.bodyText === '{}'
             this.drillcore = response.body.results;
           }
         }, errResponse => {
+          this.isSearching = false
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
@@ -425,7 +427,6 @@
       },
 
       resetData() {
-        this.showLabel = true;
         this.drillcore = null;
         this.drillcoreSummary = null;
         // this.tabIndex = 0; Not Resetting it!

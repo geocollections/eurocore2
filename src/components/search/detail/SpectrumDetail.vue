@@ -1,27 +1,31 @@
 <template>
-  <div v-if="spectrumData.count > 0">
-    <div class="row">
-      <div class="col">
-        <h2>Spectrum</h2>
-        <h3>Analysis ID: {{analysisId}}</h3>
-      </div>
-    </div>
+  <div class="spectrum-detail">
 
-    <div class="row">
-      <div class="col mb-3">
-        <div ref="spectrumGraph" id="graph">
-          <!--Graph is drawn here-->
+    <spinner v-if="isSearching" class="loading-overlay" size="huge" message="Loading data..."></spinner>
+
+    <div v-if="spectrumData.count > 0">
+
+      <div class="row">
+        <div class="col">
+          <h2>Spectrum</h2>
+          <h3>Analysis ID: {{analysisId}}</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3">
+          <div ref="spectrumGraph" id="graph">
+            <!--Graph is drawn here-->
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div v-else>
-    <div v-if="showLabel">
-      <spinner size="large" message="Loading data..."></spinner>
-    </div>
+
     <div v-else>
-      Sorry but we didn't find any results!
-      Check your id <b>{{analysisId}}</b>
+      <div v-if="!isSearching">
+        Sorry but we didn't find any results!
+        Check your id <b>{{analysisId}}</b>
+      </div>
     </div>
   </div>
 </template>
@@ -37,11 +41,11 @@
     name: "spectrum-detail",
     data() {
       return {
-        showLabel: true,
-        spectrumData: { count: 0, results: [] }
+        isSearching: false,
+        spectrumData: {count: 0, results: []}
       }
     },
-    metaInfo () {
+    metaInfo() {
       return {
         title: 'EUROCORE Data Portal: Spectrum ' + this.analysisId
       }
@@ -50,7 +54,6 @@
       'analysisId': function () {
         this.getSpectrumResultsById(this.analysisId);
         this.resetData();
-        setTimeout(function() { this.showLabel = false }.bind(this), 2000);
       },
       'spectrumData.results': function (newVal, oldVal) {
         if (newVal == null && oldVal.length === 0) {
@@ -61,7 +64,6 @@
       }
     },
     created: function () {
-      setTimeout(function() { this.showLabel = false }.bind(this), 2000);
       window.addEventListener('resize', this.onResize);
       this.getSpectrumResultsById(this.analysisId);
     },
@@ -81,20 +83,27 @@
       },
 
       getSpectrumResultsById(id) {
-        this.$http.get('https://api.eurocore.rocks/spectrum/', {params: {analysis__id: id, format: 'json'}}).then(response => {
+        this.isSearching = true
+        this.$http.get('https://api.eurocore.rocks/spectrum/', {
+          params: {
+            analysis__id: id,
+            format: 'json'
+          }
+        }).then(response => {
+          this.isSearching = false
           console.log(response);
           if (response.status === 200) {
             this.spectrumData.count = response.body.count;
             this.spectrumData.results = response.body.results;
           }
         }, errResponse => {
+          this.isSearching = false
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       resetData() {
-        this.showLabel = true;
-        this.spectrumData = { count: 0, results: [] }
+        this.spectrumData = {count: 0, results: []}
       },
 
       filterSpectrumData(results) {
@@ -136,7 +145,7 @@
             t: 120,
             pad: 4
           },
-          title: 'Analysis ID: '+ this.analysisId,
+          title: 'Analysis ID: ' + this.analysisId,
           legend: {
             x: 0,
             y: 1.1,
@@ -192,7 +201,7 @@
               name: 'Download plot as a SVG',
               icon: Plotly.Icons.camera,
               click: function (gd) {
-                Plotly.downloadImage(gd, {filename: "spectrum", format: 'svg',height: 600, width: 900 })
+                Plotly.downloadImage(gd, {filename: "spectrum", format: 'svg', height: 600, width: 900})
               }
             }],
             displaylogo: false

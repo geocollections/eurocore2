@@ -1,81 +1,91 @@
 <template>
-  <div v-if="drillcoreName != null && response.results != null">
-    <div class="row">
-      <div class="col">
-        <router-link :to="{ path: '/drillcore/' + drillcoreId }" class="title-link">{{drillcoreName[0].name}} drillcore</router-link>
-      </div>
-    </div>
+  <div class="drillcore-data-detail">
 
+    <spinner v-if="isSearching" class="loading-overlay" size="huge" message="Loading data..."></spinner>
 
-    <div class="row mt-3">
-      <div class="col">
-        <div>
+    <div v-if="drillcoreName != null && response.results != null">
 
-          <b>Parameters:</b><br>
-
-          <!-- RADIO BUTTONS -->
-          <b-form-group v-if="availableParameters.length > 0">
-            <b-form-radio-group id="radio-buttons"
-                                v-model="selectedParameter"
-                                :options="availableParameters">
-            </b-form-radio-group>
-          </b-form-group>
-
-          <!-- CHECKBOXES -->
-          <b-form-group>
-            <b-form-checkbox v-model="allSelected"
-                             :indeterminate="indeterminate"
-                             @change="toggleAllParameters">{{ allSelected ? 'Deselect All' : 'Select All' }}
-            </b-form-checkbox>
-
-            <b-form-checkbox-group v-model="currentlyShownParameters"
-                                   :options="parameters"
-                                   class="row ml-4"
-                                   id="checkboxGroup"
-            ></b-form-checkbox-group>
-          </b-form-group>
-
-
-          <b>Table settings:</b><br>
-
-          <b-form-group>
-            <b-form-checkbox v-model="freezeColumn">Freeze first column</b-form-checkbox>
-          </b-form-group>
-
-
+      <div class="row">
+        <div class="col">
+          <router-link :to="{ path: '/drillcore/' + drillcoreId }" class="title-link">{{drillcoreName[0].name}}
+            drillcore
+          </router-link>
         </div>
       </div>
-    </div>
 
 
-    <div class="row">
-      <div class="col">
-        <b-tabs v-model="tabIndex">
-          <b-tab :title="'Data (' + (response.count) + ')'" @click="openData()">
-            <div class="row mt-3">
-              <div class="col-sm-6 col-md-3 pl-3 pr-3 t-paginate-by-center">
-                <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions" class="mb-3"></b-form-select>
+      <div class="row mt-3">
+        <div class="col">
+          <div>
+
+            <b>Parameters:</b><br>
+
+            <!-- RADIO BUTTONS -->
+            <b-form-group v-if="availableParameters.length > 0">
+              <b-form-radio-group id="radio-buttons"
+                                  v-model="selectedParameter"
+                                  :options="availableParameters">
+              </b-form-radio-group>
+            </b-form-group>
+
+            <!-- CHECKBOXES -->
+            <b-form-group>
+              <b-form-checkbox v-model="allSelected"
+                               :indeterminate="indeterminate"
+                               @change="toggleAllParameters">{{ allSelected ? 'Deselect All' : 'Select All' }}
+              </b-form-checkbox>
+
+              <b-form-checkbox-group v-model="currentlyShownParameters"
+                                     :options="parameters"
+                                     class="row ml-4"
+                                     id="checkboxGroup"
+              ></b-form-checkbox-group>
+            </b-form-group>
+
+
+            <b>Table settings:</b><br>
+
+            <b-form-group>
+              <b-form-checkbox v-model="freezeColumn">Freeze first column</b-form-checkbox>
+            </b-form-group>
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <b-tabs v-model="tabIndex">
+            <b-tab :title="'Data (' + (response.count) + ')'" @click="openData()">
+              <div class="row mt-3">
+                <div class="col-sm-6 col-md-3 pl-3 pr-3 t-paginate-by-center">
+                  <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"
+                                 class="mb-3"></b-form-select>
+                </div>
+
+                <div class="col-sm-12 col-md-3 mb-3 export-center">
+                  <export-buttons filename="drillcoreData"></export-buttons>
+                </div>
+
+                <div class="col-sm-12 col-md-6 pagination-center">
+                  <b-pagination
+                    size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page"
+                    :per-page="searchParameters.paginateBy">
+                  </b-pagination>
+                </div>
               </div>
 
-              <div class="col-sm-12 col-md-3 mb-3 export-center">
-                <export-buttons filename="drillcoreData"></export-buttons>
-              </div>
-
-              <div class="col-sm-12 col-md-6 pagination-center">
-                <b-pagination
-                  size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
-                </b-pagination>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col">
+              <div class="row">
+                <div class="col">
 
 
-                <div class="table-responsive fixed-table">
+                  <div class="table-responsive fixed-table">
 
-                  <table id="table-search" class="table table-hover table-bordered" v-bind:class="{ 'freeze-column': freezeColumn }">
-                    <thead class="thead-light">
+                    <table id="table-search" class="table table-hover table-bordered"
+                           v-bind:class="{ 'freeze-column': freezeColumn }">
+                      <thead class="thead-light">
                       <tr class="th-sort sticky-header">
                         <th>
                           <span @click="changeOrder('depth')" v-on:dblclick="removeOrder('depth')">
@@ -114,28 +124,35 @@
                         </th>
 
                         <th v-for="parameter in currentlyShownParameters">
-                          <span @click="changeOrder(formatParameterForTableData(parameter))" v-on:dblclick="removeOrder(formatParameterForTableData(parameter))">
-                            <i class="fas fa-sort" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 0"></i>
-                            <i class="fas fa-sort-up" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 1"></i>
-                            <i class="fas fa-sort-down" v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === -1"></i>
+                          <span @click="changeOrder(formatParameterForTableData(parameter))"
+                                v-on:dblclick="removeOrder(formatParameterForTableData(parameter))">
+                            <i class="fas fa-sort"
+                               v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 0"></i>
+                            <i class="fas fa-sort-up"
+                               v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === 1"></i>
+                            <i class="fas fa-sort-down"
+                               v-if="isFieldInOrderBy(formatParameterForTableData(parameter)) === -1"></i>
                             {{parameter}}
                           </span>
                         </th>
                         <!--<th v-for="parameter in currentlyShownParameters"><span>{{parameter}}</span></th>-->
                       </tr>
-                    </thead>
+                      </thead>
 
-                    <tbody>
-                      <tr v-if="response.count === 0 || response.count === undefined"><br></tr> <!-- Adds empty line so title can fit -->
+                      <tbody>
+                      <tr v-if="response.count === 0 || response.count === undefined"><br></tr>
+                      <!-- Adds empty line so title can fit -->
                       <tr v-for="entity in response.results">
                         <td>{{entity.depth}}</td>
                         <td>{{entity.end_depth}}</td>
                         <td>
-                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: entity.sample_id})">{{entity.sample_number}}</a>
+                          <a href="javascript:void(0)"
+                             @click="openInNewWindow({object: 'sample', id: entity.sample_id})">{{entity.sample_number}}</a>
                           <!--<router-link :to="{ path: '/sample/' + entity.sample_id }">{{entity.sample_number}}</router-link>-->
                         </td>
                         <td>
-                          <a href="javascript:void(0)" @click="openInNewWindow({object: 'analysis', id: entity.analysis_id, width: 600})">{{entity.analysis_id}}</a>
+                          <a href="javascript:void(0)"
+                             @click="openInNewWindow({object: 'analysis', id: entity.analysis_id, width: 600})">{{entity.analysis_id}}</a>
                           <!--<router-link :to="{ path: '/analysis/' + entity.analysis_id }">{{entity.analysis_id}}</router-link>-->
                         </td>
                         <td v-for="parameter in currentlyShownParameters">
@@ -149,45 +166,48 @@
                           </div>
                         </td>
                       </tr>
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+
+
+              <div class="row mt-3" v-if="response.count > 0">
+                <div class="col-xs-1 pl-3 pr-3 mb-3 b-paginate-by-center">
+                  <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
                 </div>
 
+                <div class="col mb-3 pagination-center">
+                  <b-pagination
+                    size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page"
+                    :per-page="searchParameters.paginateBy">
+                  </b-pagination>
+                </div>
               </div>
-            </div>
+            </b-tab>
+            <b-tab title="Chart" @click="openChart()">
+              <plotly-chart :results="response.results" :parameters="currentlyShownParameters"
+                            :name="drillcoreName[0].name" :drillcore-id="drillcoreName[0].id"
+                            v-if="isChartOpen"></plotly-chart>
+            </b-tab>
+          </b-tabs>
+        </div>
+      </div>
 
+    </div>
 
-            <div class="row mt-3" v-if="response.count > 0">
-              <div class="col-xs-1 pl-3 pr-3 mb-3 b-paginate-by-center">
-                <b-form-select v-model="searchParameters.paginateBy" :options="paginationOptions"></b-form-select>
-              </div>
-
-              <div class="col mb-3 pagination-center">
-                <b-pagination
-                  size="md" align="right" :limit="5" :total-rows="response.count" v-model="searchParameters.page" :per-page="searchParameters.paginateBy">
-                </b-pagination>
-              </div>
-            </div>
-          </b-tab>
-          <b-tab title="Chart" @click="openChart()">
-            <plotly-chart :results="response.results" :parameters="currentlyShownParameters" :name="drillcoreName[0].name" :drillcore-id="drillcoreName[0].id" v-if="isChartOpen" ></plotly-chart>
-          </b-tab>
-        </b-tabs>
+    <div v-else>
+      <div v-if="!isSearching">
+        <p class="text-center error-text">
+          Sorry, the query returned no results. Try another drillcore.
+          <br>
+          Note that some datasets are accessible to registered users only.
+        </p>
       </div>
     </div>
 
-  </div>
-  <div v-else>
-    <div v-if="showLabel">
-      <spinner size="large" message="Loading data..."></spinner>
-    </div>
-    <div v-else>
-      <p class="text-center error-text">
-        Sorry, the query returned no results. Try another drillcore.
-        <br>
-        Note that some datasets are accessible to registered users only.
-      </p>
-    </div>
   </div>
 </template>
 
@@ -208,7 +228,7 @@
     name: "drillcore-data-detail",
     data() {
       return {
-        showLabel: true,
+        isSearching: false,
         tabIndex: 0,
         searchParameters: {
           page: 1,
@@ -219,7 +239,7 @@
           count: 0,
           results: []
         },
-        drillcoreName: [ { name: '', deposit__main_commodity: '' } ],
+        drillcoreName: [{name: '', deposit__main_commodity: ''}],
         dcName: '',
         currentlyShownParameters: [],
         parameters: [],
@@ -233,13 +253,13 @@
         freezeColumn: false,
 
         paginationOptions: [
-          { value: 10, text: 'Show 10 results per page' },
-          { value: 25, text: 'Show 25 results per page' },
-          { value: 50, text: 'Show 50 results per page' },
-          { value: 100, text: 'Show 100 results per page' },
-          { value: 250, text: 'Show 250 results per page' },
-          { value: 500, text: 'Show 500 results per page' },
-          { value: 1000, text: 'Show 1000 results per page' }
+          {value: 10, text: 'Show 10 results per page'},
+          {value: 25, text: 'Show 25 results per page'},
+          {value: 50, text: 'Show 50 results per page'},
+          {value: 100, text: 'Show 100 results per page'},
+          {value: 250, text: 'Show 250 results per page'},
+          {value: 500, text: 'Show 500 results per page'},
+          {value: 1000, text: 'Show 1000 results per page'}
         ],
       }
     },
@@ -247,10 +267,12 @@
       return {
         title: 'EUROCORE Data Portal: Drillcore Data' + this.drillcoreId,
         link: [
-          { rel: 'stylesheet',
+          {
+            rel: 'stylesheet',
             href: 'https://use.fontawesome.com/releases/v5.0.10/css/all.css',
             integrity: 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg',
-            crossorigin: 'anonymous'}
+            crossorigin: 'anonymous'
+          }
         ],
       }
     },
@@ -261,7 +283,6 @@
         this.getDrillcoreName(this.drillcoreId);
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
         console.log(this.dcName)
-        setTimeout(function () { this.showLabel = false }.bind(this), 2000);
       },
       'searchParameters': {
         handler: function () {
@@ -269,7 +290,7 @@
         },
         deep: true
       },
-      'searchParameters.paginateBy': function(newVal, oldVal) {
+      'searchParameters.paginateBy': function (newVal, oldVal) {
         this.toastInfo('Showing <strong>' + newVal + '</strong> results per page!')
       },
       'currentlyShownParameters': function (newVal, oldVal) {
@@ -326,8 +347,6 @@
       } else {
         this.getAnalysisSummary(this.drillcoreId, this.searchParameters);
       }
-
-      setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
 
     updated: function () {
@@ -363,19 +382,36 @@
       getAnalysisSummary(id, searchParams) {
         const orderBy = this.buildOrderBy(searchParams.orderBy);
 
-        this.$http.get('https://api.eurocore.rocks/analysis_summary/', {params: {drillcore_id: id, page: searchParams.page, paginate_by: searchParams.paginateBy, order_by: orderBy, format: 'json'}}).then(response => {
+        this.$http.get('https://api.eurocore.rocks/analysis_summary/', {
+          params: {
+            drillcore_id: id,
+            page: searchParams.page,
+            paginate_by: searchParams.paginateBy,
+            order_by: orderBy,
+            format: 'json'
+          }
+        }).then(response => {
+          this.isSearching = false // Added it just in case
           console.log(response);
           if (response.status === 200) {
             this.response.count = response.body.count;
             this.response.results = response.body.results;
           }
         }, errResponse => {
+          this.isSearching = false // Added it just in case
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
 
       getDrillcoreName(id) {
-        this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {params: {fields: 'name,deposit__main_commodity,id', format: 'json'}}).then(response => {
+        this.isSearching = true
+        this.$http.get('https://api.eurocore.rocks/drillcore/' + id, {
+          params: {
+            fields: 'name,deposit__main_commodity,id',
+            format: 'json'
+          }
+        }).then(response => {
+          this.isSearching = false
           console.log(response);
           if (response.status === 200) {
             if (response.body.results.length > 0) {
@@ -384,6 +420,7 @@
             }
           }
         }, errResponse => {
+          this.isSearching = false
           console.log('ERROR: ' + JSON.stringify(errResponse));
         })
       },
@@ -507,7 +544,7 @@
           }
 
           if (commodities.includes(',')) {
-            commodities = commodities.replace(/,/g , '');
+            commodities = commodities.replace(/,/g, '');
             commodities = commodities.split(' ');
             for (const i in commodities) {
               defaultCommodities.push(commodities[i]);
@@ -537,19 +574,19 @@
 
       openData() {
         this.isChartOpen = false;
-        this.$router.push({ path: '/drillcore_data/' + this.drillcoreId, query: { tab: 'data' } })
+        this.$router.push({path: '/drillcore_data/' + this.drillcoreId, query: {tab: 'data'}})
       },
 
       openChart() {
         this.isChartOpen = true;
-        this.$router.push({ path: '/drillcore_data/' + this.drillcoreId, query: { tab: 'chart' } })
+        this.$router.push({path: '/drillcore_data/' + this.drillcoreId, query: {tab: 'chart'}})
       },
 
       openInNewWindow(params) {
         if (typeof (params.width) === 'undefined') {
           params.width = 800;
         }
-        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+        window.open(location.origin + '/#/' + params.object + '/' + params.id, '', 'width=' + params.width + ', height=750');
       },
 
       addResponsiveDesignToCheckboxes() {
@@ -575,7 +612,6 @@
           this.isChartOpen = false;
         }
       },
-
 
 
       /***************************
@@ -643,7 +679,6 @@
       },
 
       resetData() {
-        this.showLabel = true;
         // this.tabIndex = 0; DO NOT RESET!
         this.searchParameters = {
           page: 1,
@@ -654,7 +689,7 @@
           count: 0,
           results: []
         };
-        this.drillcoreName = [ { name: '', deposit__main_commodity: '' } ];
+        this.drillcoreName = [{name: '', deposit__main_commodity: ''}];
         this.dcName = '';
         this.currentlyShownParameters = [];
         this.parameters = [];

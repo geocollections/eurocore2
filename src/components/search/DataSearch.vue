@@ -120,7 +120,7 @@
 
     <div class="row mt-1">
       <div class="col">
-        <spinner v-if="isSearching" message="Searching..."></spinner>
+        <spinner v-if="isSearching" message="Loading data..."></spinner>
         <p v-else-if="!isSearching && (response.count > 0 || response.count !== undefined)">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>
       </div>
