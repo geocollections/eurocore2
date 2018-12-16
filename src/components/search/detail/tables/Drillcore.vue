@@ -7,9 +7,9 @@
         </div>
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive fixed-table">
       <table id="drillcore-table" class="table table-hover table-bordered">
-        <thead class="thead-light">
+        <thead class="thead-light sticky-header">
           <tr>
             <th>ID</th>
             <th>Name</th>

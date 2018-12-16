@@ -7,9 +7,9 @@
         </div>
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive fixed-table">
       <table id="dip-table" class="table table-hover table-bordered">
-        <thead class="thead-light">
+        <thead class="thead-light sticky-header">
         <tr>
           <th>Depth (m)</th>
           <th>Dip</th>
@@ -38,26 +38,6 @@
     },
     props: ['results'],
     name: "dip",
-
-    mounted: function () {
-      this.addFloatingTableHeaders();
-    },
-
-    updated: function () {
-      $('#dip-table').floatThead('reflow');
-    },
-
-    methods: {
-      addFloatingTableHeaders() {
-        $('#dip-table').floatThead({
-          position: 'absolute',
-          zIndex: 1025,
-          top: function () {
-            return $('#main').css('padding-top') === '22px' ? 0 : 98;
-          }
-        });
-      },
-    }
   }
 </script>
 

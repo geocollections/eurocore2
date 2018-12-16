@@ -9,9 +9,9 @@
 
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive fixed-table">
       <table id="structure-table" class="table table-hover table-bordered">
-        <thead class="thead-light">
+        <thead class="thead-light sticky-header">
         <tr>
           <th>Depth (m)</th>
           <th>Depth (m, interval)</th>
@@ -50,26 +50,6 @@
     },
     props: ['results'],
     name: "structure",
-
-    mounted: function () {
-      this.addFloatingTableHeaders();
-    },
-
-    updated: function () {
-      $('#structure-table').floatThead('reflow');
-    },
-
-    methods: {
-      addFloatingTableHeaders() {
-        $('#structure-table').floatThead({
-          position: 'absolute',
-          zIndex: 1025,
-          top: function () {
-            return $('#main').css('padding-top') === '22px' ? 0 : 98;
-          }
-        });
-      },
-    }
   }
 </script>
 

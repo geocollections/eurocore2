@@ -27,6 +27,16 @@ a:hover {
   text-decoration: none;
 }
 
+/* OpenLayers layer switcher position */
+.layer-switcher {
+  top: 0.5rem;
+}
+
+/* Error pages have whole background white */
+.background-color-white {
+  background-color: #fff !important;
+}
+
 /* LOADING SPINNER */
 .loading-overlay {
   position: fixed;
@@ -38,6 +48,21 @@ a:hover {
   width: 100%;
   padding: 50% 0;
 }
+
+
+
+/*******************
+ *** TABLE START ***
+ *******************/
+
+/* Fixes table so scrolling happens inside table */
+.fixed-table {
+  max-height: 65vh;
+}
+
+/*****************
+ *** TABLE END ***
+ *****************/
 
 
 
@@ -66,14 +91,6 @@ a:hover {
 .fa-sort-up, .fa-sort-down {
   color: #6bb745;
 }
-
-/* Defaults:
-      TH - border-bottom: 2px solid #dee2e6;
-      TD - border: 1px solid #dee2e6;
-   New:
-      TH - #cfd5db;
-      TD - #cfd5db
- */
 
 /* Sticky header for responsive table */
 .sticky-header th {
@@ -104,7 +121,7 @@ a:hover {
   box-shadow: 1px 2px 0 #cfd5db;
 }
 
-/* First column will stay on top of other columns */
+/* First tbody column will stay on top of other columns */
 .freeze-column td:first-child {
   background-color: #f2f2f2;
   /* Right border */
@@ -114,18 +131,6 @@ a:hover {
 /************************
  ***  TABLE HEAD END  ***
  ************************/
-
-
-
-/* OpenLayers layer switcher position */
-.layer-switcher {
-  top: 0.5rem;
-}
-
-/* Error pages have whole background white */
-.background-color-white {
-  background-color: #fff !important;
-}
 
 
 

@@ -72,7 +72,7 @@
               <div class="col">
 
 
-                <div class="table-responsive">
+                <div class="table-responsive fixed-table">
 
                   <table id="table-search" class="table table-hover table-bordered" v-bind:class="{ 'freeze-column': freezeColumn }">
                     <thead class="thead-light">
@@ -330,12 +330,7 @@
       setTimeout(function () { this.showLabel = false }.bind(this), 2000);
     },
 
-    mounted: function () {
-      // this.addFloatingTableHeaders();
-    },
-
     updated: function () {
-      // this.reflowFloatThead();
       this.addResponsiveDesignToCheckboxes()
     },
 
@@ -557,20 +552,6 @@
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
       },
 
-      // addFloatingTableHeaders() {
-      //   $('#table-search').floatThead({
-      //     position: 'absolute',
-      //     zIndex: 1025,
-      //     top: function () {
-      //       return $('#main').css('padding-top') === '22px' ? 0 : 98;
-      //     }
-      //   });
-      // },
-
-      // reflowFloatThead() {
-      //   $('#table-search').floatThead('reflow');
-      // },
-
       addResponsiveDesignToCheckboxes() {
         $('#checkboxGroup').find('div').addClass('mr-0 col-6 col-sm-4 col-md-3 col-lg-2 text-center')
       },
@@ -581,16 +562,6 @@
             if (!this.currentlyShownParameters.includes(this.parameters[param])) {
               this.currentlyShownParameters.push(this.parameters[param]);
             }
-          }
-        }
-      },
-
-      // Currently not used because of different logic #54
-      deleteParametersUsingMethod(methodName) {
-        let i = this.currentlyShownParameters.length;
-        while (i--) {
-          if (this.currentlyShownParameters[i].includes(methodName)) {
-            this.currentlyShownParameters.splice(i, 1);
           }
         }
       },
@@ -718,9 +689,5 @@
 
   span {
     white-space: nowrap;
-  }
-
-  .table-responsive {
-    max-height: 65vh;
   }
 </style>

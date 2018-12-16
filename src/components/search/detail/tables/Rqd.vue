@@ -9,9 +9,9 @@
 
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive fixed-table">
       <table id="rqd-table" class="table table-hover table-bordered">
-        <thead class="thead-light">
+        <thead class="thead-light sticky-header">
         <tr>
           <th>Depth from (m)</th>
           <th>Depth to (m)</th>
@@ -46,26 +46,6 @@
     },
     props: ['results'],
     name: "rqd",
-
-    mounted: function () {
-      this.addFloatingTableHeaders();
-    },
-
-    updated: function () {
-      $('#rqd-table').floatThead('reflow');
-    },
-
-    methods: {
-      addFloatingTableHeaders() {
-        $('#rqd-table').floatThead({
-          position: 'absolute',
-          zIndex: 1025,
-          top: function () {
-            return $('#main').css('padding-top') === '22px' ? 0 : 98;
-          }
-        });
-      },
-    }
   }
 </script>
 

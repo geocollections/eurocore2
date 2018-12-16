@@ -9,9 +9,9 @@
       </div>
     </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive fixed-table">
       <table id="sample-table" class="table table-hover table-bordered">
-        <thead class="thead-light">
+        <thead class="thead-light sticky-header">
         <tr>
           <th>ID</th>
           <th>Sample number</th>
@@ -51,15 +51,6 @@
     },
     props: ['results'],
     name: "sample",
-
-    mounted: function () {
-      this.addFloatingTableHeaders();
-    },
-
-    updated: function () {
-      $('#sample-table').floatThead('reflow');
-    },
-
     methods: {
 
       openInNewWindow(params) {
@@ -67,16 +58,6 @@
           params.width = 800;
         }
         window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
-      },
-
-      addFloatingTableHeaders() {
-        $('#sample-table').floatThead({
-          position: 'absolute',
-          zIndex: 1025,
-          top: function () {
-            return $('#main').css('padding-top') === '22px' ? 0 : 98;
-          }
-        });
       },
     }
   }
