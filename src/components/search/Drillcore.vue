@@ -78,7 +78,8 @@
 
     <div class="row mt-3">
       <div class="col">
-        <p v-if="noResults">No results found. Please try again.</p>
+        <p v-if="isSearching">Searching...</p>
+        <p v-else-if="!isSearching && noResults">No results found. Please try again.</p>
         <p v-else>Found <b>{{response.count}}</b> result(s). </p>
       </div>
     </div>

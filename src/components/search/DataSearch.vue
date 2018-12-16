@@ -1,8 +1,6 @@
 <template>
   <div>
 
-    <spinner v-show="isSearching" class="loading-overlay" size="huge" message="Searching..."></spinner>
-
     <div class="row">
       <div class="col">
         <h2>Data Search</h2>
@@ -122,7 +120,8 @@
 
     <div class="row mt-1">
       <div class="col">
-        <p v-if="response.count > 0 || response.count !== undefined">Found <b>{{response.count}}</b> result(s). </p>
+        <spinner v-if="isSearching" message="Searching..."></spinner>
+        <p v-else-if="!isSearching && (response.count > 0 || response.count !== undefined)">Found <b>{{response.count}}</b> result(s). </p>
         <p v-else>No results found. Please try again. </p>
       </div>
     </div>
@@ -348,7 +347,9 @@
 
       watch: {
         'searchParameters.watched': {
-          handler: function () {
+          handler: function (newVal, oldVal) {
+            console.log(newVal)
+            console.log(oldVal)
             this.isSearching = true;
             this.searchEntities(this.searchParameters.watched);
           },
