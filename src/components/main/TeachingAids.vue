@@ -10,9 +10,13 @@
       <div class="col">
 	  	<div class="module-details">
 	  		<h3>{{ module.title }}</h3>
-	        <p><strong>Authors</strong>: {{ module.author }}, {{ module.institution__name }}</p>
+	        <p v-if="module.author"><strong>Authors</strong>: {{ module.author }}, {{ module.institution__name }}</p>
+	        <p v-if="module.institution__name"><strong>Institution</strong>: {{ module.institution__name }}</p>
 	        <p><strong>Description</strong>: {{ module.description }}</p>
-	        <p><strong>Downloads</strong>: <a href="javascript:void(0)" @click="openInNewWindow({url: module.files__url})">{{ module.files__title }}</a></p>
+	        <p><strong>Downloads</strong>: 
+	        	<a v-if="module.files__title" href="javascript:void(0)" @click="openInNewWindow({url: module.files__url})">{{ module.files__title }}</a>
+	        	<a v-else href="javascript:void(0)" @click="openInNewWindow({url: module.files__url})">FILE</a>
+        	</p>
 		</div>
       </div>
     </div>
