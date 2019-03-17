@@ -25,14 +25,22 @@ export default {
   #app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    width: inherit;
+    height: 100%;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    /*width: inherit;*/
   }
 
   #main {
     background-color: #fff!important;
+    /*padding: 120px 15px 0;*/
+    /*width: 100%;*/
+    /*margin: 0 auto;*/
+
     padding: 120px 15px 0;
-    width: 100%;
     margin: 0 auto;
+    flex: 1;
   }
 
   /* Part of removing fixed navbar on smaller screens */

@@ -1,21 +1,23 @@
 @import url('https://fonts.googleapis.com/css?family=Titillium+Web');
 
 html {
-  position: relative;
-  min-height: 100%;
+  /*position: relative;*/
+  /*min-height: 100%;*/
+  height: 100%;
 }
 
 body {
   font-family: Titillium Web, sans-serif!important;
   /* Margin bottom by footer height */
-  margin-bottom: 135px;
+  /*margin-bottom: 135px;*/
+  height: 100%;
   background-color: rgba(0,68,148,.03)!important;
 }
 
 @media (max-width: 768px) {
-  body {
-    margin-bottom: 155px;
-  }
+  /*body {*/
+    /*margin-bottom: 155px;*/
+  /*}*/
 }
 
 h2 {

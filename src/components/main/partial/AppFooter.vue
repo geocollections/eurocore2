@@ -36,9 +36,9 @@
 
 <style scoped>
   .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    /*position: absolute;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
     font-size: 0.7rem;
     padding: 5px 15px 15px;
     text-align: center;
@@ -57,9 +57,13 @@
 	    margin: 10px;
 	  }
   /* Footer logo is 40px for small mobile screens */
-  @media (max-width: 401px) {
+  @media (max-width: 515px) {
     #eitrawLogo {
       height: 40px;
+    }
+
+    #euLogo {
+      height: 34px;
     }
   }
 
