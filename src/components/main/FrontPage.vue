@@ -48,7 +48,9 @@
           collections,
           could be used for building up realistic workshops on ore exploration. For more information about the project
           please visit
-          <a target="_blank" href="https://eitrawmaterials.eu/course/eurocore/">https://eitrawmaterials.eu/course/eurocore/</a>
+          <a style="word-break: break-word" target="_blank" href="https://eitrawmaterials.eu/course/eurocore/">
+            https://eitrawmaterials.eu/course/eurocore/
+          </a>
         </p>
       </div>
     </div>

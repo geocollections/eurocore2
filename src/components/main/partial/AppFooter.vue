@@ -67,4 +67,10 @@
     }
   }
 
+  @media (max-width: 377px) {
+    #euLogo {
+      height: 24px;
+    }
+  }
+
 </style>

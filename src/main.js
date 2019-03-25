@@ -13,6 +13,7 @@ import SocialSharing from 'vue-social-sharing'
 
 import 'izitoast/dist/css/iziToast.min.css'
 import VueCookie from 'vue-cookie'
+import VueLocalStorage from 'vue-localstorage'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
@@ -20,6 +21,7 @@ Vue.use(VueSession);
 Vue.use(VueIziToast);
 Vue.use(SocialSharing);
 Vue.use(VueCookie);
+Vue.use(VueLocalStorage);
 
 Vue.config.productionTip = false;
 
@@ -37,6 +39,12 @@ Vue.http.interceptors.push((request, next) => {
 new Vue({
   el: '#app',
   router,
+  localStorage: {
+    eurocore_cookie_policy: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: { App },
   template: '<App/>'
 });

@@ -4,6 +4,9 @@
     <div id="main" class="container">
       <router-view/>
     </div>
+
+    <cookie-policy-modal></cookie-policy-modal>
+
     <app-footer/>
   </div>
 </template>
@@ -11,9 +14,11 @@
 <script>
 import AppHeader from "./components/main/partial/AppHeader";
 import AppFooter from "./components/main/partial/AppFooter";
+import CookiePolicyModal from "./components/main/partial/CookiePolicy";
 
 export default {
   components: {
+    CookiePolicyModal,
     'app-header': AppHeader,
     'app-footer': AppFooter
   },
