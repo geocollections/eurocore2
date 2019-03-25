@@ -4,7 +4,7 @@ import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
 const api = {
-  url: 'https://api.eurocore.rocks/'
+  url: 'https://api.geocollections.info/'
 };
 
 function fetch (child) {

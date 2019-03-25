@@ -7,10 +7,10 @@
           This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies.
         </span>
 
-        <!--<span>-->
-          <!--Read our -->
-          <!--<a>conditions of use.</a>-->
-        <!--</span>-->
+        <span>
+          Read our
+          <a id="activate-modal-button" @click="showModal = !showModal">conditions of use.</a>
+        </span>
 
         <span class="pl-2">
           <b-button variant="primary" @click="agreeToCookiePolicy">Agree</b-button>
@@ -24,13 +24,19 @@
         </span>
     </div>
 
-    <!-- MODAL -->
-    <!--<b-modal id="cookie-policy" centered scrollable title="Terms of Service, Cookie policy, Privacy Policy">-->
-      <!--<p class="my-4" v-for="i in 20" :key="i">-->
-        <!--Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis-->
-        <!--in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.-->
-      <!--</p>-->
-    <!--</b-modal>-->
+
+    <!--MODAL -->
+    <b-modal id="cookie-policy" :busy="true"
+             v-model="showModal" centered
+             scrollable title="Cookie and Privacy Policy">
+      <div v-if="cookiePolicy !== null" v-html="cookiePolicy.content_en"></div>
+
+      <hr>
+
+      <div v-if="privacyPolicy !== null" v-html="privacyPolicy.content_en"></div>
+
+      <div slot="modal-footer"></div>
+    </b-modal>
 
   </div>
 </template>
@@ -48,7 +54,6 @@
     data() {
       return {
         showCookiePolicy: null,
-        termsOfService: null,
         cookiePolicy: null,
         privacyPolicy: null,
         showModal: false,
@@ -61,12 +66,11 @@
       const userAgreedToCookiePolicy = this.$localStorage.get('eurocore_cookie_policy')
       if (userAgreedToCookiePolicy) {
         this.showCookiePolicy = false
-        // fetchPage(67).then((response) => {this.cookiePolicy = response.results[0]});
-        // fetchPage(68).then((response) => {this.privacyPolicy = response.results[0]});
-        // fetchPage(69).then((response) => {this.termsOfService = response.results[0]});
       } else {
         this.showCookiePolicy = true
       }
+      fetchPage(67).then((response) => {this.cookiePolicy = response.body.results[0]});
+      fetchPage(68).then((response) => {this.privacyPolicy = response.body.results[0]});
     },
     methods: {
       agreeToCookiePolicy() {
@@ -88,6 +92,16 @@
     padding: 8px 16px;
     box-shadow: 0 4px 10px #000;
     z-index: 1; /* Maybe need to make it even more higher */
+  }
+
+  #activate-modal-button {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  #activate-modal-button:hover {
+    cursor: pointer;
+    color: #0056B3;
   }
 
   .exit-button {
