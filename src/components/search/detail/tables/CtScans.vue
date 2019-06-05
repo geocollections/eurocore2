@@ -12,11 +12,11 @@
         <thead class="thead-light sticky-header">
         <tr>
           <th>ID</th>
-          <th>Depth (m)</th>
-          <th>Depth (m, interval)</th>
-          <th>Instrument</th>
-          <th>Person/Institution</th>
+          <th>Depth form (m)</th>
+          <th>Depth to (m)</th>
+          <th>Lab</th>
           <th>Date</th>
+          <th>Remarks</th>
           <!-- ISSUE #44 -->
           <!--<th></th>-->
         </tr>
@@ -30,9 +30,12 @@
           </td>
           <td>{{entity.depth}}</td>
           <td>{{entity.end_depth}}</td>
-          <td>{{entity.instrument__instrument}}</td>
-          <td>{{entity.agent__name}}</td>
-          <td>{{entity.date | formatDate}}</td>
+          <td>{{entity.lab__lab}}</td>
+          <td>{{entity.date_free}}</td>
+          <td>{{entity.remarks}}</td>
+<!--          <td>{{entity.instrument__instrument}}</td>-->
+<!--          <td>{{entity.agent__name}}</td>-->
+<!--          <td>{{entity.date | formatDate}}</td>-->
           <!-- ISSUE #44 -->
           <!--<td class="tableexport-ignore">-->
             <!--<b>-->

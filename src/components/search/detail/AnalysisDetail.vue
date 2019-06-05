@@ -27,7 +27,8 @@
                   <td>Drillcore</td>
                   <td>
                     <!--<router-link :to="{ path: '/drillcore/' + analysis[0].drillcore__id }">{{analysis[0].drillcore__name}}</router-link>-->
-                    <a href="javascript:void(0)" @click="openInNewWindow({object: 'drillcore', id: analysis[0].drillcore__id})">
+                    <a href="javascript:void(0)"
+                       @click="openInNewWindow({object: 'drillcore', id: analysis[0].drillcore__id})">
                       {{analysis[0].drillcore__name}}
                     </a>
                   </td>
@@ -36,7 +37,8 @@
                 <tr v-if="analysis[0].sample__sample_number">
                   <td>Sample</td>
                   <td>
-                    <a href="javascript:void(0)" @click="openInNewWindow({object: 'sample', id: analysis[0].sample__id})">{{analysis[0].sample__sample_number}}</a>
+                    <a href="javascript:void(0)"
+                       @click="openInNewWindow({object: 'sample', id: analysis[0].sample__id})">{{analysis[0].sample__sample_number}}</a>
                     <!--<router-link target="_" :to="{ path: '/sample/' + analysis[0].sample__id }">{{analysis[0].sample__sample_number}}</router-link>-->
                   </td>
                 </tr>
@@ -121,7 +123,8 @@
 
               <div class="row" v-if="spectraCount > 0">
                 <div class="col">
-                  <a class="btn btn-primary mb-3" href="javascript:void(0)" @click="openInNewWindow({object: 'spectrum', id: id})">Show spectra ({{spectraCount}})</a>
+                  <a class="btn btn-primary mb-3" href="javascript:void(0)"
+                     @click="openInNewWindow({object: 'spectrum', id: id})">Show spectra ({{spectraCount}})</a>
                   <!--<router-link :to="{ path: '/spectrum/' + id }" class="btn btn-primary mb-3">Show spectra ({{spectraCount}})</router-link>-->
                 </div>
               </div>
@@ -134,27 +137,30 @@
               <h3>Analysis results</h3>
 
               <div class="mb-2">
-                <export-buttons filename="analysisResults" />
+                <export-buttons filename="analysisResults"/>
               </div>
 
               <table id="table-search" class="table table-bordered table-hover">
                 <thead class="thead-light">
                 <tr class="th-sort">
                   <th>
-                <span v-if="analysisResults.length > 1" @click="changeOrder('parameter__parameter')">
-                  <font-awesome-icon v-if="analysisResultsOrder !== 'parameter__parameter' && analysisResultsOrder !== '-parameter__parameter'" :icon="icon"/>
-                  <font-awesome-icon v-else :icon="sortingDirection" />
-                  Parameter
-                </span>
+                    <span v-if="analysisResults.length > 1" @click="changeOrder('parameter__parameter')">
+                      <font-awesome-icon
+                        v-if="analysisResultsOrder !== 'parameter__parameter' && analysisResultsOrder !== '-parameter__parameter'"
+                        :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection"/>
+                      Parameter
+                    </span>
                     <div v-else>Parameter</div>
                   </th>
                   <th>Unit</th>
                   <th>
-                <span v-if="analysisResults.length > 1" @click="changeOrder('value')">
-                  <font-awesome-icon v-if="analysisResultsOrder !== 'value' && analysisResultsOrder !== '-value'" :icon="icon"/>
-                  <font-awesome-icon v-else :icon="sortingDirection" />
-                  Value
-                </span>
+                    <span v-if="analysisResults.length > 1" @click="changeOrder('value')">
+                      <font-awesome-icon v-if="analysisResultsOrder !== 'value' && analysisResultsOrder !== '-value'"
+                                     :icon="icon"/>
+                      <font-awesome-icon v-else :icon="sortingDirection"/>
+                      Value
+                    </span>
                     <div v-else>Value</div>
                   </th>
                   <th>Error</th>
@@ -183,14 +189,28 @@
             <div class="col-12" v-if="attachmentImages.length > 0">
               <h3>Slices</h3>
 
+              <!--              <div>-->
+              <!--                <vs-images>-->
+              <!--                  <vs-image v-for="entity in attachmentImages" v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"-->
+              <!--                            :src="helper.getFileLink({size: 'small', filename: entity.filename})"/>-->
+              <!--                </vs-images>-->
+              <!--              </div>-->
+
               <div class="row">
-                <div class="col-6 text-center mb-2" v-for="entity in attachmentImages" v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg') || entity.filename.endsWith('tif')">
+                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"
+                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">
 
                   <a data-fancybox="slices" :href="helper.getFileLink({size: 'large', filename: entity.filename})"
                      :data-caption="setCaption({title: entity.title, description: entity.description})">
-                    <img :src="helper.getFileLink({size: 'small', filename: entity.filename})" class="img-fluid img-thumbnail"/>
+                    <img :id="'icon-' + index"
+                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"
+                         class="img-fluid img-thumbnail"/>
                   </a>
-                  <p class="h6 text-left pl-2">{{ entity.title }}</p>
+                  <!--                  <p class="h6 text-left pl-2">{{ entity.title }}</p>-->
+
+                  <b-tooltip :target="'icon-' + index" placement="auto">
+                    <b>Title:</b> {{ entity.title }}<br/>
+                  </b-tooltip>
 
                 </div>
               </div>
@@ -202,7 +222,8 @@
               <h3>Videos</h3>
 
               <div class="row">
-                <div class="col-12 mt-3" v-for="entity in attachmentVideos" v-if="entity.filename.endsWith('mp4') | entity.filename.endsWith('webm') || entity.filename.endsWith('gif')">
+                <div class="col-12 mt-3" v-for="entity in attachmentVideos"
+                     v-if="entity.filename.endsWith('mp4') | entity.filename.endsWith('webm') || entity.filename.endsWith('gif')">
 
                   <video width="100%" controls loop>
                     <source :src="helper.getFileLink({filename: entity.filename})" type="video/mp4">
@@ -220,10 +241,15 @@
 
               <table class="table table-bordered table-hover th-styles">
                 <tr v-for="entity in attachmentDataFiles">
-                  <td>File</td>
+                  <td>File
+                    <span v-if="entity.title">
+                      (Title:<span style="font-weight: normal"> {{ entity.title }}</span>)
+                    </span>
+                  </td>
                   <td class="text-center">
-                    <a :title="entity.title" href="javascript:void(0)" @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
-                      <font-awesome-icon :icon="faFile" size="2x" />
+                    <a :title="entity.title" href="javascript:void(0)"
+                       @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
+                      <font-awesome-icon :icon="faFile" size="2x"/>
                     </a>
                   </td>
                   <!-- TODO: Add download button -->
@@ -311,7 +337,7 @@
     },
     updated: function () {
       $('[data-fancybox="slices"]').fancybox({
-        buttons : [
+        buttons: [
           'slideShow',
           'fullScreen',
           'thumbs',
@@ -320,10 +346,10 @@
           'arrowRight',
           'close'
         ],
-        thumbs : {
-          autoStart : true
+        thumbs: {
+          autoStart: true
         },
-        transitionEffect : "slide",
+        transitionEffect: "slide",
       });
     },
     watch: {
@@ -398,7 +424,7 @@
       },
 
       getAnalysisAttachments(id, type) {
-        let url = 'https://api.eurocore.rocks/attachment/?analysis__id=' + id + '&format=json'
+        let url = 'https://api.eurocore.rocks/attachment/?analysis__id=' + id + '&order_by=title&format=json'
         if (type === 'image') url += '&attachment_type__value__icontains=image'
         else if (type === 'video') url += '&attachment_type__value__icontains=video'
         else if (type === 'data file') url += '&attachment_type__value__icontains=data file'
@@ -469,14 +495,14 @@
         if (typeof (params.width) === 'undefined') {
           params.width = 800;
         }
-        window.open(location.origin + '/#/' + params.object + '/' + params.id,'', 'width=' + params.width + ', height=750');
+        window.open(location.origin + '/#/' + params.object + '/' + params.id, '', 'width=' + params.width + ', height=750');
       },
 
       openUrlInNewWindow(params) {
         if (typeof (params.width) === 'undefined') {
           params.width = 800;
         }
-        window.open(params.url,'', 'width=' + params.width + ', height=750');
+        window.open(params.url, '', 'width=' + params.width + ', height=750');
       },
 
       resetData() {
@@ -501,5 +527,53 @@
 
   .th-sort > th > span:hover {
     color: #000;
+  }
+
+  /* EXTRA SMALL DEVICES */
+  @media (max-width: 575.98px) {
+    .img-thumbnail {
+      max-height: 140px;
+      max-width: 95px;
+    }
+  }
+
+  /* SMALL DEVICES */
+  @media (min-width: 576px) and (max-width: 767.98px) {
+    .img-thumbnail {
+      max-height: 200px;
+      max-width: 170px;
+    }
+  }
+
+  /* MEDIUM DEVICES */
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .img-thumbnail {
+      max-height: 150px;
+      max-width: 100px;
+    }
+  }
+
+  /* MEDIUM DEVICES */
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .img-thumbnail {
+      max-height: 150px;
+      max-width: 100px;
+    }
+  }
+
+  /* LARGE DEVICES */
+  @media (min-width: 992px) and (max-width: 1199.98px) {
+    .img-thumbnail {
+      max-height: 150px;
+      max-width: 150px;
+    }
+  }
+
+  /* EXTRA LARGE DEVICES */
+  @media (min-width: 1200px) {
+    .img-thumbnail {
+      max-height: 200px;
+      max-width: 175px;
+    }
   }
 </style>

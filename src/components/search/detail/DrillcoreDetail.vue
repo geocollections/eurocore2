@@ -328,7 +328,8 @@
             params: {
               drillcore__id: id,
               analysis_method__method: 'CT',
-              format: 'json'
+              format: 'json',
+              order_by: 'depth'
             }
           }).then(response => {
             console.log(response.body.results);

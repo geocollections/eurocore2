@@ -12,8 +12,10 @@ import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/v
 import SocialSharing from 'vue-social-sharing'
 
 import 'izitoast/dist/css/iziToast.min.css'
+// import 'vuesax/dist/vuesax.css' // Todo: Vuesax breaks bootstrap navbar collapse style !!!
 import VueCookie from 'vue-cookie'
 import VueLocalStorage from 'vue-localstorage'
+import Vuesax from 'vuesax'
 
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
@@ -22,6 +24,7 @@ Vue.use(VueIziToast);
 Vue.use(SocialSharing);
 Vue.use(VueCookie);
 Vue.use(VueLocalStorage);
+Vue.use(Vuesax);
 
 Vue.config.productionTip = false;
 
