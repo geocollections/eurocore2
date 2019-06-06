@@ -123,8 +123,8 @@
           </b-tabs>
 
           <div class="row">
-            <div class="col" v-if="attachmentImages.length > 0">
-              <h3>Cross-sections</h3>
+            <div class="col" v-if="attachmentDataFiles.length > 0">
+              <h3>Stacked images</h3>
 
               <p>Tiff stacks are for image viewers that can handle layered tiff's, e.g.
                 <a target="_blank" href="https://imagej.nih.gov/ij/">ImageJ</a>.
@@ -136,53 +136,18 @@
                 (recommended but for Windows only). Low memory usage, switching of view orientation.
               </p>
 
-              <div class="vs-component vs-images vs-images-hover-default">
-                <ul class="vs-ul-images vs-images--ul">
-                  <li class="vs-image custom-size" v-for="(entity, index) in attachmentImages">
-                    <div class="con-vs-image" :id="'icon-' + index">
-
-
-                      <a data-fancybox="slices"
-                         v-if="entity.filename !== null"
-                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
-                         :data-caption="setCaption({title: entity.title, description: entity.description})">
-
-                        <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
-
-                        <div class="vs-image--img"
-                             v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"
-                             :style="'background-image: url(' + helper.getFileLink({size: 'small', filename: entity.filename}) + ')'"></div>
-
-                        <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
-                      </a>
-
-                      <div class="vs-image--img no-image" v-if="entity.filename === null"><!-- Filename missing --></div>
-                    </div>
-
-                    <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
-                  </li>
-                </ul>
-              </div>
-
-
-              <!-- Old and not best -->
-              <!--              <div class="row">-->
-              <!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
-              <!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
-
-              <!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
-              <!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
-              <!--                    <img :id="'icon-' + index"-->
-              <!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
-              <!--                         class="img-fluid img-thumbnail"/>-->
-              <!--                  </a>-->
-
-              <!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
-
-              <!--                </div>-->
-              <!--              </div>-->
-
-
+              <table class="table table-bordered table-hover th-styles">
+                <tr v-for="entity in attachmentDataFiles">
+                  <td>{{ entity.title }} ({{ entity.filesize }})</td>
+                  <td class="text-center">
+                    <a title="Open original" href="javascript:void(0)"
+                       @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
+                      <font-awesome-icon :icon="faFile" size="2x"/>
+                    </a>
+                  </td>
+                  <!-- TODO: Add download button -->
+                </tr>
+              </table>
             </div>
           </div>
 
@@ -255,6 +220,62 @@
         <div class="col-md-6">
 
           <div class="row">
+
+            <div class="col" v-if="attachmentImages.length > 0">
+              <h3>Cross-sections</h3>
+
+              <div class="vs-component vs-images vs-images-hover-default">
+                <ul class="vs-ul-images vs-images--ul">
+                  <li class="vs-image custom-size" v-for="(entity, index) in attachmentImages">
+                    <div class="con-vs-image" :id="'icon-' + index">
+
+
+                      <a data-fancybox="slices"
+                         v-if="entity.filename !== null"
+                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
+                         :data-caption="setCaption({title: entity.title, description: entity.description})">
+
+                        <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
+
+                        <div class="vs-image--img"
+                             v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"
+                             :style="'background-image: url(' + helper.getFileLink({size: 'small', filename: entity.filename}) + ')'"></div>
+
+                        <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
+                      </a>
+
+                      <div class="vs-image--img no-image" v-if="entity.filename === null">
+                        <!-- Filename missing --></div>
+                    </div>
+
+                    <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
+                  </li>
+                </ul>
+              </div>
+
+
+              <!-- Old and not best -->
+              <!--              <div class="row">-->
+              <!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
+              <!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
+
+              <!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
+              <!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
+              <!--                    <img :id="'icon-' + index"-->
+              <!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
+              <!--                         class="img-fluid img-thumbnail"/>-->
+              <!--                  </a>-->
+
+              <!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
+
+              <!--                </div>-->
+              <!--              </div>-->
+
+
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-12 mt-2" v-if="attachmentVideos.length > 0">
               <h3>Videos</h3>
 
@@ -272,24 +293,6 @@
               </div>
 
             </div>
-
-            <div class="col-12 mt-2" v-if="attachmentDataFiles.length > 0">
-              <h3>Stacked images</h3>
-
-              <table class="table table-bordered table-hover th-styles">
-                <tr v-for="entity in attachmentDataFiles">
-                  <td>{{ entity.title }} ({{ entity.filesize }})</td>
-                  <td class="text-center">
-                    <a title="Open original" href="javascript:void(0)"
-                       @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
-                      <font-awesome-icon :icon="faFile" size="2x"/>
-                    </a>
-                  </td>
-                  <!-- TODO: Add download button -->
-                </tr>
-              </table>
-            </div>
-
           </div>
 
         </div>
@@ -567,17 +570,17 @@
           return orderedParams
         }
         return parameters
-    },
+      },
 
-    resetData() {
-      this.analysis = null;
-      this.analysisResults = null;
-      this.analysisResultsOrder = 'parameter__parameter';
-      this.spectraCount = 0;
-      this.drillcoreDiameter = null;
-      this.acquisitionParams = [];
+      resetData() {
+        this.analysis = null;
+        this.analysisResults = null;
+        this.analysisResultsOrder = 'parameter__parameter';
+        this.spectraCount = 0;
+        this.drillcoreDiameter = null;
+        this.acquisitionParams = [];
+      }
     }
-  }
   }
 </script>
 
