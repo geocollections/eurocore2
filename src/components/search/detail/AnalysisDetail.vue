@@ -122,6 +122,70 @@
             </b-tab>
           </b-tabs>
 
+          <div class="row">
+            <div class="col" v-if="attachmentImages.length > 0">
+              <h3>Cross-sections</h3>
+
+              <p>Tiff stacks are for image viewers that can handle layered tiff's, e.g.
+                <a target="_blank" href="https://imagej.nih.gov/ij/">ImageJ</a>.
+                Caution: all data will be loaded into memory.
+              </p>
+
+              <p>Tiff with tiles is for
+                <a target="_blank" href="http://www.thygraphics.com">ImageView2D</a>
+                (recommended but for Windows only). Low memory usage, switching of view orientation.
+              </p>
+
+              <div class="vs-component vs-images vs-images-hover-default">
+                <ul class="vs-ul-images vs-images--ul">
+                  <li class="vs-image custom-size" v-for="(entity, index) in attachmentImages">
+                    <div class="con-vs-image" :id="'icon-' + index">
+
+
+                      <a data-fancybox="slices"
+                         v-if="entity.filename !== null"
+                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
+                         :data-caption="setCaption({title: entity.title, description: entity.description})">
+
+                        <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
+
+                        <div class="vs-image--img"
+                             v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"
+                             :style="'background-image: url(' + helper.getFileLink({size: 'small', filename: entity.filename}) + ')'"></div>
+
+                        <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
+                      </a>
+
+                      <div class="vs-image--img no-image" v-if="entity.filename === null"><!-- Filename missing --></div>
+                    </div>
+
+                    <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
+                  </li>
+                </ul>
+              </div>
+
+
+              <!-- Old and not best -->
+              <!--              <div class="row">-->
+              <!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
+              <!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
+
+              <!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
+              <!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
+              <!--                    <img :id="'icon-' + index"-->
+              <!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
+              <!--                         class="img-fluid img-thumbnail"/>-->
+              <!--                  </a>-->
+
+              <!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
+
+              <!--                </div>-->
+              <!--              </div>-->
+
+
+            </div>
+          </div>
+
 
           <div class="row">
             <div class="col">
@@ -191,59 +255,6 @@
         <div class="col-md-6">
 
           <div class="row">
-            <div class="col-12" v-if="attachmentImages.length > 0">
-              <h3>Cross-sections</h3>
-
-              <div class="vs-component vs-images vs-images-hover-default">
-                <ul class="vs-ul-images vs-images--ul">
-                  <li class="vs-image custom-size" v-for="(entity, index) in attachmentImages">
-                    <div class="con-vs-image" :id="'icon-' + index">
-
-
-                      <a data-fancybox="slices"
-                         v-if="entity.filename !== null"
-                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
-                         :data-caption="setCaption({title: entity.title, description: entity.description})">
-
-                        <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
-
-                        <div class="vs-image--img"
-                             v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"
-                             :style="'background-image: url(' + helper.getFileLink({size: 'small', filename: entity.filename}) + ')'"></div>
-
-                        <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
-                      </a>
-
-                      <div class="vs-image--img no-image" v-if="entity.filename === null">
-                        <!-- Filename missing --></div>
-                    </div>
-
-                    <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
-                  </li>
-                </ul>
-              </div>
-
-
-              <!-- Old and not best -->
-              <!--              <div class="row">-->
-              <!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
-              <!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
-
-              <!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
-              <!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
-              <!--                    <img :id="'icon-' + index"-->
-              <!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
-              <!--                         class="img-fluid img-thumbnail"/>-->
-              <!--                  </a>-->
-
-              <!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
-
-              <!--                </div>-->
-              <!--              </div>-->
-
-
-            </div>
-
             <div class="col-12 mt-2" v-if="attachmentVideos.length > 0">
               <h3>Videos</h3>
 
@@ -535,24 +546,27 @@
       },
 
       sortAcquisitionParameters(parameters) {
-        const orderedParams = {};
+        if (parameters !== null) {
+          const orderedParams = {};
 
-        Object.keys(parameters).sort().forEach(function (key) {
+          Object.keys(parameters).sort().forEach(function (key) {
 
-          // Sorting using this order: #72
-          orderedParams['voltage'] = parameters['voltage']
-          orderedParams['prefilter'] = parameters['prefilter']
-          orderedParams['tube current'] = parameters['tube current']
-          orderedParams['exposure time per projection'] = parameters['exposure time per projection']
-          orderedParams['number of projections'] = parameters['number of projections']
-          orderedParams['facility'] = parameters['facility']
-          orderedParams['lateral voxel size'] = parameters['lateral voxel size']
-          orderedParams['axial voxel size'] = parameters['axial voxel size']
-          orderedParams['grey value of     0 corresponds to attenuation coefficient'] = parameters['grey value of     0 corresponds to attenuation coefficient']
-          orderedParams['grey value of 65535 corresponds to attenuation coefficient'] = parameters['grey value of 65535 corresponds to attenuation coefficient']
-        });
+            // Sorting using this order: #72
+            orderedParams['voltage'] = parameters['voltage']
+            orderedParams['prefilter'] = parameters['prefilter']
+            orderedParams['tube current'] = parameters['tube current']
+            orderedParams['exposure time per projection'] = parameters['exposure time per projection']
+            orderedParams['number of projections'] = parameters['number of projections']
+            orderedParams['facility'] = parameters['facility']
+            orderedParams['lateral voxel size'] = parameters['lateral voxel size']
+            orderedParams['axial voxel size'] = parameters['axial voxel size']
+            orderedParams['grey value of     0 corresponds to attenuation coefficient'] = parameters['grey value of     0 corresponds to attenuation coefficient']
+            orderedParams['grey value of 65535 corresponds to attenuation coefficient'] = parameters['grey value of 65535 corresponds to attenuation coefficient']
+          });
 
-      return orderedParams
+          return orderedParams
+        }
+        return parameters
     },
 
     resetData() {
