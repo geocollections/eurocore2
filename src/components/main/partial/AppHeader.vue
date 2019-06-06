@@ -215,4 +215,14 @@
     font-size: 0.9rem;
   }
 
+  /* Vuesax override because vuesax overrides bootstrap */
+  .collapse {
+    display: none;
+  }
+
+  /* Vuesax override because vuesax overrides bootstrap */
+  .collapse.show {
+    display: block;
+  }
+
 </style>

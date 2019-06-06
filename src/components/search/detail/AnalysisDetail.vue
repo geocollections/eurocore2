@@ -54,13 +54,18 @@
                 </tr>
 
                 <tr v-if="this.drillcoreDiameter && analysis[0].analysis_method__method === 'CT'">
-                  <td>Diameter</td>
+                  <td>Core diameter (mm)</td>
                   <td>{{this.drillcoreDiameter[0].diameter}}</td>
                 </tr>
 
                 <tr v-if="analysis[0].analysis_method__method">
                   <td>Method</td>
                   <td>{{analysis[0].analysis_method__method}}</td>
+                </tr>
+
+                <tr v-if="analysis[0].analysis_method__remarks">
+                  <td>CT (computer_tomography)</td>
+                  <td>{{analysis[0].analysis_method__remarks}}</td>
                 </tr>
 
                 <tr v-if="analysis[0].lab__lab">
@@ -108,6 +113,7 @@
             <b-tab v-if="analysis[0].acquisition_params" title="Acquisition parameters">
               <table class="table table-bordered table-hover th-styles mt-2">
 
+                <!-- Todo: Certain order!!! -->
                 <tr v-for="(value, key) in analysis[0].acquisition_params">
                   <td>{{key}}</td>
                   <td>{{value}}</td>
@@ -157,7 +163,7 @@
                   <th>
                     <span v-if="analysisResults.length > 1" @click="changeOrder('value')">
                       <font-awesome-icon v-if="analysisResultsOrder !== 'value' && analysisResultsOrder !== '-value'"
-                                     :icon="icon"/>
+                                         :icon="icon"/>
                       <font-awesome-icon v-else :icon="sortingDirection"/>
                       Value
                     </span>
@@ -187,33 +193,53 @@
 
           <div class="row">
             <div class="col-12" v-if="attachmentImages.length > 0">
-              <h3>Slices</h3>
+              <h3>Cross-sections</h3>
 
-              <!--              <div>-->
-              <!--                <vs-images>-->
-              <!--                  <vs-image v-for="entity in attachmentImages" v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"-->
-              <!--                            :src="helper.getFileLink({size: 'small', filename: entity.filename})"/>-->
-              <!--                </vs-images>-->
-              <!--              </div>-->
+              <div class="vs-component vs-images vs-images-hover-default">
+                <ul class="vs-ul-images vs-images--ul">
+                  <li class="vs-image custom-size" v-for="(entity, index) in attachmentImages">
+                    <div class="con-vs-image" :id="'icon-' + index">
 
-              <div class="row">
-                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"
-                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">
 
-                  <a data-fancybox="slices" :href="helper.getFileLink({size: 'large', filename: entity.filename})"
-                     :data-caption="setCaption({title: entity.title, description: entity.description})">
-                    <img :id="'icon-' + index"
-                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"
-                         class="img-fluid img-thumbnail"/>
-                  </a>
-                  <!--                  <p class="h6 text-left pl-2">{{ entity.title }}</p>-->
+                      <a data-fancybox="slices"
+                         v-if="entity.filename !== null"
+                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
+                         :data-caption="setCaption({title: entity.title, description: entity.description})">
 
-                  <b-tooltip :target="'icon-' + index" placement="auto">
-                    <b>Title:</b> {{ entity.title }}<br/>
-                  </b-tooltip>
+                        <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
 
-                </div>
+                        <div class="vs-image--img"
+                             v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')"
+                             :style="'background-image: url(' + helper.getFileLink({size: 'small', filename: entity.filename}) + ')'"></div>
+
+                        <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
+                      </a>
+
+                      <div class="vs-image--img no-image" v-if="entity.filename === null"><!-- Filename missing --></div>
+                    </div>
+
+                    <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
+                  </li>
+                </ul>
               </div>
+
+
+              <!-- Old and not best -->
+<!--              <div class="row">-->
+<!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
+<!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
+
+<!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
+<!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
+<!--                    <img :id="'icon-' + index"-->
+<!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
+<!--                         class="img-fluid img-thumbnail"/>-->
+<!--                  </a>-->
+
+<!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
+
+<!--                </div>-->
+<!--              </div>-->
 
 
             </div>
@@ -241,13 +267,9 @@
 
               <table class="table table-bordered table-hover th-styles">
                 <tr v-for="entity in attachmentDataFiles">
-                  <td>File
-                    <span v-if="entity.title">
-                      (Title:<span style="font-weight: normal"> {{ entity.title }}</span>)
-                    </span>
-                  </td>
+                  <td>{{ entity.title }} ({{ entity.filesize }})</td>
                   <td class="text-center">
-                    <a :title="entity.title" href="javascript:void(0)"
+                    <a title="Open original" href="javascript:void(0)"
                        @click="openUrlInNewWindow({url: helper.getFileLink({filename: entity.filename})})">
                       <font-awesome-icon :icon="faFile" size="2x"/>
                     </a>
@@ -337,6 +359,7 @@
     },
     updated: function () {
       $('[data-fancybox="slices"]').fancybox({
+        loop: true,
         buttons: [
           'slideShow',
           'fullScreen',
@@ -527,6 +550,16 @@
 
   .th-sort > th > span:hover {
     color: #000;
+  }
+
+  /* This makes images come 3 in a row */
+  .vs-image {
+    width: calc(33% - 4px);
+  }
+
+  /* Makes image nicer, does not zoom in */
+  .vs-image--img {
+    background-size: cover;
   }
 
   /* EXTRA SMALL DEVICES */

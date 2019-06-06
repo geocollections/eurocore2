@@ -12,7 +12,7 @@ import VueIziToast from 'vue-izitoast' // https://github.com/arthurvasconcelos/v
 import SocialSharing from 'vue-social-sharing'
 
 import 'izitoast/dist/css/iziToast.min.css'
-// import 'vuesax/dist/vuesax.css' // Todo: Vuesax breaks bootstrap navbar collapse style !!!
+import 'vuesax/dist/vuesax.css' // Todo: Vuesax breaks bootstrap navbar collapse style !!!
 import VueCookie from 'vue-cookie'
 import VueLocalStorage from 'vue-localstorage'
 import Vuesax from 'vuesax'
