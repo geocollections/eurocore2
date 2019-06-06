@@ -60,12 +60,12 @@
 
                 <tr v-if="analysis[0].analysis_method__method">
                   <td>Method</td>
-                  <td>{{analysis[0].analysis_method__method}}</td>
-                </tr>
-
-                <tr v-if="analysis[0].analysis_method__remarks">
-                  <td>CT (computer_tomography)</td>
-                  <td>{{analysis[0].analysis_method__remarks}}</td>
+                  <td>
+                    {{analysis[0].analysis_method__method}}
+                    <span v-if="analysis[0].analysis_method__remarks">
+                      ({{ analysis[0].analysis_method__remarks }})
+                    </span>
+                  </td>
                 </tr>
 
                 <tr v-if="analysis[0].lab__lab">
@@ -110,13 +110,12 @@
               </table>
             </b-tab>
 
-            <b-tab v-if="analysis[0].acquisition_params" title="Acquisition parameters">
+            <b-tab v-if="acquisitionParams" title="Acquisition parameters">
               <table class="table table-bordered table-hover th-styles mt-2">
 
-                <!-- Todo: Certain order!!! -->
-                <tr v-for="(value, key) in analysis[0].acquisition_params">
+                <tr v-for="(value, key) in  acquisitionParams">
                   <td>{{key}}</td>
-                  <td>{{value}}</td>
+                  <td style="white-space: nowrap;">{{value}}</td>
                 </tr>
 
               </table>
@@ -215,7 +214,8 @@
                         <div v-else class="vs-image--img no-image"><!-- Unsupported format --></div>
                       </a>
 
-                      <div class="vs-image--img no-image" v-if="entity.filename === null"><!-- Filename missing --></div>
+                      <div class="vs-image--img no-image" v-if="entity.filename === null">
+                        <!-- Filename missing --></div>
                     </div>
 
                     <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>
@@ -225,21 +225,21 @@
 
 
               <!-- Old and not best -->
-<!--              <div class="row">-->
-<!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
-<!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
+              <!--              <div class="row">-->
+              <!--                <div class="col-4 text-center mb-2" v-for="(entity, index) in attachmentImages"-->
+              <!--                     v-if="entity.filename.endsWith('png') || entity.filename.endsWith('jpg') || entity.filename.endsWith('jpeg') || entity.filename.endsWith('svg')">-->
 
-<!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
-<!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
-<!--                    <img :id="'icon-' + index"-->
-<!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
-<!--                         class="img-fluid img-thumbnail"/>-->
-<!--                  </a>-->
+              <!--                  <a data-fancybox="slices-old" :href="helper.getFileLink({size: 'large', filename: entity.filename})"-->
+              <!--                     :data-caption="setCaption({title: entity.title, description: entity.description})">-->
+              <!--                    <img :id="'icon-' + index"-->
+              <!--                         :src="helper.getFileLink({size: 'small', filename: entity.filename})"-->
+              <!--                         class="img-fluid img-thumbnail"/>-->
+              <!--                  </a>-->
 
-<!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
+              <!--                  <b-tooltip :target="'icon-' + index" placement="auto">{{ entity.title }}</b-tooltip>-->
 
-<!--                </div>-->
-<!--              </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
 
 
             </div>
@@ -328,6 +328,7 @@
         attachmentVideos: [],
         attachmentDataFiles: [],
         drillcoreDiameter: null,
+        acquisitionParams: [],
       }
     },
     metaInfo() {
@@ -389,6 +390,10 @@
         this.getAnalysisResultById(this.id);
       },
       'analysis': function (newVal, oldVal) {
+        if (typeof newVal !== 'undefined' && newVal !== null && newVal.length > 0) {
+          this.acquisitionParams = this.sortAcquisitionParameters(newVal[0].acquisition_params);
+        }
+
         if (newVal == null) {
           $('body')[0].setAttribute('class', 'background-color-white')
         } else {
@@ -404,7 +409,9 @@
           console.log(response);
           if (response.status === 200) {
             this.analysis = response.body.results;
-            this.getDrillcoreDiameter(this.analysis[0])
+            if (typeof this.analysis !== 'undefined') {
+              this.getDrillcoreDiameter(this.analysis[0])
+            }
           }
         }, errResponse => {
           this.isSearching = false
@@ -471,7 +478,6 @@
       },
 
       getDrillcoreDiameter(params) {
-        console.log(params)
         this.$http.get('https://api.eurocore.rocks/drillcore_diameter/', {
           params: {
             drillcore__id: params.drillcore__id,
@@ -528,14 +534,36 @@
         window.open(params.url, '', 'width=' + params.width + ', height=750');
       },
 
-      resetData() {
-        this.analysis = null;
-        this.analysisResults = null;
-        this.analysisResultsOrder = 'parameter__parameter';
-        this.spectraCount = 0;
-        this.drillcoreDiameter = null;
-      }
+      sortAcquisitionParameters(parameters) {
+        const orderedParams = {};
+
+        Object.keys(parameters).sort().forEach(function (key) {
+
+          // Sorting using this order: #72
+          orderedParams['voltage'] = parameters['voltage']
+          orderedParams['prefilter'] = parameters['prefilter']
+          orderedParams['tube current'] = parameters['tube current']
+          orderedParams['exposure time per projection'] = parameters['exposure time per projection']
+          orderedParams['number of projections'] = parameters['number of projections']
+          orderedParams['facility'] = parameters['facility']
+          orderedParams['lateral voxel size'] = parameters['lateral voxel size']
+          orderedParams['axial voxel size'] = parameters['axial voxel size']
+          orderedParams['grey value of     0 corresponds to attenuation coefficient'] = parameters['grey value of     0 corresponds to attenuation coefficient']
+          orderedParams['grey value of 65535 corresponds to attenuation coefficient'] = parameters['grey value of 65535 corresponds to attenuation coefficient']
+        });
+
+      return orderedParams
+    },
+
+    resetData() {
+      this.analysis = null;
+      this.analysisResults = null;
+      this.analysisResultsOrder = 'parameter__parameter';
+      this.spectraCount = 0;
+      this.drillcoreDiameter = null;
+      this.acquisitionParams = [];
     }
+  }
   }
 </script>
 
