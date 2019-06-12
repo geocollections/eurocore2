@@ -232,7 +232,7 @@
 
                       <a data-fancybox="slices"
                          v-if="entity.filename !== null"
-                         :href="helper.getFileLink({size: 'large', filename: entity.filename})"
+                         :href="helper.getFileLink({filename: entity.filename})"
                          :data-caption="setCaption({title: entity.title, description: entity.description})">
 
                         <!-- Todo: Get thumbnails working for data-fancybox (old has because of <img/> tag) -->
