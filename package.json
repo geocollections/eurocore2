@@ -15,7 +15,7 @@
     "@fortawesome/vue-fontawesome": "0.0.22",
     "asn1js": "^2.0.22",
     "bootstrap-vue": "^2.0.0-rc.18",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "ol": "^4.6.5",
     "ol-layerswitcher": "^2.0.0",
