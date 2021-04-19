@@ -952,11 +952,11 @@
               source: new SourceOSM()
             }),
             new LayerTile({
-              title: 'MapBox grayscale',
+              title: 'CartoDB',
               type: 'base',
               visible: true,
               source: new SourceXYZ({
-                url: 'https://api.tiles.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3V1dG9iaW5lIiwiYSI6ImNpZWlxdXAzcjAwM2Nzd204enJvN2NieXYifQ.tp6-mmPsr95hfIWu3ASz2w'
+                url: 'https://{a-f}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
               })
             })
           ]
@@ -966,10 +966,10 @@
           title: 'Overlays',
           layers: [
             new LayerTile({
-              title: 'Bedrock age <br /><img src="http://gis.geokogud.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
+              title: 'Bedrock age <br /><img src="https://gis.geocollections.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
               visible: true,
               source: new TileWMS({
-                url: 'http://gis.geokogud.info/geoserver/wms',
+                url: 'https://gis.geocollections.info/geoserver/wms',
                 params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
                 serverType: 'geoserver',
                 projection: '',

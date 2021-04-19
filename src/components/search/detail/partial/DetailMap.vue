@@ -72,11 +72,11 @@
             source: new SourceOSM()
           }),
           new LayerTile({
-            title: 'MapBox grayscale',
+            title: 'CartoDB',
             type: 'base',
             visible: true,
             source: new SourceXYZ({
-              url: 'https://api.tiles.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3V1dG9iaW5lIiwiYSI6ImNpZWlxdXAzcjAwM2Nzd204enJvN2NieXYifQ.tp6-mmPsr95hfIWu3ASz2w'
+              url: 'https://{a-f}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
             })
           })
         ]
@@ -87,10 +87,10 @@
         layers: [
           // Bedrock age map for Europe and little bit more
           new LayerTile({
-            title: 'Bedrock age <br /><img src="http://gis.geokogud.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
+            title: 'Bedrock age <br /><img src="https://gis.geocollections.info/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=IGME5000:EuroGeology&legend_options=fontName:DejaVu%20Sans%20ExtraLight;fontAntiAliasing:true;fontColor:0x333333;fontSize:10;bgColor:0xFFFFff;dpi:96" /> ',
             visible: true,
             source: new TileWMS({
-              url: 'http://gis.geokogud.info/geoserver/wms',
+              url: 'https://gis.geocollections.info/geoserver/wms',
               params: { 'LAYERS': 'IGME5000:EuroGeology', 'TILED': true },
               serverType: 'geoserver',
               projection: '',
@@ -100,13 +100,13 @@
           }),
           // Rocks of Finland
           new LayerTile({
-            title: 'Rocks of Finland <br /><img src="http://gtkdata.gtk.fi/onegeology/wms/1ge/legend_bedrock_lithology.png?">',
+            title: 'Rocks of Finland <br /><img src="https://gtkdata.gtk.fi/onegeology/wms/1ge/legend_bedrock_lithology.png?">',
             visible: false,
             source: new TileWMS({
-              url: 'http://gtkdata.gtk.fi/arcgis/services/Inspire/GTK_Bedrock_and_Superficial_Geology/MapServer/WMSServer?',
+              url: 'https://gtkdata.gtk.fi/arcgis/services/Inspire/GTK_Bedrock_and_Superficial_Geology/MapServer/WMSServer?',
               params: { 'LAYERS': 'FI_GTK_1M_Bedrock_Lithology', 'TILED': true },
               projection: '',
-              attributions: 'Rocks of Finland: <a target="_blank" href="http://en.gtk.fi/">Geological Survey of Finland</a>. '
+              attributions: 'Rocks of Finland: <a target="_blank" href="https://en.gtk.fi/">Geological Survey of Finland</a>. '
             }),
             opacity: 0.5,
           }),
